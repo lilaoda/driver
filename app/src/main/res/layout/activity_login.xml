@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@mipmap/login_bg"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp">
+
+        <lhy.lhylibrary.view.roundImageView.RoundedImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="25dp"
+            android:layout_marginTop="60dp"
+            android:scaleType="fitXY"
+            app:riv_corner_radius="6dp"
+            android:src="@mipmap/girl11" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/shape_edit"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/edit_phone" />
+
+            <EditText
+                android:id="@+id/edit_phone"
+                style="@style/Edit_login"
+                android:hint="手机号（中国大陆号码)"
+                android:inputType="phone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_edit"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/edit_pwd" />
+
+            <EditText
+                android:id="@+id/edit_pwd"
+                style="@style/Edit_login"
+                android:hint="密码"
+                android:inputType="textPassword" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_login"
+            style="@style/Button_login"
+            android:layout_marginTop="20dp"
+            android:text="登陆" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="46dp">
+
+            <TextView
+                android:id="@+id/text_forget"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingRight="15dp"
+                android:text="忘记密码？"
+                android:textColor="@color/white"
+                android:textSize="13sp" />
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/btn_register"
+            style="@style/Button_login"
+            android:text="注册" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/ib_back"
+        style="@style/ib_login" />
+</FrameLayout>

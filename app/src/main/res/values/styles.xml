@@ -1,0 +1,121 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <style name="ViewLineHorizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/gray_light</item>
+    </style>
+
+    <style name="ViewLineVertical">
+        <item name="android:layout_width">0.5dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/gray_light</item>
+    </style>
+
+    <style name="ButtonBlack">
+        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@drawable/selector_btn_black</item>
+    </style>
+
+    <!--登陆注册中edittext样式-->
+    <style name="Edit_login">
+        <item name="android:textColor">#CCEEEEEE</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:background">@null</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">10dp</item>
+    </style>
+    <!--登陆注册中imagebutton样式-->
+    <style name="ib_login">
+        <item name="android:alpha">100</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">15dp</item>
+        <item name="android:src">@mipmap/back_arrow_white</item>
+    </style>
+    <!--登陆注册中button样式-->
+    <style name="Button_login">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/selector_btn_login</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+    </style>
+
+
+    <!--个人信息中可点击的framlayout-->
+    <style name="Form_fl">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/selector_item</item>
+    </style>
+    <!--个人信息中可点击的framlayout左侧textview-->
+    <style name="Form_text_left">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">left|center_vertical</item>
+        <item name="android:drawablePadding">9dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/text_333</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <!--个人信息中可点击的framlayout右侧textview-->
+    <style name="Form_text_right">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:drawableRight">@mipmap/arrow_right</item>
+        <item name="android:drawablePadding">9dp</item>
+        <item name="android:textColor">@color/text_666</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColorHint">@color/text_999</item>
+    </style>
+    <!--单行可点击带右键头的text-->
+    <style name="Text_click_go">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:background">@drawable/selector_item</item>
+        <item name="android:clickable">true</item>
+        <item name="android:drawableRight">@mipmap/arrow_right</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_333</item>
+    </style>
+
+</resources>

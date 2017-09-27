@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar" />
+
+    <FrameLayout
+        android:id="@+id/fl_call"
+        style="@style/Form_fl"
+        android:layout_marginTop="1dp">
+
+        <TextView
+            style="@style/Form_text_left"
+            android:text="联系我们" />
+
+        <TextView
+            android:id="@+id/text_call"
+            style="@style/Form_text_right"
+            android:text="13922239152" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/text_suggest"
+        style="@style/Text_click_go"
+        android:layout_marginTop="1dp"
+        android:text="反馈建议" />
+</LinearLayout>

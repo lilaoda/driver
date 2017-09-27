@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorGreen">#2b8c30</color>
+    <color name="colorRed">#9c2e19</color>
+
+    <color name="text_333">#333333</color>
+    <color name="text_666">#666666</color>
+    <color name="text_999">#999999</color>
+    <color name="red_normal">#E15B69</color>
+    <color name="red_pressed">#E05542</color>
+    <color name="gray_light_light">#e1e0e0</color>
+    <color name="gray_tab_bg">#e7e5e5</color>
+    <color name="item_bg_gray_dark">#e4e3e3</color>
+    <color name="black_narmal">#231f1f</color>
+    <color name="black_press">#1b1919</color>
+    <color name="common_statusbar_color">#b3b1b1</color>
+    <color name="app_color">#1b1919</color>
+    <color name="app_yellow">#da4925</color>
+
+</resources>

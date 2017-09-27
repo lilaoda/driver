@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fl_root"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/ibtn_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:background="@null"
+            android:src="@mipmap/btn_location" />
+
+        <Button
+            android:id="@+id/btn_cancel"
+            style="@style/ButtonBlack"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:text="取消订单"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/ll_call_car"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:orientation="vertical">
+
+
+            <lhy.lhylibrary.view.tablayout.SegmentTabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_tab_bg"
+                app:tl_bar_stroke_width="0dp"
+                app:tl_indicator_anim_enable="true"
+                app:tl_indicator_color="@color/white"
+                app:tl_indicator_margin_bottom="3dp"
+                app:tl_indicator_margin_left="3dp"
+                app:tl_indicator_margin_right="3dp"
+                app:tl_indicator_margin_top="3dp"
+                app:tl_tab_padding="10dp"
+                app:tl_tab_space_equal="true"
+                app:tl_tab_width="60dp"
+                app:tl_textSelectColor="@color/text_333"
+                app:tl_textUnselectColor="@color/text_999"
+                app:tl_textsize="12sp" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_circle_corner_graylight"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:gravity="center"
+                    android:hint=" 请选择预约时间"
+                    android:textColor="@color/text_666"
+                    android:textColorHint="@color/text_666"
+                    android:textSize="13sp"
+                    android:visibility="visible" />
+
+                <View
+                    android:id="@+id/line"
+                    style="@style/ViewLineHorizontal" />
+
+                <LinearLayout
+                    android:id="@+id/ll_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/text_start"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:drawableLeft="@drawable/shape_point_green"
+                        android:gravity="center"
+                        android:paddingLeft="15dp" />
+
+                    <View style="@style/ViewLineHorizontal" />
+
+                    <TextView
+                        android:id="@+id/text_end"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:drawableLeft="@drawable/shape_point_red"
+                        android:gravity="center"
+                        android:hint="@string/please_choose_destination"
+                        android:paddingLeft="15dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/text_result"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_gravity="bottom"
+                        android:gravity="center"
+                        android:text="总共费用600块"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_commit"
+                style="@style/ButtonBlack"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="呼叫专车" />
+        </LinearLayout>
+    </LinearLayout>
+
+</FrameLayout>

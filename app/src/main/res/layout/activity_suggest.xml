@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar" />
+
+    <EditText
+        android:id="@+id/edit_suggest"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        android:gravity="left|top"
+        android:hint="在这里填写您的建议"
+        android:maxLength="200"
+        android:padding="10dp"
+        android:textColor="@color/text_999"
+        android:textColorHint="@color/text_999"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/text_watch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:padding="15dp"
+        android:text="0 /200字"
+        android:textColor="@color/text_999"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btn_commit"
+        style="@style/ButtonBlack"
+        android:text="提交" />
+</LinearLayout>

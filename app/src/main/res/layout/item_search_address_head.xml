@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <ImageView
+        android:id="@+id/item_img"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:src="@mipmap/icon_address_home" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/item_img"
+        android:gravity="bottom"
+        android:text="@string/home"
+        android:textColor="@color/text_333"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/item_address"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_alignLeft="@+id/item_title"
+        android:layout_below="@+id/item_title"
+        android:layout_toRightOf="@id/item_img"
+        android:gravity="top"
+        android:hint="@string/set_home_address"
+        android:maxLines="1"
+        android:textColor="@color/text_999"
+        android:textSize="12sp" />
+
+    <View
+        style="@style/ViewLineHorizontal"
+        android:layout_alignParentBottom="true" />
+
+    <View
+        android:id="@+id/line_center"
+        style="@style/ViewLineVertical"
+        android:layout_centerInParent="true" />
+
+    <ImageView
+        android:id="@+id/img_work"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_toRightOf="@id/line_center"
+        android:src="@mipmap/icon_address_work" />
+
+    <TextView
+        android:id="@+id/work_title"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/img_work"
+        android:gravity="bottom"
+        android:text="@string/work_address"
+        android:textColor="@color/text_333"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/work_address"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_alignLeft="@+id/work_title"
+        android:layout_below="@+id/work_title"
+        android:gravity="top"
+        android:hint="@string/set_work_address"
+        android:maxLines="1"
+        android:textColor="@color/text_999"
+        android:textSize="12sp" />
+</RelativeLayout>
