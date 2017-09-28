@@ -63,7 +63,9 @@ public class LocationService extends Service implements AMapLocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isFirstLocate = intent.getBooleanExtra(FIRST_LOCATE, false);
+        if (intent != null) {
+            isFirstLocate = intent.getBooleanExtra(FIRST_LOCATE, false);
+        }
         if (mlocationClient != null) {
             mlocationClient.startLocation();
         }

@@ -30,13 +30,27 @@
     </style>
 
     <style name="ButtonBlack">
-        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">45dp</item>
+        <item name="android:layout_marginRight">50dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
         <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>
         <item name="android:background">@drawable/selector_btn_black</item>
+    </style>
+
+    <style name="ButtonYellow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:layout_marginRight">50dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@drawable/selector_btn_yello</item>
     </style>
 
     <!--登陆注册中edittext样式-->

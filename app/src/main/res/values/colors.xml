@@ -18,7 +18,9 @@
     <color name="black_narmal">#231f1f</color>
     <color name="black_press">#1b1919</color>
     <color name="common_statusbar_color">#b3b1b1</color>
-    <color name="app_color">#1b1919</color>
-    <color name="app_yellow">#da4925</color>
+    <color name="app_color">#19191e</color>
+    <color name="yellow_normal">#da4925</color>
+    <color name="yellow_pressed">#bf3d1d</color>
+    <color name="black_light">#22232d</color>
 
 </resources>

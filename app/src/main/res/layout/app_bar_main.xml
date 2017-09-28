@@ -24,7 +24,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
                 app:tl_tab_width="50dp"
-                app:tl_indicator_color="@color/app_yellow"
+                app:tl_indicator_color="@color/yellow_normal"
                 app:tl_indicator_height="2dp"
                 app:tl_indicator_width_equal_title="true"
                 app:tl_textSelectColor="@color/white"
