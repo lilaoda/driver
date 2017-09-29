@@ -1,5 +1,6 @@
 package bus.driver.module.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +19,7 @@ import bus.driver.R;
 import bus.driver.adapter.OrderListAdapter;
 import bus.driver.base.BaseFragment;
 import bus.driver.bean.OrderInfo;
+import bus.driver.module.order.OrderOngoingActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -64,6 +66,12 @@ public class OrderFragment extends BaseFragment {
         }
         final OrderListAdapter adapter = new OrderListAdapter(mOrderList);
         recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                startActivity(new Intent(getActivity(), OrderOngoingActivity.class));
+            }
+        });
         adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {

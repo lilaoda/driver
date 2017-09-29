@@ -49,7 +49,7 @@ public class GlideCacheUtils {
      */
     public void clearImageMemoryCache(Context context) {
         try {
-            if (Looper.myLooper() == Looper.getMainLooper()) { //只能在主线程执行
+            if (Looper.myLooper() == Looper.getMainLooper()) {
                 Glide.get(context).clearMemory();
             }
         } catch (Exception e) {

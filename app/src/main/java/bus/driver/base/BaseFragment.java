@@ -1,11 +1,12 @@
 package bus.driver.base;
 
-import android.support.v4.app.Fragment;
+import lhy.lhylibrary.base.LhyFragment;
 
 /**
  * Created by Lilaoda on 2017/9/27.
  * Email:749948218@qq.com
  */
 
-public class BaseFragment extends Fragment {
+public class BaseFragment extends LhyFragment {
+
 }

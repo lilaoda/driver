@@ -12,12 +12,9 @@ import lhy.lhylibrary.base.LhyApplication;
 
 public class BaseApplication extends LhyApplication {
 
-    private static ApplicationComponent applicationComponent;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        applicationComponent = DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(this)).build();
         initLeakCanary();
         FileDownloader.setup(this);
     }
@@ -27,10 +24,5 @@ public class BaseApplication extends LhyApplication {
             return;
         }
         LeakCanary.install(this);
-    }
-
-
-    public static ApplicationComponent getApplicationComponent() {
-        return applicationComponent;
     }
 }

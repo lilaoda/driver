@@ -3,9 +3,7 @@ package bus.driver.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import bus.driver.base.BaseApplication;
 import bus.driver.data.entity.User;
 import bus.driver.data.gen.DaoMaster;
 import bus.driver.data.gen.DaoSession;
@@ -17,17 +15,27 @@ import bus.driver.data.gen.DaoSession;
  */
 
 
-@Singleton
 public class DbManager {
 
     private static final String DB_NAME = "passenger.db";
+
+    private static DbManager instance;
     private DaoSession mDaoSession;
 
-    @Inject
-    public DbManager(Context context) {
-        init(context);
+    private DbManager() {
+        init(BaseApplication.getContext());
     }
 
+    public static synchronized DbManager instance() {
+        if (instance == null) {
+            synchronized (DbManager.class) {
+                if (instance == null) {
+                    instance = new DbManager();
+                }
+            }
+        }
+        return instance;
+    }
 
     private void init(Context context) {
         DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(context, DB_NAME);
@@ -42,6 +50,7 @@ public class DbManager {
 
     /**
      * 只保存一个用户的信息
+     *
      * @param user 用户信息
      */
     public void saveUser(User user) {

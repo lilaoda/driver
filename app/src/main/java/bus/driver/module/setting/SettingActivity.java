@@ -18,14 +18,11 @@ import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseApplication;
 import bus.driver.base.GlobeConstants;
 import bus.driver.data.DbManager;
-import bus.driver.module.DaggerCommonComponent;
 import bus.driver.module.login.LoginActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,13 +31,13 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
-import lhy.lhylibrary.http.ObserverResult;
+import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.FileUtils;
 import lhy.lhylibrary.utils.GlideCacheUtils;
 import lhy.lhylibrary.utils.ToastUtils;
 
-import static lhy.lhylibrary.utils.RxUtils.wrapAsync;
+import static bus.driver.utils.RxUtils.wrapAsync;
 
 /**
  * 设置
@@ -56,7 +53,6 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.switch_msg)
     Switch switchMsg;
 
-    @Inject
     DbManager mDbManager;
     @BindView(R.id.text_call)
     TextView textCall;
@@ -69,7 +65,7 @@ public class SettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
-        DaggerCommonComponent.builder().applicationComponent(BaseApplication.getApplicationComponent()).build().inject(this);
+        mDbManager = DbManager.instance();
         initToolbar("设置");
         initView();
     }
@@ -95,7 +91,7 @@ public class SettingActivity extends BaseActivity {
 
     private void cleanCache() {
         wrapAsync(Observable.timer(1, TimeUnit.SECONDS)).compose(this.<Long>bindToLifecycle())
-                .subscribe(new ObserverResult<Long>(this, "正在清理缓存") {
+                .subscribe(new ResultObserver<Long>(this, "正在清理缓存") {
                     @Override
                     public void onSuccess(Long value) {
                         textClean.setText("0kb");

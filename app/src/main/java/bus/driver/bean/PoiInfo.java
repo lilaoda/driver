@@ -3,8 +3,6 @@ package bus.driver.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import javax.inject.Inject;
-
 /**
  * Created by Liheyu on 2017/9/19.
  * Email:liheyu999@163.com
@@ -22,7 +20,6 @@ public class PoiInfo implements Parcelable{
     private String adName;
     private String snippet;
 
-    @Inject
     public PoiInfo() {
     }
 

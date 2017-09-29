@@ -16,10 +16,8 @@ import com.amap.api.services.route.RouteSearch;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import bus.driver.R;
+import bus.driver.base.BaseApplication;
 import bus.driver.bean.PoiInfo;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -36,14 +34,26 @@ import static lhy.lhylibrary.base.LhyApplication.getContext;
  * Email:liheyu999@163.com
  */
 
-@Singleton
+
 public class AMapManager {
 
+    private static AMapManager instance;
     private Context mContext;
 
-    @Inject
-    public AMapManager(Context context) {
+
+    private AMapManager(Context context) {
         mContext = context;
+    }
+
+    public static synchronized AMapManager instance() {
+        if (instance == null) {
+            synchronized (AMapManager.class) {
+                if (instance == null) {
+                    instance = new AMapManager(BaseApplication.getContext());
+                }
+            }
+        }
+        return instance;
     }
 
     /**

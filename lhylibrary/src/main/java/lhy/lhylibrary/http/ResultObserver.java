@@ -17,12 +17,8 @@ import lhy.lhylibrary.base.LhyApplication;
 import lhy.lhylibrary.http.exception.ApiException;
 import retrofit2.HttpException;
 
-/**
- * Created by Liheyu on 2017/3/6.
- * Email:liheyu999@163.com
- */
 
-public abstract class ObserverResult<T> implements Observer<T> {
+public abstract class ResultObserver<T> implements Observer<T> {
 
     private Activity mActivity;
     private ProgressDialog progressDialog;
@@ -33,34 +29,34 @@ public abstract class ObserverResult<T> implements Observer<T> {
     boolean isShowToast;
     boolean isShowDialog;
 
-    public ObserverResult() {
+    public ResultObserver() {
     }
 
-    public ObserverResult(boolean isShowToast) {
+    public ResultObserver(boolean isShowToast) {
         this.isShowToast = isShowToast;
     }
 
-    public ObserverResult(Activity mActivity, boolean isShowDialog, boolean isShowToast) {
+    public ResultObserver(Activity mActivity, boolean isShowDialog, boolean isShowToast) {
         this.mActivity = mActivity;
         this.isShowToast = isShowToast;
         this.isShowDialog = isShowDialog;
     }
 
-    public ObserverResult(Activity mActivity, boolean isShowDialog, String dialogMsg, boolean isShowToast) {
+    public ResultObserver(Activity mActivity, boolean isShowDialog, String dialogMsg, boolean isShowToast) {
         this.mActivity = mActivity;
         this.isShowToast = isShowToast;
         this.isShowDialog = isShowDialog;
         this.dialogMsg = dialogMsg;
     }
 
-    public ObserverResult(Activity mActivity, String dialogMsg, boolean isShowToast) {
+    public ResultObserver(Activity mActivity, String dialogMsg, boolean isShowToast) {
         this.mActivity = mActivity;
         this.isShowToast = isShowToast;
         this.isShowDialog = true;
         this.dialogMsg = dialogMsg;
     }
 
-    public ObserverResult(Activity mActivity, String dialogMsg) {
+    public ResultObserver(Activity mActivity, String dialogMsg) {
         this.mActivity = mActivity;
         this.isShowDialog = true;
         this.dialogMsg = dialogMsg;

@@ -2,6 +2,7 @@ package bus.driver.module.main;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import lhy.lhylibrary.utils.DateUtils;
+
+import static bus.driver.utils.RxUtils.wrapAsync;
 
 /**
  * Created by Lilaoda on 2017/9/27.
@@ -60,6 +69,21 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initView() {
+        wrapAsync(Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                while (true) {
+                    SystemClock.sleep(1000);
+                    e.onNext(DateUtils.getDate("MM月dd HH:mm:ss") + DateUtils.getWeek());
+                }
+            }
+        })).compose(this.<String>bindToLifecycle())
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(@NonNull String s) throws Exception {
+                        textTime.setText(s);
+                    }
+                });
         imgIndicate.setVisibility(View.INVISIBLE);
     }
 
@@ -94,7 +118,7 @@ public class HomeFragment extends BaseFragment {
 
     private void startAnim() {
         imgIndicate.setVisibility(View.VISIBLE);
-        ObjectAnimator translationX = ObjectAnimator.ofFloat(imgIndicate, "rotation", 0,360F).setDuration(2000);
+        ObjectAnimator translationX = ObjectAnimator.ofFloat(imgIndicate, "rotation", 0, 360F).setDuration(2000);
         translationX.setRepeatCount(Integer.MAX_VALUE);
         translationX.setRepeatMode(ObjectAnimator.RESTART);
         translationX.start();

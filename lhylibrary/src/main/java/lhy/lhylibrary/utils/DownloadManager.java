@@ -42,7 +42,6 @@ public class DownloadManager {
     }
 
     public void updateAPP(String url, String directoryPath) {
-//        "http://ets.xbwl.cn/openapi/spyApk/spy.apk"
         String direcotryPath = Environment.getExternalStorageDirectory().getPath() + "/" + "test/";
         File file = new File(direcotryPath);
         if (!file.exists()) file.mkdirs();
@@ -134,8 +133,5 @@ public class DownloadManager {
                 .setPriority(Notification.PRIORITY_MAX)
                 .setOngoing(true);
         mNotificationManager = (NotificationManager) LhyApplication.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//        //这通知的其他属性，比如：声音和振动
-//        notification.defaults |= Notification.DEFAULT_SOUND;
-//        notification.defaults |= Notification.DEFAULT_VIBRATE;
     }
 }

@@ -18,24 +18,20 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import bus.driver.R;
 import bus.driver.adapter.SearchAdapter;
-import bus.driver.base.BaseApplication;
 import bus.driver.bean.PoiInfo;
 import bus.driver.data.AMapManager;
 import bus.driver.data.SpManager;
-import bus.driver.module.DaggerCommonComponent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lhy.lhylibrary.base.LhyActivity;
-import lhy.lhylibrary.http.ObserverResult;
+import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.view.SideLetterBar;
 
-import static lhy.lhylibrary.utils.RxUtils.wrapAsync;
+import static bus.driver.utils.RxUtils.wrapAsync;
 
 /**
  * Created by Liheyu on 2017/9/18.
@@ -63,21 +59,17 @@ public class SearchAddressActivity extends LhyActivity {
 
     List<PoiInfo> mHistoryList;
     private SearchAdapter mAdapter;
+    private SpManager mSpManager;
+    private AMapManager mAMapManager;
 
-    @Inject
-    SpManager mSpManager;
-    @Inject
-    AMapManager mAMapManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_address);
         ButterKnife.bind(this);
-        DaggerCommonComponent.builder()
-                .applicationComponent(BaseApplication.getApplicationComponent())
-                .build()
-                .inject(this);
+        mSpManager = SpManager.instance();
+        mAMapManager = AMapManager.instance();
         initView();
         intListener();
     }
@@ -173,7 +165,7 @@ public class SearchAddressActivity extends LhyActivity {
     private void queryAddress(String keyWord) {
         LlLoading.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        wrapAsync(mAMapManager.search(keyWord, "", "广州")).subscribe(new ObserverResult<List<PoiInfo>>() {
+        wrapAsync(mAMapManager.search(keyWord, "", "广州")).subscribe(new ResultObserver<List<PoiInfo>>() {
             @Override
             public void onSuccess(List<PoiInfo> value) {
                 LlLoading.setVisibility(View.GONE);

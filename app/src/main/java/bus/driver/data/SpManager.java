@@ -8,9 +8,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import bus.driver.bean.PoiInfo;
 import lhy.lhylibrary.base.LhyApplication;
 
@@ -21,17 +18,28 @@ import lhy.lhylibrary.base.LhyApplication;
  */
 
 
-@Singleton
+
 public class SpManager {
 
     private static final String SP_FILE_NAME = "webus_passenger";
     private static final String HISTORY_POIINFO = "history_poiInfo";
     public static final String IS_STARTED = "is_started";//是否已经启动过
 
+    private static SpManager instance;
     private SharedPreferences mSP;
-    private Gson mGson;
+    private final Gson mGson;
 
-    @Inject
+    public static synchronized SpManager instance() {
+        if (instance == null) {
+            synchronized (SpManager.class) {
+                if (instance == null) {
+                    instance = new SpManager();
+                }
+            }
+        }
+        return instance;
+    }
+
     public SpManager() {
         mSP = LhyApplication.getContext().getSharedPreferences(SP_FILE_NAME, Context.MODE_PRIVATE);
         mGson = new Gson();

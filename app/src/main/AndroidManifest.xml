@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!--用于进行网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!--获取运营商信息，用于支持提供运营商信息相关的接口-->
@@ -18,13 +19,13 @@
     <!--这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!--这个权限用于允许程序在手机屏幕关闭后后台进程仍然运行-->
-    <user-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name=".base.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".base.BaseApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -44,10 +45,12 @@
         <activity android:name=".module.route.RouteActivity" />
         <activity android:name=".module.customerservice.CustomerServiceActivity" />
         <activity android:name=".module.setting.SuggestActivity" />
+        <activity android:name=".module.order.OrderOngoingActivity" />
 
+        <service android:name=".service.LocationService" />
+        <service android:name=".service.OrderService" />
         <!--高德地图-->
         <service android:name="com.amap.api.location.APSService" />
-        <service android:name=".service.LocationService" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

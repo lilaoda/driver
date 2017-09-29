@@ -3,20 +3,25 @@ package bus.driver.module.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
+import bus.driver.data.DbManager;
+import bus.driver.data.HttpManager;
+import bus.driver.data.entity.User;
 import bus.driver.module.main.MainActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.utils.ValidateUtils;
+
+import static bus.driver.utils.RxUtils.wrapHttp;
 
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
@@ -25,12 +30,14 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     EditText editPhone;
     @BindView(R.id.edit_pwd)
     EditText editPwd;
+    HttpManager httpManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        httpManager = HttpManager.instance();
     }
 
     @Override
@@ -60,12 +67,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void doSignin() {
-        if (TextUtils.equals(CommonUtils.getString(editPhone), "13922239152") && TextUtils.equals(CommonUtils.getString(editPwd), "123456")) {
-            startActivity(new Intent(this, MainActivity.class));
-        }else {
-            ToastUtils.showString("账号13922239152+\n密码123456");
-        }
-
+        wrapHttp(httpManager.getApiService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
+                .compose(this.<String>bindToLifecycle())
+                .subscribe(new ResultObserver<String>(this, "正在登陆", true) {
+                    @Override
+                    public void onSuccess(String value) {
+                        User user = new User();
+                        user.setPhone(CommonUtils.getString(editPhone));
+                        user.setPassword(CommonUtils.getString(editPwd));
+                        user.setToken(value);
+                        DbManager.instance().saveUser(user);
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    }
+                });
     }
 
     private boolean checkData() {

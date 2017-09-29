@@ -86,7 +86,7 @@
 
     <Button
         android:id="@+id/btn_over"
-        style="@style/ButtonBlack"
+        style="@style/ButtonYellow"
         android:layout_marginTop="20dp"
         android:text="退出登陆" />
 </LinearLayout>

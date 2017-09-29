@@ -55,16 +55,12 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import bus.driver.R;
-import bus.driver.base.BaseApplication;
 import bus.driver.bean.PoiInfo;
 import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.bean.event.StartLocationEvent;
 import bus.driver.data.AMapManager;
 import bus.driver.module.AMapFragment;
-import bus.driver.module.DaggerCommonComponent;
 import bus.driver.overlay.AMapUtil;
 import bus.driver.overlay.DrivingRouteOverlay;
 import bus.driver.service.LocationService;
@@ -73,14 +69,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
-import lhy.lhylibrary.http.ObserverResult;
+import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.ImageFactory;
 import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.view.tablayout.SegmentTabLayout;
 import lhy.lhylibrary.view.tablayout.listener.OnTabSelectListener;
 
-import static lhy.lhylibrary.utils.RxUtils.wrapAsync;
+import static bus.driver.utils.RxUtils.wrapAsync;
 
 /**
  * Created by Liheyu on 2017/9/12.
@@ -129,9 +125,6 @@ public class MainFragment extends AMapFragment implements AMap.OnMapLoadedListen
     FrameLayout flRoot;
     TextureMapView mapView;
 
-    @Inject
-    AMapManager mAMapManager;
-
     PoiInfo mStartPoiInfo;//用户当前选择的起始位置
     PoiInfo mTargetPoiInfo;//用户当前选择的目的位置
     private AMap mAMap;
@@ -156,7 +149,6 @@ public class MainFragment extends AMapFragment implements AMap.OnMapLoadedListen
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        DaggerCommonComponent.builder().applicationComponent(BaseApplication.getApplicationComponent()).build().inject(this);
     }
 
     @Nullable
@@ -291,9 +283,9 @@ public class MainFragment extends AMapFragment implements AMap.OnMapLoadedListen
     }
 
     private void searchPoiInfo(LatLng target) {
-        wrapAsync(mAMapManager.search(target))
+        wrapAsync(AMapManager.instance().search(target))
                 .compose(this.<PoiInfo>bindToLifecycle())
-                .subscribe(new ObserverResult<PoiInfo>(true) {
+                .subscribe(new ResultObserver<PoiInfo>(true) {
                     @Override
                     public void onSuccess(PoiInfo value) {
                         mStartPoiInfo = value;
@@ -633,7 +625,7 @@ public class MainFragment extends AMapFragment implements AMap.OnMapLoadedListen
             mAMap.setMyLocationStyle(mMyLocationStyle);//重新显示定位蓝点
             addMarkerInScreenCenter();
 
-            wrapAsync(Observable.timer(500, TimeUnit.MILLISECONDS)).subscribe(new ObserverResult<Long>() {
+            wrapAsync(Observable.timer(500, TimeUnit.MILLISECONDS)).subscribe(new ResultObserver<Long>() {
                 @Override
                 public void onSuccess(Long value) {
                     moveMapToCurrentLocation();

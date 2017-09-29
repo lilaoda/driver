@@ -33,6 +33,6 @@
 
     <Button
         android:id="@+id/btn_commit"
-        style="@style/ButtonBlack"
+        style="@style/ButtonYellow"
         android:text="提交" />
 </LinearLayout>

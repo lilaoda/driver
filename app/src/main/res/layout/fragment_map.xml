@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:paddingLeft="15dp">
+
+        <TextView
+            android:id="@+id/text_target"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:drawableLeft="@drawable/shape_point_red"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:text="广州南站"
+            android:textColor="@color/text_333"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_status"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@+id/text_target"
+            android:gravity="center_vertical"
+            android:text="等待乘客 尾号9152"
+            android:textColor="@color/text_666"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_navi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignBaseline="@+id/text_status"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/shape_circel_stroke"
+            android:text="导航"
+            android:textColor="@color/yellow_normal" />
+
+        <Button
+            android:id="@+id/btn_call"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignBaseline="@+id/text_status"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/btn_navi"
+            android:background="@drawable/shape_circel_stroke"
+            android:text="联系"
+            android:textColor="@color/yellow_normal" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="距离8公里" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="预计时间28分钟" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/ib_reLocate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="20dp"
+            android:background="@null"
+            android:src="@mipmap/icon_location" />
+    </FrameLayout>
+</LinearLayout>

@@ -25,15 +25,11 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.BaseApplication;
 import bus.driver.base.BaseFragment;
 import bus.driver.data.DbManager;
 import bus.driver.data.entity.User;
-import bus.driver.module.DaggerCommonComponent;
 import bus.driver.module.customerservice.CustomerServiceActivity;
 import bus.driver.module.route.RouteActivity;
 import bus.driver.module.setting.SettingActivity;
@@ -59,8 +55,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.viewPager)
     ViewPager viewPager;
 
-    @Inject
-    DbManager mDbManager;
 
     private ActionBarDrawerToggle mDrawerToggle;
     private List<BaseFragment> mFragments;
@@ -71,10 +65,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        DaggerCommonComponent.builder()
-                .applicationComponent(BaseApplication.getApplicationComponent())
-                .build()
-                .inject(this);
         initToolbar();
         initView();
     }
@@ -99,7 +89,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initNavHeadView() {
-        User user = mDbManager.getUser();
+        User user = DbManager.instance().getUser();
+         user = null;
         View headerView = navView.getHeaderView(0);
         ImageView userIcon = (ImageView) headerView.findViewById(R.id.img_photo);
         TextView userName = (TextView) headerView.findViewById(R.id.text_name);
@@ -174,6 +165,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         DrawerLayout drawlayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         StatusBarUtil.setColorForDrawerLayout(this, drawlayout,getResources().getColor(R.color.app_color),0);
     }
+
 
     private class ManiAdapter extends FragmentPagerAdapter{
 

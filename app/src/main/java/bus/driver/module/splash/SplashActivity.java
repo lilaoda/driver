@@ -14,15 +14,12 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.BaseApplication;
 import bus.driver.data.SpManager;
-import bus.driver.module.DaggerCommonComponent;
-import bus.driver.module.main.MainActivity;
+import bus.driver.module.login.LoginActivity;
 import bus.driver.service.LocationService;
+import bus.driver.service.OrderService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lhy.lhylibrary.utils.StatusBarUtil;
@@ -34,7 +31,6 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     ViewPager viewPager;
     @BindView(R.id.fl_root)
     FrameLayout flRoot;
-    @Inject
     SpManager mSpManager;
 
     private ArrayList<View> list;
@@ -50,13 +46,14 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         }
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-        DaggerCommonComponent.builder().applicationComponent(BaseApplication.getApplicationComponent()).build().inject(this);
-        startService(new Intent(this, LocationService.class).putExtra(LocationService.FIRST_LOCATE,true));
+        mSpManager = SpManager.instance();
+        startService(new Intent(this, LocationService.class).putExtra(LocationService.FIRST_LOCATE, true));
+        startService(new Intent(this, OrderService.class));
         boolean isStarted = mSpManager.getBoolean(SpManager.IS_STARTED);
         if (!isStarted) {
             initView();
         } else {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }
@@ -70,7 +67,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         view1.setBackgroundResource(R.mipmap.login_bg);
 
         list = new ArrayList<>();
-        list.add(view1);
+        //  list.add(view1);
         list.add(startView);
         viewPager.setAdapter(new SplashAdapter());
     }
@@ -79,7 +76,7 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
     public void onClick(View v) {
         if (v.getId() == R.id.btn_start) {
             mSpManager.putBoolean(SpManager.IS_STARTED, true);
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
     }

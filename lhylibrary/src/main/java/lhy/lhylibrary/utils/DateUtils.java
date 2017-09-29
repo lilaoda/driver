@@ -3,11 +3,11 @@ package lhy.lhylibrary.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
-/**
- * Created by lilaoda on 2016/10/24.
- */
+
 public class DateUtils {
+
     public static final String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
     /**
@@ -47,5 +47,12 @@ public class DateUtils {
         Date date = new Date(timestemp);
         SimpleDateFormat format = new SimpleDateFormat(dateFormat);
         return format.format(date);
+    }
+
+    public static String getDate(String dateFormat){
+        return new SimpleDateFormat(dateFormat, Locale.CHINA).format(new Date());
+    }
+    public static String getWeek(){
+        return new SimpleDateFormat("EEEE", Locale.CHINA).format(new Date());
     }
 }
