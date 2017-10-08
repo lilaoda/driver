@@ -29,7 +29,9 @@ public class BaseActivity extends LhyActivity {
             return;
         }
         toolbar.setTitle("");
-        textTitle.setText(title);
+        if (textTitle != null) {
+            textTitle.setText(title);
+        }
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -44,4 +46,6 @@ public class BaseActivity extends LhyActivity {
     public void setStatusBar() {
         StatusBarUtil.setColor(this, getResources().getColor(R.color.common_statusbar_color), 0);
     }
+
+
 }

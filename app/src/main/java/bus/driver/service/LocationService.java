@@ -10,18 +10,21 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.HashMap;
 
 import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.bean.event.StartLocationEvent;
+import bus.driver.data.HttpManager;
+import bus.driver.data.remote.HttpResult;
+import lhy.lhylibrary.http.ResultObserver;
 
+import static bus.driver.utils.RxUtils.wrapAsync;
 import static lhy.lhylibrary.base.LhyApplication.getContext;
 
 /**
@@ -42,10 +45,12 @@ public class LocationService extends Service implements AMapLocationListener {
     private AMapLocationClient mlocationClient;
     private boolean isFirstLocate = false;
     private boolean isNeedResult = false;
+    private HttpManager mHttpManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mHttpManager = HttpManager.instance();
         EventBus.getDefault().register(this);
         initLocationClient();
     }
@@ -63,10 +68,10 @@ public class LocationService extends Service implements AMapLocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null) {
+        if (intent != null && intent.hasExtra(FIRST_LOCATE)) {
             isFirstLocate = intent.getBooleanExtra(FIRST_LOCATE, false);
         }
-        if (mlocationClient != null) {
+        if (isFirstLocate && mlocationClient != null) {
             mlocationClient.startLocation();
         }
         return super.onStartCommand(intent, flags, startId);
@@ -102,30 +107,33 @@ public class LocationService extends Service implements AMapLocationListener {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
                 //定位成功回调信息，设置相关消息
-                aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                aMapLocation.getAccuracy();//获取精度信息
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date date = new Date(aMapLocation.getTime());
-                df.format(date);//定位时间
-                aMapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-                aMapLocation.getCountry();//国家信息
-                aMapLocation.getProvince();//省信息
-                aMapLocation.getCity();//城市信息
-                aMapLocation.getDistrict();//城区信息
-                aMapLocation.getStreet();//街道信息
-                aMapLocation.getStreetNum();//街道门牌号信息
-                aMapLocation.getCityCode();//城市编码
-                aMapLocation.getAdCode();//地区编码
-                aMapLocation.getAoiName();//获取当前定位点的AOI信息
+//                aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
+//                aMapLocation.getAccuracy();//获取精度信息
+//                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+//                Date date = new Date(aMapLocation.getTime());
+//                df.format(date);//定位时间
+//                aMapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
+//                aMapLocation.getCountry();//国家信息
+//                aMapLocation.getProvince();//省信息
+//                aMapLocation.getCity();//城市信息
+//                aMapLocation.getDistrict();//城区信息
+//                aMapLocation.getStreet();//街道信息
+//                aMapLocation.getStreetNum();//街道门牌号信息
+//                aMapLocation.getCityCode();//城市编码
+//                aMapLocation.getAdCode();//地区编码
+//                aMapLocation.getAoiName();//获取当前定位点的AOI信息
 
                 longitude = aMapLocation.getLongitude();
                 latitude = aMapLocation.getLatitude();
                 Log.d(TAG, "onLocationChanged: " + longitude + "_" + latitude + aMapLocation.getAoiName());
 
-                if (isFirstLocate) {
-                    isFirstLocate = false;
-                    mlocationClient.stopLocation();
-                }
+                //uploadLocation(latitude, longitude);
+
+//                if (isFirstLocate) {
+//                    isFirstLocate = false;
+//                    mlocationClient.stopLocation();
+//                }
+
                 if (isNeedResult) {
                     EventBus.getDefault().post(new LocationResultEvent(true));
                     isNeedResult = false;
@@ -133,7 +141,7 @@ public class LocationService extends Service implements AMapLocationListener {
             } else {
                 if (isNeedResult) {
                     String errorInfo = "定位失败:" + aMapLocation.getErrorCode() + "," + aMapLocation.getErrorInfo();
-                    EventBus.getDefault().post(new LocationResultEvent(false,errorInfo));
+                    EventBus.getDefault().post(new LocationResultEvent(false, errorInfo));
                     isNeedResult = false;
                 }
 
@@ -142,6 +150,19 @@ public class LocationService extends Service implements AMapLocationListener {
                         + aMapLocation.getErrorInfo());
             }
         }
+    }
+
+    private void uploadLocation(double latitude, double longitude) {
+        HashMap<String, String> argsMap = new HashMap<>(3);
+        argsMap.put("lat", String.valueOf(latitude));
+        argsMap.put("lng", String.valueOf(longitude));
+        argsMap.put("mapType", "0");
+        wrapAsync(mHttpManager.getCarService().uploadLocation(argsMap)).subscribe(new ResultObserver<HttpResult<String>>() {
+            @Override
+            public void onSuccess(HttpResult<String> value) {
+                Logger.d(value.getData());
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

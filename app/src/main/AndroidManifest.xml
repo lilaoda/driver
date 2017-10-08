@@ -46,6 +46,7 @@
         <activity android:name=".module.customerservice.CustomerServiceActivity" />
         <activity android:name=".module.setting.SuggestActivity" />
         <activity android:name=".module.order.OrderOngoingActivity" />
+        <activity android:name=".module.order.OrderDetailActivity" />
 
         <service android:name=".service.LocationService" />
         <service android:name=".service.OrderService" />

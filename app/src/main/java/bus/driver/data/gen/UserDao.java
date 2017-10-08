@@ -29,7 +29,8 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Name = new Property(2, String.class, "name", false, "NAME");
         public final static Property Password = new Property(3, String.class, "password", false, "PASSWORD");
         public final static Property Token = new Property(4, String.class, "token", false, "TOKEN");
-        public final static Property IconUrl = new Property(5, String.class, "iconUrl", false, "ICON_URL");
+        public final static Property Uuid = new Property(5, String.class, "uuid", false, "UUID");
+        public final static Property IconUrl = new Property(6, String.class, "iconUrl", false, "ICON_URL");
     }
 
     private DaoSession daoSession;
@@ -53,7 +54,8 @@ public class UserDao extends AbstractDao<User, Long> {
                 "\"NAME\" TEXT," + // 2: name
                 "\"PASSWORD\" TEXT," + // 3: password
                 "\"TOKEN\" TEXT," + // 4: token
-                "\"ICON_URL\" TEXT);"); // 5: iconUrl
+                "\"UUID\" TEXT," + // 5: uuid
+                "\"ICON_URL\" TEXT);"); // 6: iconUrl
     }
 
     /** Drops the underlying database table. */
@@ -91,9 +93,14 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindString(5, token);
         }
  
+        String uuid = entity.getUuid();
+        if (uuid != null) {
+            stmt.bindString(6, uuid);
+        }
+ 
         String iconUrl = entity.getIconUrl();
         if (iconUrl != null) {
-            stmt.bindString(6, iconUrl);
+            stmt.bindString(7, iconUrl);
         }
     }
 
@@ -126,9 +133,14 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindString(5, token);
         }
  
+        String uuid = entity.getUuid();
+        if (uuid != null) {
+            stmt.bindString(6, uuid);
+        }
+ 
         String iconUrl = entity.getIconUrl();
         if (iconUrl != null) {
-            stmt.bindString(6, iconUrl);
+            stmt.bindString(7, iconUrl);
         }
     }
 
@@ -151,7 +163,8 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // password
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // token
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // iconUrl
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // uuid
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // iconUrl
         );
         return entity;
     }
@@ -163,7 +176,8 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setPassword(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setToken(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setIconUrl(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setUuid(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setIconUrl(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
      }
     
     @Override

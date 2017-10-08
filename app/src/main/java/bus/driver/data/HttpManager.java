@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import bus.driver.BuildConfig;
-import bus.driver.data.remote.ApiService;
+import bus.driver.data.remote.DriverService;
+import bus.driver.data.remote.CarService;
 import bus.driver.data.remote.HeadIntercepter;
 import lhy.lhylibrary.base.LhyApplication;
 import lhy.lhylibrary.http.interceptor.CacheIntercepter;
@@ -30,15 +31,15 @@ public class HttpManager {
     private static final long CACHE_MAX_SIZE = 1024 * 1024 * 100;//100M
 
     private static HttpManager instance;
-    private Retrofit mRetrofit;
+    private Retrofit.Builder mRetrofitBuilder;
+    private DriverService mApiService;
+    private CarService mCarService;
 
     private HttpManager() {
-        mRetrofit = new Retrofit.Builder()
-                .baseUrl(ApiService.BASE_URL)
+        mRetrofitBuilder = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getOkHttp())
-                .build();
+                .client(getOkHttp());
     }
 
     public static synchronized HttpManager instance() {
@@ -77,7 +78,17 @@ public class HttpManager {
                 .build();
     }
 
-    public ApiService getApiService() {
-        return mRetrofit.create(ApiService.class);
+    public DriverService getDriverService() {
+        if (mApiService == null) {
+            mApiService = mRetrofitBuilder.baseUrl(DriverService.BASE_URL).build().create(DriverService.class);
+        }
+        return mApiService;
+    }
+
+    public CarService getCarService() {
+        if (mCarService == null) {
+            mCarService = mRetrofitBuilder.baseUrl(CarService.BASE_URL).build().create(CarService.class);
+        }
+        return mCarService;
     }
 }

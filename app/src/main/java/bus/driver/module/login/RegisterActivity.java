@@ -1,5 +1,6 @@
 package bus.driver.module.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,18 +10,26 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
+import bus.driver.base.BaseApplication;
+import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
+import bus.driver.data.entity.User;
+import bus.driver.data.remote.HttpResult;
+import bus.driver.module.main.MainActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.http.exception.ApiException;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
@@ -46,8 +55,8 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     private int mExtraTime = 60;
     private Timer mTimer;
     private TimerTask mTimeTask;
-
-    HttpManager httpManager;
+    private DbManager mDbManager;
+    private HttpManager httpManager;
     //更改验证码剩余秒数
     private Handler mHandler = new Handler() {
         @Override
@@ -73,7 +82,12 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
+        initData();
+    }
+
+    private void initData() {
         httpManager = HttpManager.instance();
+        mDbManager = DbManager.instance();
     }
 
     @Override
@@ -130,13 +144,32 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
+    //先注册，注册成功后再登陆
     private void doNext() {
-        wrapHttp(httpManager.getApiService().regist(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
+        Observable<HttpResult<String>> regist = httpManager.getDriverService().regist(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd));
+        final Observable<HttpResult<String>> login = httpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd));
+        wrapHttp(regist.flatMap(new Function<HttpResult<String>, ObservableSource<HttpResult<String>>>() {
+            @Override
+            public ObservableSource<HttpResult<String>> apply(@NonNull HttpResult<String> stringHttpResult) throws Exception {
+                if (stringHttpResult.isResult()) {
+                    return login;
+                } else {
+                    throw new ApiException(stringHttpResult.getMessage());
+                }
+            }
+        }))
                 .compose(this.<String>bindToLifecycle())
                 .subscribe(new ResultObserver<String>(this, "正在注册", true) {
                     @Override
                     public void onSuccess(String value) {
-                        Logger.d(value);
+                        User user = new User();
+                        user.setPhone(CommonUtils.getString(editPhone));
+                        user.setPassword(CommonUtils.getString(editPwd));
+                        user.setToken(value);
+                        mDbManager.saveUser(user);
+                        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                        finish();
+                        BaseApplication.getInstance().finishTheActivity(LoginActivity.class);
                     }
                 });
     }

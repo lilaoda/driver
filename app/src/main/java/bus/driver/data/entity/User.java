@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Unique;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
+
 import bus.driver.data.gen.DaoSession;
 import bus.driver.data.gen.UserDao;
 
@@ -24,62 +25,91 @@ public class User {
     private String name;
     private String password;
     private String token;
+    private String uuid;
     private String iconUrl;
-    /** Used to resolve relations */
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 1507654846)
     private transient UserDao myDao;
-    @Generated(hash = 819501677)
+
+    @Generated(hash = 524136806)
     public User(Long id, String phone, String name, String password, String token,
-            String iconUrl) {
+                String uuid, String iconUrl) {
         this.id = id;
         this.phone = phone;
         this.name = name;
         this.password = password;
         this.token = token;
+        this.uuid = uuid;
         this.iconUrl = iconUrl;
     }
+
     @Generated(hash = 586692638)
     public User() {
     }
+
     public Long getId() {
         return this.id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getPhone() {
         return this.phone;
     }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
     public String getName() {
         return this.name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public String getPassword() {
         return this.password;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
+
     public String getToken() {
         return this.token;
     }
+
     public void setToken(String token) {
         this.token = token;
     }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     public String getIconUrl() {
         return this.iconUrl;
     }
+
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
     }
+
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
@@ -91,6 +121,7 @@ public class User {
         }
         myDao.delete(this);
     }
+
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
      * Entity must attached to an entity context.
@@ -102,6 +133,7 @@ public class User {
         }
         myDao.refresh(this);
     }
+
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
      * Entity must attached to an entity context.
@@ -113,10 +145,14 @@ public class User {
         }
         myDao.update(this);
     }
-    /** called by internal mechanisms, do not call yourself. */
+
+    /**
+     * called by internal mechanisms, do not call yourself.
+     */
     @Generated(hash = 2059241980)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getUserDao() : null;
     }
+
 }

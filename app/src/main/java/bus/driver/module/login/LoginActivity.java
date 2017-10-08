@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
+import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.entity.User;
@@ -31,13 +32,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     @BindView(R.id.edit_pwd)
     EditText editPwd;
     HttpManager httpManager;
+    private DbManager mDbManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        initData();
+        initView();
+    }
+
+    private void initData() {
         httpManager = HttpManager.instance();
+        mDbManager = DbManager.instance();
+    }
+
+    private void initView() {
+        User user = DbManager.instance().getUser();
+        if(user!=null){
+            editPhone.setText(user.getPhone());
+            editPwd.setText(user.getPassword());
+        }
     }
 
     @Override
@@ -52,8 +68,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 finish();
                 break;
             case R.id.btn_login:
-                editPhone.setText("13922239152");
-                editPwd.setText("123456");
                 if (checkData()) {
                     doSignin();
                 }
@@ -67,7 +81,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void doSignin() {
-        wrapHttp(httpManager.getApiService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
+        wrapHttp(httpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
                 .compose(this.<String>bindToLifecycle())
                 .subscribe(new ResultObserver<String>(this, "正在登陆", true) {
                     @Override
@@ -76,8 +90,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         user.setPhone(CommonUtils.getString(editPhone));
                         user.setPassword(CommonUtils.getString(editPwd));
                         user.setToken(value);
-                        DbManager.instance().saveUser(user);
+                        mDbManager.saveUser(user);
+                        getDriverInfo();
+                    }
+                });
+    }
+
+    //获取个人信息接口
+    private void getDriverInfo() {
+        wrapHttp(httpManager.getDriverService().getDriverInfo())
+                .compose(this.<DriverInfo>bindToLifecycle())
+                .subscribe(new ResultObserver<DriverInfo>(this, "正在加载...", true) {
+                    @Override
+                    public void onSuccess(DriverInfo value) {
+                        mDbManager.getUser().setUuid(value.getUser().getUuid());
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        finish();
                     }
                 });
     }
@@ -85,10 +113,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private boolean checkData() {
         String phone = CommonUtils.getString(editPhone);
         String pwd = CommonUtils.getString(editPwd);
-        if (checkMobile(phone) && checkPwd(pwd)) {
-            return true;
-        }
-        return false;
+        return checkMobile(phone) && checkPwd(pwd);
     }
 
     private boolean checkPwd(String pwd) {
