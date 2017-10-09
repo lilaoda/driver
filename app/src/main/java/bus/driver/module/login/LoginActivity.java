@@ -31,7 +31,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     EditText editPhone;
     @BindView(R.id.edit_pwd)
     EditText editPwd;
-    HttpManager httpManager;
+    private HttpManager mHttpManager;
     private DbManager mDbManager;
 
     @Override
@@ -44,7 +44,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void initData() {
-        httpManager = HttpManager.instance();
+        mHttpManager = HttpManager.instance();
         mDbManager = DbManager.instance();
     }
 
@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void doSignin() {
-        wrapHttp(httpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
+        wrapHttp(mHttpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
                 .compose(this.<String>bindToLifecycle())
                 .subscribe(new ResultObserver<String>(this, "正在登陆", true) {
                     @Override
@@ -98,7 +98,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     //获取个人信息接口
     private void getDriverInfo() {
-        wrapHttp(httpManager.getDriverService().getDriverInfo())
+        wrapHttp(mHttpManager.getDriverService().getDriverInfo())
                 .compose(this.<DriverInfo>bindToLifecycle())
                 .subscribe(new ResultObserver<DriverInfo>(this, "正在加载...", true) {
                     @Override

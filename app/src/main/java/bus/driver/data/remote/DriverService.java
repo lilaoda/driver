@@ -1,8 +1,11 @@
 package bus.driver.data.remote;
 
+import java.util.Map;
+
 import bus.driver.bean.DriverInfo;
 import io.reactivex.Observable;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
@@ -25,6 +28,11 @@ public interface DriverService {
 
     @POST("driver/get")
     Observable<HttpResult<DriverInfo>> getDriverInfo();
+
+    //上传定位
+    @POST("car/sendCarTrack")
+    @FormUrlEncoded
+    Observable<HttpResult<String>> uploadLocation(@FieldMap Map<String,String> map);
 
     //接单
     @POST("driver/order/get")

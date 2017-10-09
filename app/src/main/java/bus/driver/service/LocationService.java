@@ -157,7 +157,7 @@ public class LocationService extends Service implements AMapLocationListener {
         argsMap.put("lat", String.valueOf(latitude));
         argsMap.put("lng", String.valueOf(longitude));
         argsMap.put("mapType", "0");
-        wrapAsync(mHttpManager.getCarService().uploadLocation(argsMap)).subscribe(new ResultObserver<HttpResult<String>>() {
+        wrapAsync(mHttpManager.getDriverService().uploadLocation(argsMap)).subscribe(new ResultObserver<HttpResult<String>>() {
             @Override
             public void onSuccess(HttpResult<String> value) {
                 Logger.d(value.getData());
