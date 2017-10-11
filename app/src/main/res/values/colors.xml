@@ -22,5 +22,7 @@
     <color name="yellow_normal">#da4925</color>
     <color name="yellow_pressed">#bf3d1d</color>
     <color name="black_light">#22232d</color>
+    <color name="green_normal">#00b5e6</color>
+    <color name="green_pressed">#11a4d5</color>
 
 </resources>

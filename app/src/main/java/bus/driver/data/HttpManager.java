@@ -12,6 +12,7 @@ import bus.driver.BuildConfig;
 import bus.driver.data.remote.DriverService;
 import bus.driver.data.remote.CarService;
 import bus.driver.data.remote.HeadIntercepter;
+import bus.driver.data.remote.OrderApiService;
 import lhy.lhylibrary.base.LhyApplication;
 import lhy.lhylibrary.http.interceptor.CacheIntercepter;
 import lhy.lhylibrary.utils.FileUtils;
@@ -25,8 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpManager {
 
-    private static final int CONNECTIMEOUT = 10000;
-    private static final int READTIMEOUT = 10000;
+    private static final int CONNECTIMEOUT = 5000;
+    private static final int READTIMEOUT = 5000;
     private static final String CACHE_DIRECTORY_NAME = "file_cache";
     private static final long CACHE_MAX_SIZE = 1024 * 1024 * 100;//100M
 
@@ -34,6 +35,7 @@ public class HttpManager {
     private Retrofit.Builder mRetrofitBuilder;
     private DriverService mApiService;
     private CarService mCarService;
+    private OrderApiService mOrderApi;
 
     private HttpManager() {
         mRetrofitBuilder = new Retrofit.Builder()
@@ -57,7 +59,7 @@ public class HttpManager {
         return new OkHttpClient.Builder()
                 .connectTimeout(CONNECTIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(READTIMEOUT, TimeUnit.MILLISECONDS)
-                .retryOnConnectionFailure(true)
+                .retryOnConnectionFailure(false)
                 .cache(new Cache(FileUtils.getCacheFile(LhyApplication.getContext(), CACHE_DIRECTORY_NAME), CACHE_MAX_SIZE))
                 .addInterceptor(new CacheIntercepter(LhyApplication.getContext()))
                 .addInterceptor(new HeadIntercepter(DbManager.instance()))
@@ -90,5 +92,12 @@ public class HttpManager {
             mCarService = mRetrofitBuilder.baseUrl(CarService.BASE_URL).build().create(CarService.class);
         }
         return mCarService;
+    }
+
+    public OrderApiService getOrderApi() {
+        if (mOrderApi == null) {
+            mOrderApi = mRetrofitBuilder.baseUrl(OrderApiService.BASE_URL).build().create(OrderApiService.class);
+        }
+        return mOrderApi;
     }
 }

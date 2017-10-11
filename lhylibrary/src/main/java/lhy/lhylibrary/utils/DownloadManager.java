@@ -38,6 +38,7 @@ public class DownloadManager {
 
     public DownloadManager(Context context) {
         this.mContext = context;
+        FileDownloader.setup(context);
         initNotification();
     }
 

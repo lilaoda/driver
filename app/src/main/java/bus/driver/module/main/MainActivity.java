@@ -1,7 +1,6 @@
 package bus.driver.module.main;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,31 +22,24 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseFragment;
-import bus.driver.bean.OrderInfo;
 import bus.driver.data.DbManager;
-import bus.driver.data.HttpManager;
 import bus.driver.data.entity.User;
 import bus.driver.module.customerservice.CustomerServiceActivity;
 import bus.driver.module.route.RouteActivity;
 import bus.driver.module.setting.SettingActivity;
+import bus.driver.service.LocationService;
+import bus.driver.service.OrderService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.view.tablayout.SlidingTabLayout;
-
-import static bus.driver.utils.RxUtils.wrapHttp;
 
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -69,8 +60,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private ActionBarDrawerToggle mDrawerToggle;
     private List<BaseFragment> mFragments;
-    private AlertDialog mOrderDialog;
-    private User mUser;
+    private HomeFragment mHomeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +68,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
+        startDriverService();
         initToolbar();
         initView();
     }
 
+    private void startDriverService() {
+        startService(new Intent(this, LocationService.class).putExtra(LocationService.FIRST_LOCATE, true));
+        startService(new Intent(this, OrderService.class));
+    }
+
     private void initView() {
         mFragments = new ArrayList<>();
-        mFragments.add(HomeFragment.newInstance());
+        mHomeFragment = HomeFragment.newInstance();
+        mFragments.add(mHomeFragment);
         mFragments.add(OrderFragment.newInstance());
         viewPager.setAdapter(new ManiAdapter(getSupportFragmentManager()));
         tabLayout.setViewPager(viewPager);
@@ -103,7 +99,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initNavHeadView() {
-        mUser = DbManager.instance().getUser();
+        User mUser = DbManager.instance().getUser();
         View headerView = navView.getHeaderView(0);
         ImageView userIcon = (ImageView) headerView.findViewById(R.id.img_photo);
         TextView userName = (TextView) headerView.findViewById(R.id.text_name);
@@ -114,7 +110,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             userName.setText(mUser.getPhone());
         }
     }
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -177,7 +172,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -209,38 +203,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         public int getCount() {
             return mFragments.size();
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(OrderInfo event) {
-        if (event == null) return;
-        showOrderDialog(event);
-    }
-
-    private void showOrderDialog(final OrderInfo orderInfo) {
-        if (mOrderDialog == null) {
-            mOrderDialog = new AlertDialog.Builder(this)
-                    .setTitle("您有新的订单")
-                    .setMessage("乘客位置：" + orderInfo.getStartLocation() + "\n目的地：" + orderInfo.getEndLocation())
-                    .setNegativeButton("立即抢单", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                           captureOrder(orderInfo);
-                        }
-                    }).setNegativeButton("残忍拒绝", null).create();
-        }
-        mOrderDialog.show();
-    }
-
-    private void captureOrder(OrderInfo orderInfo) {
-        wrapHttp(HttpManager.instance().getDriverService().getOrder(mUser.getToken(),orderInfo.getOrderId()))
-        .compose(this.<String>bindToLifecycle())
-        .subscribe(new ResultObserver<String>(this,"正在抢单...",true) {
-            @Override
-            public void onSuccess(String value) {
-                //TODO 接单成功后跳到订单详情页面
-            }
-        });
     }
 
 }

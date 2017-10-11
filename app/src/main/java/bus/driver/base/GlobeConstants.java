@@ -9,18 +9,15 @@ public class GlobeConstants {
     public static final String CACHE_FILE_NAME = "file_cache";
     public static final long cacheFileSize = 1024 * 1024 * 100;
 
-    //个人信息中，修改昵称，公司名，职业，设置邮箱，INTENT传递的KEy,及SP写入的值，联网上传的值
-    public static final String EMAIL = "email";
-    public static final String NICK_NAME = "name";
-    public static final String COMPANY_NAME = "company_name";
-    public static final String OCCUPATION = "occupation";
-    public static final String PHONE = "phone";
-
-    public static final String token = "token";
-    public static final String password = "password";
-    public static final String sid = "sid";
-    public static final String sign = "sign";
-    public static final String timestamp = "timestamp";
+    public static final String ORDER_INFO = "order_info";
+    //司机状态，工作，作息
+    public static final int DRIVER_STATSU_WORK = 9;
+    public static final int DRIVER_STATSU_REST = 10;
+    public static int DRIVER_STATSU = 10;
+    //订单状态，有正在进行中的订单，没有正在进行中的订单
+    public static final int ORDER_STATSU_ONDOING = 11;
+    public static final int ORDER_STATSU_NO = 12;
+    public static int ORDER_STATSU = 12;
 
 }
 

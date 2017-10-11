@@ -17,4 +17,10 @@
         style="@style/ButtonYellow"
         android:layout_marginTop="20dp"
         android:text="确认达到目的地" />
+
+    <Button
+        android:id="@+id/btn_expenses"
+        style="@style/ButtonYellow"
+        android:layout_marginTop="20dp"
+        android:text="确认费用" />
 </LinearLayout>

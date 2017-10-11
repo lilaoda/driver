@@ -37,6 +37,8 @@ import static lhy.lhylibrary.base.LhyApplication.getContext;
 
 public class AMapManager {
 
+    public static final int ZOOM_SCALE_VALUE = 15;
+
     private static AMapManager instance;
     private Context mContext;
 

@@ -16,6 +16,7 @@ import java.util.TimerTask;
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseApplication;
+import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.entity.User;
@@ -144,10 +145,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     }
 
 
-    //先注册，注册成功后再登陆
+    //先注册，注册成功后,再登陆,登陆成功后获取司机ID，然后保存司机信息进入主面
     private void doNext() {
         Observable<HttpResult<String>> regist = httpManager.getDriverService().regist(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd));
         final Observable<HttpResult<String>> login = httpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd));
+        final Observable<HttpResult<DriverInfo>> driverInfo = httpManager.getDriverService().getDriverInfo();
         wrapHttp(regist.flatMap(new Function<HttpResult<String>, ObservableSource<HttpResult<String>>>() {
             @Override
             public ObservableSource<HttpResult<String>> apply(@NonNull HttpResult<String> stringHttpResult) throws Exception {
@@ -157,16 +159,30 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     throw new ApiException(stringHttpResult.getMessage());
                 }
             }
+        }).flatMap(new Function<HttpResult<String>, ObservableSource<HttpResult<DriverInfo>>>() {
+            @Override
+            public ObservableSource<HttpResult<DriverInfo>> apply(@NonNull HttpResult<String> stringHttpResult) throws Exception {
+                if (stringHttpResult.isResult()) {
+                    User user = new User();
+                    user.setPhone(CommonUtils.getString(editPhone));
+                    user.setPassword(CommonUtils.getString(editPwd));
+                    user.setToken(stringHttpResult.getData());
+                    mDbManager.saveUser(user);
+                } else {
+                    throw new ApiException(stringHttpResult.getMessage());
+                }
+                return driverInfo;
+            }
         }))
-                .compose(this.<String>bindToLifecycle())
-                .subscribe(new ResultObserver<String>(this, "正在注册", true) {
+                .compose(this.<DriverInfo>bindToLifecycle())
+                .subscribe(new ResultObserver<DriverInfo>(this, "正在注册", true) {
                     @Override
-                    public void onSuccess(String value) {
-                        User user = new User();
-                        user.setPhone(CommonUtils.getString(editPhone));
-                        user.setPassword(CommonUtils.getString(editPwd));
-                        user.setToken(value);
-                        mDbManager.saveUser(user);
+                    public void onSuccess(DriverInfo value) {
+                        User user = mDbManager.getUser();
+                        if (user != null) {
+                            user.setUuid(value.getUser().getUuid());
+                        }
+                        mDbManager.updateUser(user);
                         startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                         finish();
                         BaseApplication.getInstance().finishTheActivity(LoginActivity.class);

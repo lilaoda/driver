@@ -1,6 +1,5 @@
 package bus.driver.base;
 
-import com.liulishuo.filedownloader.FileDownloader;
 import com.squareup.leakcanary.LeakCanary;
 
 import lhy.lhylibrary.base.LhyApplication;
@@ -12,11 +11,11 @@ import lhy.lhylibrary.base.LhyApplication;
 
 public class BaseApplication extends LhyApplication {
 
+
     @Override
     public void onCreate() {
         super.onCreate();
         initLeakCanary();
-        FileDownloader.setup(this);
     }
 
     private void initLeakCanary() {

@@ -98,27 +98,29 @@
                 android:id="@+id/btn_style"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_gravity="bottom|right"
-                android:layout_marginBottom="80dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/selector_circel_yellow"
+                android:layout_gravity="bottom|left"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/selector_circel_green"
                 android:text="模式"
                 android:textColor="@color/white" />
 
 
             <ImageView
                 android:id="@+id/img_indicate"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginBottom="60dp"
-                android:src="@mipmap/center_bg" />
+                android:src="@mipmap/callcar_bg" />
 
             <Button
                 android:id="@+id/btn_go_car"
-                style="@style/ButtonYellow"
-                android:layout_gravity="bottom"
-                android:text="点击出车" />
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/selector_circel_green"
+                android:layout_gravity="bottom|center_horizontal"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:text="出车" />
         </FrameLayout>
 
     </RelativeLayout>

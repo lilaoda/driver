@@ -47,6 +47,7 @@
         <activity android:name=".module.setting.SuggestActivity" />
         <activity android:name=".module.order.OrderOngoingActivity" />
         <activity android:name=".module.order.OrderDetailActivity" />
+        <activity android:name=".module.order.CaptureOrderActivity" />
 
         <service android:name=".service.LocationService" />
         <service android:name=".service.OrderService" />

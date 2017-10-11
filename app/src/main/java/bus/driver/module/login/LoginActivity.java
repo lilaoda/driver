@@ -6,17 +6,25 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.EditText;
 
+import com.orhanobut.logger.Logger;
+
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.entity.User;
+import bus.driver.data.remote.HttpResult;
 import bus.driver.module.main.MainActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.http.exception.ApiException;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
@@ -50,7 +58,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     private void initView() {
         User user = DbManager.instance().getUser();
-        if(user!=null){
+        if (user != null) {
             editPhone.setText(user.getPhone());
             editPwd.setText(user.getPassword());
         }
@@ -69,6 +77,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.btn_login:
                 if (checkData()) {
+                    User user = mDbManager.getUser();
+                    if (user != null) {
+                        user.setToken("");
+                        mDbManager.updateUser(user);
+                    }
                     doSignin();
                 }
                 break;
@@ -81,34 +94,53 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     }
 
     private void doSignin() {
-        wrapHttp(mHttpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd)))
-                .compose(this.<String>bindToLifecycle())
-                .subscribe(new ResultObserver<String>(this, "正在登陆", true) {
-                    @Override
-                    public void onSuccess(String value) {
-                        User user = new User();
-                        user.setPhone(CommonUtils.getString(editPhone));
-                        user.setPassword(CommonUtils.getString(editPwd));
-                        user.setToken(value);
-                        mDbManager.saveUser(user);
-                        getDriverInfo();
-                    }
-                });
-    }
-
-    //获取个人信息接口
-    private void getDriverInfo() {
-        wrapHttp(mHttpManager.getDriverService().getDriverInfo())
+        Observable<HttpResult<String>> login = mHttpManager.getDriverService().login(0, CommonUtils.getString(editPhone), CommonUtils.getString(editPwd));
+        final Observable<HttpResult<DriverInfo>> driverInfo = mHttpManager.getDriverService().getDriverInfo();
+        wrapHttp(login.flatMap(new Function<HttpResult<String>, ObservableSource<HttpResult<DriverInfo>>>() {
+            @Override
+            public ObservableSource<HttpResult<DriverInfo>> apply(@NonNull HttpResult<String> stringHttpResult) throws Exception {
+                Logger.d("apply");
+                if (stringHttpResult.isResult()) {
+                    User user = new User();
+                    user.setPhone(CommonUtils.getString(editPhone));
+                    user.setPassword(CommonUtils.getString(editPwd));
+                    user.setToken(stringHttpResult.getData());
+                    mDbManager.saveUser(user);
+                } else {
+                    throw new ApiException(stringHttpResult.getMessage());
+                }
+                return driverInfo;
+            }
+        }))
                 .compose(this.<DriverInfo>bindToLifecycle())
-                .subscribe(new ResultObserver<DriverInfo>(this, "正在加载...", true) {
+                .subscribe(new ResultObserver<DriverInfo>(this, "正在登陆...", true) {
                     @Override
                     public void onSuccess(DriverInfo value) {
-                        mDbManager.getUser().setUuid(value.getUser().getUuid());
+                        User user = mDbManager.getUser();
+                        if (user != null) {
+                            user.setUuid(value.getUser().getUuid());
+                        }
+                        mDbManager.updateUser(user);
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         finish();
                     }
                 });
     }
+
+//    //获取个人信息接口
+//    private void getDriverInfo() {
+//        Observable<HttpResult<DriverInfo>> driverInfo = mHttpManager.getDriverService().getDriverInfo();
+//        wrapHttp(driverInfo)
+//                .compose(this.<DriverInfo>bindToLifecycle())
+//                .subscribe(new ResultObserver<DriverInfo>(this, "正在加载...", true) {
+//                    @Override
+//                    public void onSuccess(DriverInfo value) {
+//                        mDbManager.getUser().setUuid(value.getUser().getUuid());
+//                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+//                        finish();
+//                    }
+//                });
+//    }
 
     private boolean checkData() {
         String phone = CommonUtils.getString(editPhone);

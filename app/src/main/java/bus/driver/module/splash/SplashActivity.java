@@ -18,8 +18,6 @@ import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.data.SpManager;
 import bus.driver.module.login.LoginActivity;
-import bus.driver.service.LocationService;
-import bus.driver.service.OrderService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lhy.lhylibrary.utils.StatusBarUtil;
@@ -46,9 +44,6 @@ public class SplashActivity extends BaseActivity implements View.OnClickListener
         }
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
-
-        startService(new Intent(this, LocationService.class).putExtra(LocationService.FIRST_LOCATE, true));
-        startService(new Intent(this, OrderService.class));
 
         mSpManager = SpManager.instance();
         boolean isStarted = mSpManager.getBoolean(SpManager.IS_STARTED);

@@ -18,6 +18,7 @@ import lhy.lhylibrary.utils.StatusBarUtil;
 public class LhyActivity extends RxAppCompatActivity {
 
     private static Handler handler;
+    private boolean isResume;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class LhyActivity extends RxAppCompatActivity {
             String FRAGMENTS_TAG = "Android:support:fragments";
             savedInstanceState.remove(FRAGMENTS_TAG);
         }
-       // getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+        // getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         LhyApplication.getInstance().addActivity(this);
     }
@@ -43,6 +44,21 @@ public class LhyActivity extends RxAppCompatActivity {
         StatusBarUtil.setColor(this, getResources().getColor(R.color.colorPrimaryDark), 0);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isResume = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isResume = false;
+    }
+
+    public boolean isResume() {
+        return isResume;
+    }
 
     @Override
     protected void onDestroy() {

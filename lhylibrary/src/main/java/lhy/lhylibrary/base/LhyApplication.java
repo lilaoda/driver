@@ -1,6 +1,5 @@
 package lhy.lhylibrary.base;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
 import android.content.Context;
@@ -18,7 +17,7 @@ import java.util.ListIterator;
 
 public class LhyApplication extends Application {
 
-    private List<AppCompatActivity> activitys = new LinkedList<>();
+    private List<LhyActivity> activitys = new LinkedList<>();
     private List<Service> services = new LinkedList<>();
 
     private static LhyApplication instance;
@@ -33,6 +32,10 @@ public class LhyApplication extends Application {
         initLogger();
     }
 
+    public LhyActivity getCurrentActivity() {
+        return activitys.get(activitys.size()-1);
+    }
+
     private void initLogger() {
         Logger.init()
                 .methodCount(5)
@@ -41,11 +44,11 @@ public class LhyApplication extends Application {
                 .methodOffset(5);
     }
 
-    public void addActivity(AppCompatActivity activity) {
+    public void addActivity(LhyActivity activity) {
         activitys.add(activity);
     }
 
-    public void removeActivity(AppCompatActivity activity) {
+    public void removeActivity(LhyActivity activity) {
         activitys.remove(activity);
     }
 
@@ -66,7 +69,7 @@ public class LhyApplication extends Application {
     }
 
     public void closeActivity() {
-        ListIterator<AppCompatActivity> listIterator = activitys.listIterator();
+        ListIterator<LhyActivity> listIterator = activitys.listIterator();
         while (listIterator.hasNext()) {
             AppCompatActivity activity = listIterator.next();
             if (activity != null) {
@@ -75,8 +78,8 @@ public class LhyApplication extends Application {
         }
     }
 
-    public void finishOtherActivity(Activity nowAct) {
-        ListIterator<AppCompatActivity> listIterator = activitys.listIterator();
+    public void finishOtherActivity(LhyActivity nowAct) {
+        ListIterator<LhyActivity> listIterator = activitys.listIterator();
         while (listIterator.hasNext()) {
             AppCompatActivity activity = listIterator.next();
             if (activity != null && activity != nowAct) {
@@ -85,8 +88,8 @@ public class LhyApplication extends Application {
         }
     }
 
-    public void finishTheActivity(Class<? extends Activity> nowAct) {
-        ListIterator<AppCompatActivity> listIterator = activitys.listIterator();
+    public void finishTheActivity(Class<? extends LhyActivity> nowAct) {
+        ListIterator<LhyActivity> listIterator = activitys.listIterator();
         while (listIterator.hasNext()) {
             AppCompatActivity activity = listIterator.next();
             if (activity != null && TextUtils.equals(activity.getClass().getName(), nowAct.getName())) {

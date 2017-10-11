@@ -47,5 +47,13 @@ public class BaseActivity extends LhyActivity {
         StatusBarUtil.setColor(this, getResources().getColor(R.color.common_statusbar_color), 0);
     }
 
-
+//    public void setOrderServiceEnable(boolean isEnable) {
+//        Intent service = new Intent(this, OrderService.class);
+//        if (isEnable) {
+//            service.putExtra(OrderService.PULL_ORDER, OrderService.PULL_ORDER_START);
+//        } else {
+//            service.putExtra(OrderService.PULL_ORDER, OrderService.PULL_ORDER_END);
+//        }
+//        startService(service);
+//    }
 }
