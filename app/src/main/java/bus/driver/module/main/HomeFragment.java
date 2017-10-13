@@ -117,6 +117,10 @@ public class HomeFragment extends BaseFragment {
             mTimeDisable.dispose();
             mTimeDisable = null;
         }
+        if(mRotateAnim!=null){
+            mRotateAnim.cancel();
+            mRotateAnim = null;
+        }
     }
 
     @OnClick({R.id.btn_style, R.id.btn_go_car})

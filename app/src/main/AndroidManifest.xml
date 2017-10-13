@@ -48,6 +48,8 @@
         <activity android:name=".module.order.OrderOngoingActivity" />
         <activity android:name=".module.order.OrderDetailActivity" />
         <activity android:name=".module.order.CaptureOrderActivity" />
+        <activity android:name=".module.navi.MapNaviActivity" />
+        <activity android:name=".module.navi.NaviActivity" />
 
         <service android:name=".service.LocationService" />
         <service android:name=".service.OrderService" />

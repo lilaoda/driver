@@ -40,6 +40,7 @@ import io.reactivex.functions.Consumer;
 import lhy.lhylibrary.base.LhyActivity;
 import lhy.lhylibrary.base.LhyApplication;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
 
@@ -47,7 +48,7 @@ import static bus.driver.utils.RxUtils.wrapHttp;
  * Created by Lilaoda on 2017/9/29.
  * Email:749948218@qq.com
  * <p>
- * 订单服务接口 用于循环获取订单相关信息,默认开启服务时自动开始获取订单
+ * 订单服务接口 用于循环获取订单相关信息,需要发送开启事件才能开始获取订单
  */
 
 public class OrderService extends Service {
@@ -125,24 +126,10 @@ public class OrderService extends Service {
     }
 
     private void pullCancelOrder() {
-        wrapHttp(mHttpManager.getDriverService().pullOrder()).subscribe(new ResultObserver<List<OrderInfo>>() {
+        wrapHttp(mHttpManager.getOrderApi().pushOrderCancel()).subscribe(new ResultObserver<List<OrderInfo>>() {
             @Override
             public void onSuccess(List<OrderInfo> value) {
-                if (value.size() > 0) {
-                    LhyActivity currentActivity = BaseApplication.getInstance().getCurrentActivity();
-                    if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_ONDOING || GlobeConstants.DRIVER_STATSU == GlobeConstants.DRIVER_STATSU_REST) {
-                        return;
-                    }
-                    if (isBackground() || currentActivity == null || !currentActivity.isResume()) {
-                        notifyOrder(value.get(0));
-                    } else {
-                        if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_NO) {
-                            if (mOrderDialog != null && mOrderDialog.isShowing() || currentActivity instanceof CaptureOrderActivity)
-                                return;
-                            showOrderDialog(currentActivity, value.get(0));
-                        }
-                    }
-                }
+                ToastUtils.showString("订单已被取消");
             }
         });
     }
@@ -161,7 +148,9 @@ public class OrderService extends Service {
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(@NonNull Long aLong) throws Exception {
-                        pullOrder();
+                        if(GlobeConstants.DRIVER_STATSU==GlobeConstants.DRIVER_STATSU_WORK){
+                            pullOrder();
+                        }
                     }
                 });
     }

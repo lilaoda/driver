@@ -2,17 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="90dp"
     android:orientation="vertical"
     android:paddingLeft="15dp"
     android:paddingRight="15dp">
 
     <TextView
-        android:id="@+id/text_time"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:gravity="center"
-        android:text="8月27日"
+        android:id="@+id/text_orderid"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="left"
         android:textColor="@color/text_666" />
 
     <TextView
@@ -20,13 +19,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:text="未开始" />
 
     <TextView
         android:id="@+id/text_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_time"
+        android:layout_below="@+id/text_orderid"
         android:drawableLeft="@drawable/shape_point_green"
         android:drawablePadding="8dp"
         android:text="起始位置 天河区天信楼" />

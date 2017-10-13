@@ -14,6 +14,7 @@ import bus.driver.base.BaseActivity;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.LocationEvent;
+import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,6 +74,7 @@ public class CaptureOrderActivity extends BaseActivity {
                         intent.putExtra(GlobeConstants.ORDER_INFO, mOrderInfo);
                         startActivity(intent);
                         EventBus.getDefault().post(LocationEvent.LOCATION_UNABLE);
+                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_ENABLE);
                         finish();
                     }
                 });

@@ -1,5 +1,8 @@
 package bus.driver.base;
 
+import android.content.Context;
+import android.support.multidex.MultiDex;
+
 import com.squareup.leakcanary.LeakCanary;
 
 import lhy.lhylibrary.base.LhyApplication;
@@ -24,4 +27,11 @@ public class BaseApplication extends LhyApplication {
         }
         LeakCanary.install(this);
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
 }

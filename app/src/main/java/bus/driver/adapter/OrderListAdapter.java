@@ -34,12 +34,16 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderInfo, BaseViewHolder
 
     @Override
     protected void convert(BaseViewHolder helper, OrderInfo item) {
-
+        helper.setText(R.id.text_start, "始点: "+item.getOriginAddress())
+                .setText(R.id.text_end, "终点: "+item.getDestAddress())
+                .setText(R.id.text_orderid, "订单编号: " + item.getOrderUuid())
+                .setText(R.id.text_status, "订单状态：" + item.getSubStatus() + "");
     }
 
     @Override
     public int addHeaderView(View header) {
         return super.addHeaderView(header);
     }
+
 
 }

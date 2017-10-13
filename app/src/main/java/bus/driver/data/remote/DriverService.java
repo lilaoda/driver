@@ -56,9 +56,13 @@ public interface DriverService {
     Observable<HttpResult<String>> confirmArrive(@Field("order_uuid") String order_uuid);
 
     //确认费用
-    @POST("/driver/order/confirmExpenses")
+    @POST("driver/order/confirmExpenses")
     @FormUrlEncoded
     Observable<HttpResult<String>> confirmExpenses(@Field("order_uuid") String order_uuid);
+
+    //获取订单列表
+    @POST("driver/getOrderList")
+    Observable<HttpResult<List<OrderInfo>>> getOrderList();
 
 
 }

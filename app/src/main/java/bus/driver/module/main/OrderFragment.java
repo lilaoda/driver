@@ -12,35 +12,38 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import bus.driver.R;
 import bus.driver.adapter.OrderListAdapter;
 import bus.driver.base.BaseFragment;
+import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
+import bus.driver.data.HttpManager;
 import bus.driver.module.order.OrderOngoingActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
+import lhy.lhylibrary.http.ResultObserver;
+
+import static bus.driver.utils.RxUtils.wrapHttp;
 
 /**
  * Created by Lilaoda on 2017/9/27.
  * Email:749948218@qq.com
  */
 
-public class OrderFragment extends BaseFragment {
+public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener,
+        BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
+
     Unbinder unbinder;
-    private ArrayList<OrderInfo> mOrderList;
+    private HttpManager mHttpManager;
+    private OrderListAdapter mOrderAdapter;
 
     public static OrderFragment newInstance() {
         Bundle args = new Bundle();
@@ -54,59 +57,88 @@ public class OrderFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order, null);
         unbinder = ButterKnife.bind(this, view);
+        mHttpManager = HttpManager.instance();
         initView();
+        getOrderList();
         return view;
+    }
+
+    private void getOrderList() {
+        wrapHttp(mHttpManager.getDriverService().getOrderList()).
+        compose(this.<List<OrderInfo>>bindToLifecycle())
+                .subscribe(new ResultObserver<List<OrderInfo>>() {
+                    @Override
+                    public void onSuccess(List<OrderInfo> value) {
+                        refreshAdapter(value);
+                    }
+                });
+    }
+
+    private void refreshAdapter(List<OrderInfo> value) {
+        mOrderAdapter.setNewData(value);
+      //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
     }
 
     private void initView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mOrderList = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            mOrderList.add(new OrderInfo());
-        }
-        final OrderListAdapter adapter = new OrderListAdapter(mOrderList);
-        recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                startActivity(new Intent(getActivity(), OrderOngoingActivity.class));
-            }
-        });
-        adapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                Observable.timer(2, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Long>() {
-                            @Override
-                            public void accept(@NonNull Long aLong) throws Exception {
-                                if (mOrderList.size() > 40) {
-                                    adapter.loadMoreEnd();
-                                } else {
-                                    adapter.addData(mOrderList);
-                                    adapter.loadMoreComplete();
-                                }
-                            }
-                        });
-            }
-        }, recyclerView);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Observable.timer(2, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Consumer<Long>() {
-                            @Override
-                            public void accept(@NonNull Long aLong) throws Exception {
-                                refreshLayout.setRefreshing(false);
-                                adapter.setNewData(mOrderList);
-                                adapter.disableLoadMoreIfNotFullPage(recyclerView);
-
-                            }
-                        });
-            }
-        });
-
+        mOrderAdapter = new OrderListAdapter(null);
+        mOrderAdapter.setEmptyView(R.layout.empty_order, (ViewGroup) recyclerView.getParent());
+        recyclerView.setAdapter(mOrderAdapter);
+        mOrderAdapter.setOnItemClickListener(this);
+      //  mOrderAdapter.setOnLoadMoreListener(this, recyclerView);
+        refreshLayout.setOnRefreshListener(this);
         //这句要想有效果必须放在监听器之后 要想不满屏时不能上拉加载，需要放在监听器之后 然后每次刷新数据都要再调用
-        adapter.disableLoadMoreIfNotFullPage(recyclerView);
+      //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
+    }
+
+    private void refresh(final boolean isLoadMore) {
+        wrapHttp(mHttpManager.getDriverService().getOrderList())
+                .compose(this.<List<OrderInfo>>bindToLifecycle())
+                .subscribe(new ResultObserver<List<OrderInfo>>(true) {
+                    @Override
+                    public void onSuccess(List<OrderInfo> value) {
+                        if (isLoadMore) {
+                            if (value == null || value.size() == 0) {
+                                mOrderAdapter.loadMoreEnd();
+                            } else {
+                                mOrderAdapter.addData(value);
+                                mOrderAdapter.loadMoreComplete();
+                            }
+                        } else {
+                            refreshLayout.setRefreshing(false);
+                            refreshAdapter(value);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable e) {
+                        super.onFailure(e);
+                        if (isLoadMore) {
+                            mOrderAdapter.loadMoreFail();
+                        } else {
+                            refreshLayout.setRefreshing(false);
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onRefresh() {
+        refresh(false);
+    }
+
+
+    @Override
+    public void onLoadMoreRequested() {
+      //  refresh(true);
+    }
+
+    @Override
+    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+        OrderInfo orderInfo = mOrderAdapter.getData().get(position);
+        Intent intent = new Intent(getActivity(), OrderOngoingActivity.class);
+        intent.putExtra(GlobeConstants.ORDER_INFO,orderInfo);
+        startActivity(intent);
     }
 
     @Override

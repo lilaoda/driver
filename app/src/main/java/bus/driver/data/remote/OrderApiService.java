@@ -1,7 +1,9 @@
 package bus.driver.data.remote;
 
+import java.util.List;
+
+import bus.driver.bean.OrderInfo;
 import io.reactivex.Observable;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
 /**
@@ -15,7 +17,6 @@ public interface OrderApiService {
     String BASE_URL = "http://192.168.8.58:8883/";
 
     @POST("communication/pushOrderCancel")
-    @FormUrlEncoded
-    Observable<HttpResult<String>> pushOrderCancel();
+    Observable<HttpResult<List<OrderInfo>>> pushOrderCancel();
 
 }

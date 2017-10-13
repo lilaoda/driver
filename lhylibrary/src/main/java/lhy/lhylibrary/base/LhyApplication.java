@@ -33,7 +33,8 @@ public class LhyApplication extends Application {
     }
 
     public LhyActivity getCurrentActivity() {
-        return activitys.get(activitys.size()-1);
+        if (activitys.size() == 0) return null;
+        return activitys.get(activitys.size() - 1);
     }
 
     private void initLogger() {

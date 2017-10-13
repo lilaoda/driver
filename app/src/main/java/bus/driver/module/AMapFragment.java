@@ -64,6 +64,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
     private AMap mAMap;
     private MyLocationStyle mMyLocationStyle;
     private LinearLayout llRoot;
+    private boolean isResume;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,27 +104,26 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
         }
     }
 
-    /**
-     * 方法必须重写
-     */
     @Override
     public void onResume() {
         super.onResume();
+        isResume = true;
         mapView.onResume();
+        EventBus.getDefault().register(this);
     }
 
-    /**
-     * 方法必须重写
-     */
     @Override
     public void onPause() {
         super.onPause();
+        isResume = false;
         mapView.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
-    /**
-     * 方法必须重写
-     */
+    public boolean isResume() {
+        return isResume;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

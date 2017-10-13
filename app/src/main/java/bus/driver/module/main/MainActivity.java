@@ -31,7 +31,6 @@ import bus.driver.base.BaseFragment;
 import bus.driver.data.DbManager;
 import bus.driver.data.entity.User;
 import bus.driver.module.customerservice.CustomerServiceActivity;
-import bus.driver.module.route.RouteActivity;
 import bus.driver.module.setting.SettingActivity;
 import bus.driver.service.LocationService;
 import bus.driver.service.OrderService;
@@ -154,9 +153,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_route) {
-            gotoActivity(RouteActivity.class);
-        } else if (id == R.id.nav_service) {
+//        if (id == R.id.nav_route) {
+//            gotoActivity(RouteActivity.class);
+//        } else
+            if (id == R.id.nav_service) {
             gotoActivity(CustomerServiceActivity.class);
         } else if (id == R.id.nav_setting) {
             gotoActivity(SettingActivity.class);
