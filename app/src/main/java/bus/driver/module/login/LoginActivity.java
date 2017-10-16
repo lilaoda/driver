@@ -13,7 +13,7 @@ import bus.driver.base.BaseActivity;
 import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
-import bus.driver.data.entity.User;
+import bus.driver.data.local.entity.User;
 import bus.driver.data.remote.HttpResult;
 import bus.driver.module.main.MainActivity;
 import butterknife.BindView;
@@ -77,6 +77,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 break;
             case R.id.btn_login:
                 if (checkData()) {
+//                    startActivity(new Intent(this,MainActivity.class));
                     User user = mDbManager.getUser();
                     if (user != null) {
                         user.setToken("");

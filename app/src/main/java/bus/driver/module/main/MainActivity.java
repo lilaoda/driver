@@ -20,8 +20,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,13 +27,14 @@ import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseFragment;
 import bus.driver.data.DbManager;
-import bus.driver.data.entity.User;
+import bus.driver.data.local.entity.User;
 import bus.driver.module.customerservice.CustomerServiceActivity;
 import bus.driver.module.setting.SettingActivity;
 import bus.driver.service.LocationService;
 import bus.driver.service.OrderService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import lhy.lhylibrary.base.GlideApp;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.view.tablayout.SlidingTabLayout;
@@ -105,7 +104,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (mUser == null) {
             userName.setText("请登陆");
         } else {
-            Glide.with(this).load(mUser.getIconUrl()).into(userIcon);
+            GlideApp.with(this).load(mUser.getIconUrl()).error(R.mipmap.icon_user_default).into(userIcon);
             userName.setText(mUser.getPhone());
         }
     }

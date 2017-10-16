@@ -109,7 +109,9 @@ public class OrderService extends Service {
     private void startPullCancelOrder() {
         Log.i(TAG, "startPullCancelOrdr: " + "开始循环获取乘客是否取消订单的通知");
         if (mCancelOrderDisposable != null && !mCancelOrderDisposable.isDisposed()) return;
-        mCancelOrderDisposable = Flowable.interval(INTERVAL_PULL_ORDER, TimeUnit.SECONDS).take(Integer.MAX_VALUE).observeOn(AndroidSchedulers.mainThread())
+        mCancelOrderDisposable = Flowable.interval(INTERVAL_PULL_ORDER, TimeUnit.SECONDS)
+                .onBackpressureLatest()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(@NonNull Long aLong) throws Exception {
@@ -144,7 +146,9 @@ public class OrderService extends Service {
     private void startPullOrder() {
         Log.i(TAG, "stopPullOrder: " + "开始循环拉取订单");
         if (mOrderDisposable != null && !mOrderDisposable.isDisposed()) return;
-        mOrderDisposable = Flowable.interval(INTERVAL_PULL_ORDER, TimeUnit.SECONDS).take(Integer.MAX_VALUE).observeOn(AndroidSchedulers.mainThread())
+        mOrderDisposable = Flowable.interval(INTERVAL_PULL_ORDER, TimeUnit.SECONDS)
+                .onBackpressureLatest()
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(@NonNull Long aLong) throws Exception {

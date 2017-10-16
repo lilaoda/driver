@@ -3,8 +3,8 @@ package bus.driver.module.main;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.concurrent.TimeUnit;
+
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseFragment;
@@ -27,16 +29,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
-import io.reactivex.FlowableOnSubscribe;
-import io.reactivex.Scheduler;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.DateUtils;
 
@@ -63,6 +61,8 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.btn_go_car)
     Button btnGoCar;
     Unbinder unbinder;
+    @BindView(R.id.refreshLayout)
+    SwipeRefreshLayout refreshLayout;
 
     private int mCurrentStatus = 1;
     private RotateAnimation mRotateAnim;
@@ -87,26 +87,33 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initView() {
-        Scheduler scheduler = Schedulers.newThread();
-        mTimeDisable = Flowable.create(new FlowableOnSubscribe<String>() {
-            @Override
-            public void subscribe(@NonNull FlowableEmitter<String> e) throws Exception {
-                while (true) {
-                    e.onNext(DateUtils.getDate("MM月dd HH:mm:ss") + DateUtils.getWeek());
-                    SystemClock.sleep(1000);
-                }
-            }
-        }, BackpressureStrategy.LATEST).subscribeOn(scheduler)
-                .unsubscribeOn(scheduler)
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(this.<String>bindToLifecycle())
-                .subscribe(new Consumer<String>() {
+        mTimeDisable = Flowable.interval(1, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
+                .compose(this.<Long>bindToLifecycle())
+                .subscribe(new Consumer<Long>() {
                     @Override
-                    public void accept(@NonNull String s) throws Exception {
-                        textTime.setText(s);
+                    public void accept(@NonNull Long aLong) throws Exception {
+                        textTime.setText(DateUtils.getDate("MM月dd HH:mm:ss") + " " + DateUtils.getWeek());
                     }
                 });
         imgIndicate.setVisibility(View.INVISIBLE);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshView();
+            }
+        });
+    }
+
+    private void refreshView() {
+        Observable.timer(2, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(this.<Long>bindToLifecycle())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(@NonNull Long aLong) throws Exception {
+                        refreshLayout.setRefreshing(false);
+                    }
+                });
     }
 
     @Override
@@ -117,7 +124,7 @@ public class HomeFragment extends BaseFragment {
             mTimeDisable.dispose();
             mTimeDisable = null;
         }
-        if(mRotateAnim!=null){
+        if (mRotateAnim != null) {
             mRotateAnim.cancel();
             mRotateAnim = null;
         }
@@ -154,7 +161,7 @@ public class HomeFragment extends BaseFragment {
 
     private void setOrderServiceEnable(boolean b) {
         BaseActivity activity = (BaseActivity) getActivity();
-        EventBus.getDefault().post(b? OrderEvent.ORDER_PULL_ENABLE:OrderEvent.ORDER_PULL_UNABLE);
+        EventBus.getDefault().post(b ? OrderEvent.ORDER_PULL_ENABLE : OrderEvent.ORDER_PULL_UNABLE);
         EventBus.getDefault().post(b ? LocationEvent.LOCATION_ENABLE : LocationEvent.LOCATION_UNABLE);
     }
 

@@ -1,4 +1,4 @@
-package bus.driver.data.gen;
+package bus.driver.data.local.gen;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -18,7 +18,8 @@ import retrofit2.http.POST;
 
 public interface DriverService {
 
-    String BASE_URL = "http://192.168.8.58:8881/";
+//    String BASE_URL = "http://192.168.8.58:8881/";
+    String BASE_URL = "http://120.24.79.21:8881/";
 
     @POST("driver/user/add")
     @FormUrlEncoded

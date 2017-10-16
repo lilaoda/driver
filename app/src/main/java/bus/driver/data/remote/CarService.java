@@ -8,7 +8,8 @@ package bus.driver.data.remote;
 
 public interface CarService {
 
-    String BASE_URL = "http://192.168.8.58:8882/";
+//    String BASE_URL = "http://192.168.8.58:8882/";
+    String BASE_URL = "http://120.24.79.21:8882/";
 
 //    @POST("car/sendCarTrack")
 //    @FormUrlEncoded

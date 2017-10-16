@@ -19,7 +19,7 @@ import bus.driver.base.BaseApplication;
 import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
-import bus.driver.data.entity.User;
+import bus.driver.data.local.entity.User;
 import bus.driver.data.remote.HttpResult;
 import bus.driver.module.main.MainActivity;
 import butterknife.BindView;

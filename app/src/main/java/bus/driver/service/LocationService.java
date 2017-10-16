@@ -21,6 +21,8 @@ import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.data.HttpManager;
 import bus.driver.data.remote.DriverService;
+import bus.driver.data.remote.HttpResult;
+import lhy.lhylibrary.http.ResultObserver;
 
 import static bus.driver.utils.RxUtils.wrapAsync;
 import static lhy.lhylibrary.base.LhyApplication.getContext;
@@ -161,7 +163,12 @@ public class LocationService extends Service implements AMapLocationListener {
         argsMap.put("lat", String.valueOf(latitude));
         argsMap.put("lng", String.valueOf(longitude));
         argsMap.put("mapType", "0");
-        wrapAsync(mDriverService.uploadLocation(argsMap)).subscribe();
+        wrapAsync(mDriverService.uploadLocation(argsMap)).subscribe(new ResultObserver<HttpResult<String>>() {
+            @Override
+            public void onSuccess(HttpResult<String> value) {
+
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

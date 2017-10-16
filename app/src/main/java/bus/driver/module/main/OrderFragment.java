@@ -65,7 +65,7 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
 
     private void getOrderList() {
         wrapHttp(mHttpManager.getDriverService().getOrderList()).
-        compose(this.<List<OrderInfo>>bindToLifecycle())
+                compose(this.<List<OrderInfo>>bindToLifecycle())
                 .subscribe(new ResultObserver<List<OrderInfo>>() {
                     @Override
                     public void onSuccess(List<OrderInfo> value) {
@@ -76,7 +76,7 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
 
     private void refreshAdapter(List<OrderInfo> value) {
         mOrderAdapter.setNewData(value);
-      //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
+        //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
     }
 
     private void initView() {
@@ -85,10 +85,10 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
         mOrderAdapter.setEmptyView(R.layout.empty_order, (ViewGroup) recyclerView.getParent());
         recyclerView.setAdapter(mOrderAdapter);
         mOrderAdapter.setOnItemClickListener(this);
-      //  mOrderAdapter.setOnLoadMoreListener(this, recyclerView);
+        //  mOrderAdapter.setOnLoadMoreListener(this, recyclerView);
         refreshLayout.setOnRefreshListener(this);
         //这句要想有效果必须放在监听器之后 要想不满屏时不能上拉加载，需要放在监听器之后 然后每次刷新数据都要再调用
-      //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
+        //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
     }
 
     private void refresh(final boolean isLoadMore) {
@@ -130,14 +130,14 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
 
     @Override
     public void onLoadMoreRequested() {
-      //  refresh(true);
+        //  refresh(true);
     }
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         OrderInfo orderInfo = mOrderAdapter.getData().get(position);
         Intent intent = new Intent(getActivity(), OrderOngoingActivity.class);
-        intent.putExtra(GlobeConstants.ORDER_INFO,orderInfo);
+        intent.putExtra(GlobeConstants.ORDER_INFO, orderInfo);
         startActivity(intent);
     }
 

@@ -2,6 +2,8 @@
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/refreshLayout"
     android:background="@color/black_light"
     android:orientation="vertical">
 
@@ -17,7 +19,7 @@
             android:layout_height="60dp"
             android:gravity="bottom|center_horizontal"
             android:paddingBottom="10dp"
-            android:text="9月28日，星期四"
+            tools:text="9月28日，星期四"
             android:textColor="@color/text_999"
             android:textSize="16sp" />
 
@@ -41,7 +43,7 @@
                     android:id="@+id/text_order_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10单"
+                    android:text="0单"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -73,7 +75,7 @@
                     android:id="@+id/text_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10元"
+                    android:text="0元"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />

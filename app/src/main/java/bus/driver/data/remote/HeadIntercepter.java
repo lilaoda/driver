@@ -3,7 +3,7 @@ package bus.driver.data.remote;
 import java.io.IOException;
 
 import bus.driver.data.DbManager;
-import bus.driver.data.entity.User;
+import bus.driver.data.local.entity.User;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
