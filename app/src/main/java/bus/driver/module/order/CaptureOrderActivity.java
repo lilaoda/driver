@@ -70,7 +70,7 @@ public class CaptureOrderActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String value) {
                         GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_ONDOING;
-                        Intent intent = new Intent(CaptureOrderActivity.this, OrderDetailActivity.class);
+                        Intent intent = new Intent(CaptureOrderActivity.this, OrderOngoingActivity.class);
                         intent.putExtra(GlobeConstants.ORDER_INFO, mOrderInfo);
                         startActivity(intent);
                         EventBus.getDefault().post(LocationEvent.LOCATION_UNABLE);

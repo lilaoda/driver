@@ -82,9 +82,10 @@ public class OrderDetailActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String value) {
                         btnExpenses.setText(value);
-//                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_NO;
-//                        EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
-//                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
+                        btnExpenses.setEnabled(false);
+                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_NO;
+                        EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
+                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
                     }
                 });
     }
@@ -98,10 +99,10 @@ public class OrderDetailActivity extends BaseActivity {
                         btnArrive.setText("已到达目的地");
                         btnArrive.setEnabled(false);
 
-                        //TODO ,订单完成才改状态，现在在这里测试
-                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_NO;
-                        EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
-                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
+//                        //TODO ,订单完成才改状态，现在在这里测试
+//                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_NO;
+//                        EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
+//                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
                     }
                 });
     }
