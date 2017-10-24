@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import bus.driver.R;
@@ -75,8 +77,18 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
     }
 
     private void refreshAdapter(List<OrderInfo> value) {
+        sort(value);
         mOrderAdapter.setNewData(value);
         //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
+    }
+
+    private void sort(List<OrderInfo> list) {
+        Collections.sort(list, new Comparator<OrderInfo>() {
+            @Override
+            public int compare(OrderInfo o1, OrderInfo o2) {
+                return o1.getSubStatus() - o2.getSubStatus();
+            }
+        });
     }
 
     private void initView() {

@@ -149,7 +149,7 @@ public class SearchAddressActivity extends LhyActivity {
         finish();
     }
 
-    @OnClick({R.id.text_cancel, R.id.ibt_clear})
+    @OnClick({R.id.text_cancel, R.id.ibt_clear, R.id.text_city})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.text_cancel:
@@ -158,6 +158,8 @@ public class SearchAddressActivity extends LhyActivity {
                 break;
             case R.id.ibt_clear:
                 editInput.setText("");
+                break;
+            case R.id.text_city:
                 break;
         }
     }
