@@ -26,6 +26,7 @@ public class User {
     private String password;
     private String token;
     private String uuid;
+    //图片子路经 完整路径DriverService.imgBaseUrl+iconUrl
     private String iconUrl;
     /**
      * Used to resolve relations
@@ -155,4 +156,18 @@ public class User {
         myDao = daoSession != null ? daoSession.getUserDao() : null;
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", phone='" + phone + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", token='" + token + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", iconUrl='" + iconUrl + '\'' +
+                ", daoSession=" + daoSession +
+                ", myDao=" + myDao +
+                '}';
+    }
 }

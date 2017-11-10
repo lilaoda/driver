@@ -75,7 +75,6 @@ public class OkhttpManager {
         RequestBody requestFile = RequestBody.create(MediaType.parse("application/otcet-stream"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("aFile", file.getName(), requestFile);
         String descriptionString = "This is a description";
-        RequestBody description = RequestBody.create(MediaType.parse("multipart/form-data"), descriptionString);
     }
 
 

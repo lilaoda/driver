@@ -12,6 +12,10 @@ import android.view.ViewGroup;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +26,7 @@ import bus.driver.base.BaseFragment;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.data.HttpManager;
+import bus.driver.module.order.ConfirmExpensesActivity;
 import bus.driver.module.order.OrderOngoingActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +63,7 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order, null);
+        EventBus.getDefault().register(this);
         unbinder = ButterKnife.bind(this, view);
         mHttpManager = HttpManager.instance();
         initView();
@@ -148,14 +154,33 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         OrderInfo orderInfo = mOrderAdapter.getData().get(position);
-        Intent intent = new Intent(getActivity(), OrderOngoingActivity.class);
+        if (orderInfo.getSubStatus() == 301 || orderInfo.getSubStatus() == 400) {
+            //到达目的地未确认费用  //确认费用了未支付
+            toActivity(orderInfo, ConfirmExpensesActivity.class);
+        } else {
+            toActivity(orderInfo, OrderOngoingActivity.class);
+        }
+    }
+
+    private void toActivity(OrderInfo orderInfo, Class cls) {
+        Intent intent = new Intent(getActivity(), cls);
         intent.putExtra(GlobeConstants.ORDER_INFO, orderInfo);
         startActivity(intent);
+    }
+
+    /**
+     * 订单信息有改变 在抢单，行程中的订单，确认费用页面对订单状态就行了更改，此时回到这个页面，需要刷新数据
+     * @param orderInfo 更改的订单信息,备用
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMessage(OrderInfo orderInfo) {
+        getOrderList();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        EventBus.getDefault().unregister(this);
         unbinder.unbind();
     }
 }

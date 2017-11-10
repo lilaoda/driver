@@ -44,7 +44,8 @@ public class BaseActivity extends LhyActivity {
 
     @Override
     public void setStatusBar() {
-        StatusBarUtil.setColor(this, getResources().getColor(R.color.common_statusbar_color), 0);
+        StatusBarUtil.setColor(this, getResources().getColor(R.color.app_color), 0);
+//        StatusBarUtil.setColor(this, getResources().getColor(R.color.common_statusbar_color), 0);
     }
 
 //    public void setOrderServiceEnable(boolean isEnable) {

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_light_light"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/expenses_des"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:gravity="center_horizontal|bottom"
+            android:text="总费用"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/text_expenses"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:text="48.5元"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_linearLayout"
+                android:text="总行驶里程:" />
+
+            <TextView
+                android:id="@+id/total_distance"
+                style="@style/TextRight_linearLayout"
+                android:layout_marginRight="50dp"
+                android:text="5公里" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_linearLayout"
+                android:text="总用时:" />
+
+            <TextView
+                android:id="@+id/total_time"
+                style="@style/TextRight_linearLayout"
+                android:layout_marginRight="50dp"
+                android:text="38分钟" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_linearLayout"
+                android:text="起步费（2公里，5分钟）:" />
+
+            <TextView
+                android:id="@+id/money_start"
+                style="@style/TextRight_linearLayout"
+                android:text="5" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_linearLayout"
+                android:text="超出里程费（2元/公里）:" />
+
+            <TextView
+                android:id="@+id/money_beyond"
+                style="@style/TextRight_linearLayout"
+                android:text="5" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_linearLayout"
+                android:text="长途里程费（1元/公里）:" />
+
+            <TextView
+                android:id="@+id/money_long_distance"
+                style="@style/TextRight_linearLayout"
+                android:text="5" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_linearLayout"
+                android:text="夜间服务费（1元/公里）:" />
+
+            <TextView
+                android:id="@+id/money_night"
+                style="@style/TextRight_linearLayout"
+                android:text="5" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/text_999" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:text="*请在费用产生前，务必与乘客已沟通确认"
+            android:textColor="@color/red_normal"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:paddingRight="130dp"
+            android:text="产生其它费用"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_fix_linearLayout"
+                android:text="高速费:" />
+
+            <EditText
+                android:id="@+id/money_high_speed"
+                style="@style/EditRight_fix_linearLayout"
+                android:hint="0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_fix_linearLayout"
+                android:text="停车费:" />
+
+            <EditText
+                android:id="@+id/money_park"
+                style="@style/EditRight_fix_linearLayout"
+                android:hint="0" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/TextLeft_fix_linearLayout"
+                android:text="其它费用:" />
+
+            <EditText
+                android:id="@+id/money_other"
+                style="@style/EditRight_fix_linearLayout"
+                android:hint="0" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_status"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_money"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:width="150dp"
+                android:gravity="center"
+                android:text="计价有误？"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:background="@color/app_color"
+                android:gravity="center"
+                android:text="》》"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_expenses"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/app_color"
+                android:gravity="center"
+                android:text="确认费用"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

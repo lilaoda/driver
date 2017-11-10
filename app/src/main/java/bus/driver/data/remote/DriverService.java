@@ -6,6 +6,8 @@ import java.util.Map;
 import bus.driver.bean.DriverInfo;
 import bus.driver.bean.OrderInfo;
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
@@ -18,8 +20,13 @@ import retrofit2.http.POST;
 
 public interface DriverService {
 
-//    String BASE_URL = "http://192.168.8.58:8881/";
+    //    String BASE_URL = "http://192.168.8.58:8881/";
     String BASE_URL = "http://120.24.79.21:8881/";
+
+    /**
+     * 图片基础路经
+     */
+    String imgBaseUrl = BASE_URL + "driver/file/";
 
     @POST("driver/user/add")
     @FormUrlEncoded
@@ -49,12 +56,17 @@ public interface DriverService {
     //确认上车
     @POST("driver/order/confirmPassenger")
     @FormUrlEncoded
-    Observable<HttpResult<String>> confirmPassenger(@Field("order_uuid") String order_uuid);
+    Observable<HttpResult<OrderInfo>> confirmPassenger(@Field("order_uuid") String order_uuid);
+
+    //司机到达目的地，等待乘客接口
+    @POST("driver/order/waitPassenger")
+    @FormUrlEncoded
+    Observable<HttpResult<OrderInfo>> waitPassenger(@Field("order_uuid") String order_uuid);
 
     //确认到达
     @POST("driver/order/confirmDestination")
     @FormUrlEncoded
-    Observable<HttpResult<String>> confirmArrive(@Field("order_uuid") String order_uuid);
+    Observable<HttpResult<OrderInfo>> confirmArrive(@Field("order_uuid") String order_uuid);
 
     //确认费用
     @POST("driver/order/confirmExpenses")
@@ -65,5 +77,32 @@ public interface DriverService {
     @POST("driver/getOrderList")
     Observable<HttpResult<List<OrderInfo>>> getOrderList();
 
+    // 司机退出登陆接口
+    @POST("driver/user/logout")
+    Observable<HttpResult<String>> loginOut();
+
+    // 修改姓名
+    @POST("driver/update")
+    @FormUrlEncoded
+    Observable<HttpResult<String>> changeName(@Field("name") String name);
+
+    // 修改手机号
+    @POST("driver/update")
+    @FormUrlEncoded
+    Observable<HttpResult<String>> changePhone(@Field("mobile") String mobile);
+
+    // 修改密码接口
+    @POST("driver/user/updatePassword")
+    @FormUrlEncoded
+    Observable<HttpResult<String>> changePwd(@Field("oldPassword") String oldPwd, @Field("password") String newPwd);
+
+    // 修改头像码接口
+    @POST("driver/user/portrait")
+    Observable<HttpResult<String>> uploadUserIcon(@Body MultipartBody body);
+
+    // 修改司机出车、收车接口 1,下班，2上班
+    @POST("driver/updateWork")
+    @FormUrlEncoded
+    Observable<HttpResult<String>> updaeWork(@Field("isWork") int isWork);
 
 }

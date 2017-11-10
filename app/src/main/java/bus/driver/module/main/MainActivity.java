@@ -1,60 +1,51 @@
 package bus.driver.module.main;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
+import bus.driver.base.BaseApplication;
 import bus.driver.base.BaseFragment;
-import bus.driver.data.DbManager;
-import bus.driver.data.local.entity.User;
-import bus.driver.module.customerservice.CustomerServiceActivity;
-import bus.driver.module.setting.SettingActivity;
 import bus.driver.service.LocationService;
 import bus.driver.service.OrderService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import lhy.lhylibrary.base.GlideApp;
+import lhy.lhylibrary.utils.ActivityUtils;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.view.tablayout.SlidingTabLayout;
 
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity {
 
     private String[] mTitles = {"首页", "订单"};
 
+    @BindView(R.id.fl_left)
+    FrameLayout flLeft;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.nav_view)
-    NavigationView navView;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @BindView(R.id.tabLayout)
     SlidingTabLayout tabLayout;
     @BindView(R.id.viewPager)
     ViewPager viewPager;
-
 
     private ActionBarDrawerToggle mDrawerToggle;
     private List<BaseFragment> mFragments;
@@ -77,6 +68,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initView() {
+        ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),LeftNavFragment.newInstance(),R.id.fl_left);
         mFragments = new ArrayList<>();
         mHomeFragment = HomeFragment.newInstance();
         mFragments.add(mHomeFragment);
@@ -86,27 +78,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void initToolbar() {
-        initNavHeadView();
         toolbar.setTitle("");
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.setDrawerListener(mDrawerToggle);
         setSupportActionBar(toolbar);
         mDrawerToggle.syncState();
-        navView.setNavigationItemSelectedListener(this);
-    }
 
-    private void initNavHeadView() {
-        User mUser = DbManager.instance().getUser();
-        View headerView = navView.getHeaderView(0);
-        ImageView userIcon = (ImageView) headerView.findViewById(R.id.img_photo);
-        TextView userName = (TextView) headerView.findViewById(R.id.text_name);
-        if (mUser == null) {
-            userName.setText("请登陆");
-        } else {
-            GlideApp.with(this).load(mUser.getIconUrl()).error(R.mipmap.icon_user_default).into(userIcon);
-            userName.setText(mUser.getPhone());
-        }
+        //设置测滑全屏
+//        DisplayMetrics metric = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(metric);
+//        View leftMenu = findViewById(R.id.main_left);
+//        ViewGroup.LayoutParams leftParams = leftMenu.getLayoutParams();
+//        leftParams.width = metric.widthPixels;
+//        leftMenu.setLayoutParams(leftParams);
     }
 
     @Override
@@ -132,14 +117,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
         // If not handled by drawerToggle, home needs to be handled by returning to previous
-
+        if (item != null && item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
         if (item != null && item.getItemId() == R.id.action_settings) {
             ToastUtils.showString("setting");
             return true;
@@ -147,25 +134,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return super.onOptionsItemSelected(item);
     }
 
-
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-//        if (id == R.id.nav_route) {
-//            gotoActivity(RouteActivity.class);
-//        } else
-            if (id == R.id.nav_service) {
-            gotoActivity(CustomerServiceActivity.class);
-        } else if (id == R.id.nav_setting) {
-            gotoActivity(SettingActivity.class);
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
+    public void onBackPressed() {
+        doExit();
     }
 
-    private void gotoActivity(Class<? extends Activity> cls) {
-        startActivity(new Intent(this, cls));
+    private long exitTime = 0;
+
+    private void doExit() {
+        if (System.currentTimeMillis() - exitTime > 2000) {
+            ToastUtils.showString("再按一次退出程序");
+            exitTime = System.currentTimeMillis();
+        } else {
+            BaseApplication.getInstance().closeApplication();
+        }
     }
 
     @Override
@@ -179,9 +161,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         StatusBarUtil.setColorForDrawerLayout(this, drawlayout, getResources().getColor(R.color.app_color), 0);
     }
 
-
     private class ManiAdapter extends FragmentPagerAdapter {
-
 
         public ManiAdapter(FragmentManager fm) {
             super(fm);

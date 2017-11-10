@@ -38,9 +38,20 @@ public class OrderInfo implements Parcelable{
     private int actualPasNum;
 
     /**
-     * 出发时间
+     * 出发时间(后台说是从接到乘客开始算起)2017-10-17 16:50:45
      */
     private String leaveTime;
+
+    /**
+     * 乘客下单时间 //TODO 待让后台加上
+     */
+    private String beginTime;
+
+    /**
+     * 到达目的地时间   //TODO 待让后台加上
+     */
+    private String arriveTime;
+
 
     /**
      * 使用导航地图类型：0为高德、1百度、2谷歌、3其他
@@ -123,7 +134,7 @@ public class OrderInfo implements Parcelable{
     private int mainStatus;
 
     /**
-     * 订单子状态(100.等待应答（拼车中） 200.等待接驾-预约 201.等待接驾-已出发未到达 202.等待接驾-已到达 210.出发接乘客 220.司机到达等待乘客 300.行程开始 301到达目的地400.待支付 500.已完成(待评价) 501.已完成-已评价 600.取消-自主取消 601.取消-后台取消 602.取消-应答前取消)
+     * 订单子状态(100.等待应答（拼车中） 200.等待接驾-预约 201.等待接驾-已出发未到达 202.等待接驾-已到达 210.出发接乘客 220.司机到达等待乘客 300.行程开始未到达目的地 301到达目的地未确认费用400.待支付 500.已完成(待评价) 501.已完成-已评价 600.取消-自主取消 601.取消-后台取消 602.取消-应答前取消)
      */
     private int subStatus;
 
@@ -386,5 +397,43 @@ public class OrderInfo implements Parcelable{
 
     public static Creator<OrderInfo> getCREATOR() {
         return CREATOR;
+    }
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderInfo{" +
+                "passengerUuid='" + passengerUuid + '\'' +
+                ", orderUuid='" + orderUuid + '\'' +
+                ", actualPasNam='" + actualPasNam + '\'' +
+                ", actualPasMob='" + actualPasMob + '\'' +
+                ", actualPasNum=" + actualPasNum +
+                ", leaveTime='" + leaveTime + '\'' +
+                ", beginTime='" + beginTime + '\'' +
+                ", mapType=" + mapType +
+                ", originCityUuid='" + originCityUuid + '\'' +
+                ", originBuscircleUuid='" + originBuscircleUuid + '\'' +
+                ", originLng=" + originLng +
+                ", originLat=" + originLat +
+                ", originCity='" + originCity + '\'' +
+                ", originAddress='" + originAddress + '\'' +
+                ", originDetailAddress='" + originDetailAddress + '\'' +
+                ", destCityUuid='" + destCityUuid + '\'' +
+                ", destBuscircleUuid='" + destBuscircleUuid + '\'' +
+                ", destLng=" + destLng +
+                ", destLat=" + destLat +
+                ", destCity='" + destCity + '\'' +
+                ", destAddress='" + destAddress + '\'' +
+                ", destDetailAddress='" + destDetailAddress + '\'' +
+                ", mainStatus=" + mainStatus +
+                ", subStatus=" + subStatus +
+                '}';
     }
 }

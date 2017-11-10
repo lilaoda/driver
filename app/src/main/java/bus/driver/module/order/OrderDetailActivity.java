@@ -92,10 +92,10 @@ public class OrderDetailActivity extends BaseActivity {
 
     private void confirmArrive() {
         wrapHttp(mHttpManager.getDriverService().confirmArrive(mOrderInfo.getOrderUuid()))
-                .compose(this.<String>bindToLifecycle())
-                .subscribe(new ResultObserver<String>(this, "确认到达...", true) {
+                .compose(this.<OrderInfo>bindToLifecycle())
+                .subscribe(new ResultObserver<OrderInfo>(this, "确认到达...", true) {
                     @Override
-                    public void onSuccess(String value) {
+                    public void onSuccess(OrderInfo value) {
                         btnArrive.setText("已到达目的地");
                         btnArrive.setEnabled(false);
 
@@ -109,10 +109,10 @@ public class OrderDetailActivity extends BaseActivity {
 
     private void confirmAboard() {
         wrapHttp(mHttpManager.getDriverService().confirmPassenger(mOrderInfo.getOrderUuid()))
-                .compose(this.<String>bindToLifecycle())
-                .subscribe(new ResultObserver<String>(this, "确认上车...", true) {
+                .compose(this.<OrderInfo>bindToLifecycle())
+                .subscribe(new ResultObserver<OrderInfo>(this, "确认上车...", true) {
                     @Override
-                    public void onSuccess(String value) {
+                    public void onSuccess(OrderInfo value) {
                         btnAboard.setText("乘客已上车");
                         btnAboard.setEnabled(false);
                     }

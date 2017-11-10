@@ -23,11 +23,10 @@ public abstract class ResultObserver<T> implements Observer<T> {
     private Activity mActivity;
     private ProgressDialog progressDialog;
     private Disposable mDisposable;
-
     private boolean isUserCancel = false;
     private String dialogMsg;
-    boolean isShowToast;
-    boolean isShowDialog;
+    private boolean isShowToast;
+    private boolean isShowDialog;
 
     public ResultObserver() {
     }
@@ -61,7 +60,6 @@ public abstract class ResultObserver<T> implements Observer<T> {
         this.isShowDialog = true;
         this.dialogMsg = dialogMsg;
     }
-
 
     @Override
     public void onSubscribe(Disposable d) {
@@ -108,7 +106,6 @@ public abstract class ResultObserver<T> implements Observer<T> {
         onFailure(errorMsg);
     }
 
-
     @Override
     public void onComplete() {
         hideDialog();
@@ -120,7 +117,6 @@ public abstract class ResultObserver<T> implements Observer<T> {
             return;
         }
 
-        //取消这块 待测试
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(mActivity);
             progressDialog.setMessage(dialogMsg);
@@ -148,7 +144,6 @@ public abstract class ResultObserver<T> implements Observer<T> {
     public abstract void onSuccess(T value);
 
     public void onFailure(Throwable e) {
-        e.printStackTrace();
     }
 
     public void onFailure(String msg) {

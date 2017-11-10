@@ -3,12 +3,15 @@ package bus.driver.module;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapOptions;
@@ -19,6 +22,7 @@ import com.amap.api.maps.model.BitmapDescriptor;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.LatLngBounds;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
@@ -29,6 +33,7 @@ import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
 import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.DrivePath;
 import com.amap.api.services.route.DriveRouteResult;
@@ -39,6 +44,8 @@ import com.amap.api.services.route.WalkRouteResult;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 
 import bus.driver.R;
 import bus.driver.bean.event.LocationEvent;
@@ -58,6 +65,11 @@ import lhy.lhylibrary.utils.ToastUtils;
  */
 
 public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener, AMap.OnMarkerClickListener, RouteSearch.OnRouteSearchListener, AMap.OnMapLoadedListener {
+
+    /**
+     * 定位时间间隔，mS
+     */
+    public static final int INTERVAL_LOCAITON = 2000;
 
     private TextureMapView mapView;
     private Marker mGrowMarker;
@@ -136,7 +148,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
         mapView.onDestroy();
     }
 
-    private void initLocation() {
+    protected void initLocation(AMap.OnMyLocationChangeListener listener) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_map_location);
         ImageFactory imageFactory = new ImageFactory();
         Bitmap ratio = imageFactory.ratio(bitmap, CommonUtils.dp2px(getContext(), 5), CommonUtils.dp2px(getContext(), 5));
@@ -145,7 +157,9 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
         mMyLocationStyle.myLocationIcon(pointIcon);
         mMyLocationStyle.strokeWidth(0F);
         mMyLocationStyle.radiusFillColor(getResources().getColor(android.R.color.transparent));
-        mMyLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        mMyLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE_NO_CENTER);
+//        mMyLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        mMyLocationStyle.interval(INTERVAL_LOCAITON);
         mMyLocationStyle.showMyLocation(true);
 //        mAMap.animateCamera(CameraUpdateFactory.zoomTo(ZOOM_SCALE_VALUE));
         moveMapToCurrentLocation();
@@ -153,17 +167,85 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
         mAMap.setMyLocationEnabled(true);// 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
         mAMap.getUiSettings().setMyLocationButtonEnabled(false);//设置默认定位按钮是否显示，非必需设置。
         mAMap.getUiSettings().setZoomControlsEnabled(false);
+        if (listener != null) {
+            mAMap.setOnMyLocationChangeListener(listener);
+        }
     }
 
+
+    protected void addStartEndMark(LatLng startLatLng, String startTitle, LatLng endLatLng, String endTitle) {
+        mAMap.clear();
+        ArrayList<MarkerOptions> optionses = new ArrayList<MarkerOptions>();
+        optionses.add(getTargetMarkerOptions(startLatLng, startTitle));
+        optionses.add(getStartMarkerOptions(endLatLng, endTitle));
+        mAMap.addMarkers(optionses, false);
+
+        LatLngBounds lngBounds = new LatLngBounds.Builder()
+                .include(endLatLng)
+                .include(startLatLng)
+                .build();
+        int bottom = CommonUtils.dp2px(getContext(), 100);
+        int padding = CommonUtils.dp2px(getContext(), 50);
+        int top = CommonUtils.dp2px(getContext(), 100);
+        mAMap.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(lngBounds, padding, padding, top, bottom));//左右上下的PADDING
+//        mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(lngBounds,bottom,bottom,top));//宽高和PADDING
+    }
+
+    @NonNull
+    private MarkerOptions getStartMarkerOptions(LatLng startLatLng, String title) {
+        MarkerOptions markOptiopns = new MarkerOptions();
+        markOptiopns.position(startLatLng);
+        View mAddressView = LayoutInflater.from(getContext()).inflate(R.layout.map_location, null);
+        TextView mAddressText = (TextView) mAddressView.findViewById(R.id.text_location);
+        ImageView mAddressImgIndicator = (ImageView) mAddressView.findViewById(R.id.img_indicate);
+        ImageView mAddressImgPoint = (ImageView) mAddressView.findViewById(R.id.img_point);
+        mAddressText.setText(title);
+        mAddressImgIndicator.setImageResource(R.mipmap.map_start);
+        mAddressImgPoint.setImageResource(R.mipmap.map_start_point);
+        markOptiopns.icon(BitmapDescriptorFactory.fromView(mAddressView));
+        return markOptiopns;
+    }
+
+    @NonNull
+    private MarkerOptions getTargetMarkerOptions(LatLng endLatLng, String title) {
+        MarkerOptions markOptiopns = new MarkerOptions();
+        markOptiopns.position(endLatLng);
+        View mAddressView = LayoutInflater.from(getContext()).inflate(R.layout.map_location, null);
+        TextView mAddressText = (TextView) mAddressView.findViewById(R.id.text_location);
+        ImageView mAddressImgIndicator = (ImageView) mAddressView.findViewById(R.id.img_indicate);
+        ImageView mAddressImgPoint = (ImageView) mAddressView.findViewById(R.id.img_point);
+        mAddressText.setText(title);
+        mAddressImgIndicator.setImageResource(R.mipmap.map_end);
+        mAddressImgPoint.setImageResource(R.mipmap.map_end_point);
+        markOptiopns.icon(BitmapDescriptorFactory.fromView(mAddressView));
+        return markOptiopns;
+    }
+
+
+    /**
+     * 移动地图到指定位置
+     */
     public void moveMapToCurrentLocation() {
         CameraUpdate cameraUpate = CameraUpdateFactory.newLatLngZoom(new LatLng(LocationService.latitude, LocationService.longitude), AMapManager.ZOOM_SCALE_VALUE);
         mAMap.animateCamera(cameraUpate);
     }
 
-    public void routeCaculate(LatLng startLatLng, LatLng ednLatLng, DrawRouteListener listener) {
+    protected void routeCaculate(LatLng startLatLng, LatLng ednLatLng, DrawRouteListener listener) {
         mDrawRouteListener = listener;
-        AMapManager.instance().routeCaculate(startLatLng, ednLatLng, this);
+        routeCaculate(startLatLng, ednLatLng, this);
     }
+
+    /**
+     * 驾车路线规划
+     */
+    private void routeCaculate(LatLng latLng, LatLng latLng1, RouteSearch.OnRouteSearchListener listener) {
+        RouteSearch routeSearch = new RouteSearch(getContext());
+        routeSearch.setRouteSearchListener(listener);
+        RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(new LatLonPoint(latLng.latitude, latLng.longitude), new LatLonPoint(latLng1.latitude, latLng1.longitude));
+        RouteSearch.DriveRouteQuery query = new RouteSearch.DriveRouteQuery(fromAndTo, RouteSearch.DRIVING_SINGLE_DEFAULT, null, null, "");
+        routeSearch.calculateDriveRouteAsyn(query);
+    }
+
 
     //重新定位，移动到定位位置
     public void refreshLocation() {

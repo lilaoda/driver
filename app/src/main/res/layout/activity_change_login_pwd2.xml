@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/view_toolbar_black" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="15dp"
+        android:text="请设置新登陆密码"
+        android:textColor="@color/text_999"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/edit_newpwd1"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/white"
+        android:gravity="left|center_vertical"
+        android:hint="请设置新登陆密码"
+        android:paddingLeft="15dp"
+        android:textColor="@color/text_333"
+        android:textColorHint="@color/text_999"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/edit_newpwd2"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/white"
+        android:gravity="left|center_vertical"
+        android:hint="确认密码"
+        android:paddingLeft="15dp"
+        android:textColor="@color/text_333"
+        android:textColorHint="@color/text_999"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_second"
+        style="@style/ButtonBlack"
+        android:layout_marginTop="45dp"
+        android:text="保存" />
+</LinearLayout>

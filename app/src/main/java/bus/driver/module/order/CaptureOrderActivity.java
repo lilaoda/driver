@@ -38,7 +38,7 @@ public class CaptureOrderActivity extends BaseActivity {
     @BindView(R.id.fl_map_content)
     FrameLayout flMapContent;
     private OrderInfo mOrderInfo;
-    private CaptureOrderFragment mCaptureOrderMapFragment;
+    private CaptureMapFragment mCaptureOrderMapFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +53,9 @@ public class CaptureOrderActivity extends BaseActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(GlobeConstants.ORDER_INFO)) {
             mOrderInfo = intent.getParcelableExtra(GlobeConstants.ORDER_INFO);
-            mCaptureOrderMapFragment = CaptureOrderFragment.newInstance(mOrderInfo);
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mCaptureOrderMapFragment, R.id.fl_map_content);
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), CaptureInfoFragment.newInstance(mOrderInfo), R.id.fl_map_content);
+//            mCaptureOrderMapFragment = CaptureMapFragment.newInstance(mOrderInfo);
+//            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mCaptureOrderMapFragment, R.id.fl_map_content);
         }
     }
 

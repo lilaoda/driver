@@ -9,14 +9,12 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import bus.driver.BuildConfig;
-import bus.driver.data.remote.DriverService;
 import bus.driver.data.remote.CarService;
+import bus.driver.data.remote.DriverService;
 import bus.driver.data.remote.HeadIntercepter;
 import bus.driver.data.remote.OrderApiService;
 import lhy.lhylibrary.base.LhyApplication;
 import lhy.lhylibrary.http.interceptor.CacheIntercepter;
-import lhy.lhylibrary.utils.FileUtils;
-import okhttp3.Cache;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.internal.platform.Platform;
@@ -60,7 +58,7 @@ public class HttpManager {
                 .connectTimeout(CONNECTIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(READTIMEOUT, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(false)
-                .cache(new Cache(FileUtils.getCacheFile(LhyApplication.getContext(), CACHE_DIRECTORY_NAME), CACHE_MAX_SIZE))
+//                .cache(new Cache(FileUtils.getCacheFile(LhyApplication.getContext(), CACHE_DIRECTORY_NAME), CACHE_MAX_SIZE))
                 .addInterceptor(new CacheIntercepter(LhyApplication.getContext()))
                 .addInterceptor(new HeadIntercepter(DbManager.instance()))
                 .addInterceptor(getHttpLogIntercept())

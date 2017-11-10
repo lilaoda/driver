@@ -17,13 +17,21 @@ import lhy.lhylibrary.base.LhyApplication;
  * SP 管理者
  */
 
-
-
 public class SpManager {
 
     private static final String SP_FILE_NAME = "webus_passenger";
+    /**
+     * 历史搜索记录
+     */
     private static final String HISTORY_POIINFO = "history_poiInfo";
-    public static final String IS_STARTED = "is_started";//是否已经启动过
+    /**
+     * 是否已经启动过
+     */
+    public static final String IS_STARTED = "is_started";
+    /**
+     * 是否出车
+     */
+    public static final String IS_CAR_WORK = "is_car_work";
 
     private static SpManager instance;
     private SharedPreferences mSP;
@@ -53,6 +61,15 @@ public class SpManager {
     public List<PoiInfo> getHistoryAddress() {
         return mGson.fromJson(mSP.getString(HISTORY_POIINFO, "[]"), new TypeToken<List<PoiInfo>>() {
         }.getType());
+    }
+
+      //保存出车状态
+    public void putIsCarWork(boolean b) {
+        mSP.edit().putBoolean(IS_CAR_WORK, b).apply();
+    }
+
+    public boolean getIsCarWork() {
+        return mSP.getBoolean(IS_CAR_WORK, false);
     }
 
     public void putString(String key, String value) {

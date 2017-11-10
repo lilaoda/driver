@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_left"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:background="@color/app_color"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
+
+        <lhy.lhylibrary.view.roundImageView.CircleImageView
+            android:id="@+id/civ_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/icon_user_default"
+            app:civ_border_color="#FFFFFF"
+            app:civ_border_width="2dp" />
+
+        <android.support.v7.widget.AppCompatRatingBar
+            android:id="@+id/rating_bar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="50dp"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:progressDrawable="@drawable/bg_ratingbar"
+            android:rating="2.5" />
+
+        <TextView
+            android:id="@+id/text_name"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginTop="38dp"
+            android:layout_toLeftOf="@id/rating_bar"
+            android:gravity="center_vertical|right"
+            android:paddingRight="10dp"
+            android:text="黎老大"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+
+        <TextView
+            android:id="@+id/text_car_type"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignRight="@+id/text_name"
+            android:layout_below="@+id/text_name"
+            android:gravity="center_vertical|right"
+            android:paddingRight="5dp"
+            android:text="舒适型"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_car_num"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignBottom="@+id/text_car_type"
+            android:layout_toRightOf="@id/text_car_type"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:text="奥A5782"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:background="@color/gray_light_light"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <LinearLayout
+            android:id="@+id/ll_money"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@mipmap/icon_user_default" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="我的钱包" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_route"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@mipmap/icon_user_default" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="我的行程" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_setting"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:src="@mipmap/icon_user_default" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center"
+                android:text="设置中心" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_my_car"
+        style="@style/Form_fl"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            style="@style/Form_text_left"
+            android:text="我的车辆"
+            android:textColor="@color/text_999" />
+
+        <TextView style="@style/Form_text_right" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_server_score"
+        style="@style/Form_fl"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            style="@style/Form_text_left"
+            android:text="服务分查询"
+            android:textColor="@color/text_999" />
+
+        <TextView style="@style/Form_text_right" />
+
+        <View
+            style="@style/ViewLineHorizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_recommend"
+        style="@style/Form_fl"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            style="@style/Form_text_left"
+            android:text="推荐有奖"
+            android:textColor="@color/text_999" />
+
+        <TextView style="@style/Form_text_right" />
+
+        <View
+            style="@style/ViewLineHorizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_server_center"
+        style="@style/Form_fl"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            style="@style/Form_text_left"
+            android:text="服务中心"
+            android:textColor="@color/text_999" />
+
+        <TextView style="@style/Form_text_right" />
+
+        <View
+            style="@style/ViewLineHorizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_assess"
+        style="@style/Form_fl"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            style="@style/Form_text_left"
+            android:text="评价中心"
+            android:textColor="@color/text_999" />
+
+        <TextView style="@style/Form_text_right" />
+
+        <View
+            style="@style/ViewLineHorizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btn_login_out"
+        style="@style/ButtonYellow"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:text="退出登陆" />
+</LinearLayout>

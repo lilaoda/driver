@@ -2,6 +2,7 @@ package bus.driver.data;
 
 import android.content.Context;
 
+import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
@@ -169,5 +170,15 @@ public class AMapManager {
         poiInfo.setAdName(item.getAdName());
         poiInfo.setSnippet(item.getSnippet());
         return poiInfo;
+    }
+
+    /**
+     * 计算两点之间的距离
+     * @param latLng1 点1的经纬度
+     * @param latLng2 点2的经纬度
+     * @return 两点间的直线距离
+     */
+    public float calculateLineDistance(LatLng latLng1, LatLng latLng2) {
+        return AMapUtils.calculateLineDistance(latLng1, latLng2);
     }
 }

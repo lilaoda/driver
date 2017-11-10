@@ -22,4 +22,56 @@
     <string name="pwd_too_small">密码长度不能小于6位</string>
     <string name="pwd_too_long">密码长度不能大于18位</string>
     <string name="my_route">我的行程</string>
+
+
+    <!--人个信息-->
+    <string name="address">地区</string>
+    <string name="address_hint">请选择地区</string>
+    <string name="user_icon">头像</string>
+    <string name="nickname">昵称</string>
+    <string name="email">邮箱</string>
+    <string name="company">公司</string>
+    <string name="company_hint">请输入公司名称</string>
+    <string name="profession">职业</string>
+    <string name="profession_hint">请输入您的职业</string>
+    <string name="care_trade">关注行业</string>
+    <string name="care_trade_hint">请选择您关注的行业</string>
+    <string name="select_trade">请选择行业</string>
+
+    <!--修改邮箱手机号-->
+    <string name="email_bundle_des">当前已绑定的邮箱</string>
+    <string name="phone_bundle_des">当前已绑定的手机号</string>
+    <string name="change_email">更改邮箱</string>
+    <string name="new_email">新邮箱</string>
+    <string name="change_email_hint">请输入需绑定的邮箱</string>
+    <string name="bundle_email">绑定邮箱</string>
+    <string name="change_phone">更换手机号</string>
+    <string name="phone_des1">我们已经向号码为</string>
+    <string name="phone_des2">的手机号发送了一条短信</string>
+    <string name="phone_des3">请输入短信中的验证码以继续</string>
+    <string name="identify_code_edit">请输入收到的6位验证码</string>
+    <string name="toast_identify_code">验证码不能为空</string>
+    <string name="phone_des">请设置新绑定的手机号：</string>
+    <string name="toast_phone">手机号不能为空</string>
+    <string name="error_pwd">密码不正确</string>
+
+    <!--账号安全-->
+    <string name="login_pwd">登陆密码</string>
+    <string name="login_pwd_hint">修改登陆密码</string>
+    <string name="pay_pwd">支付密码</string>
+    <string name="pay_pwd_change">修改支付密码</string>
+    <string name="pay_pwd_setting">设置支付密码</string>
+    <string name="input_previous_pwd">请输入原登录密码以完成验证</string>
+    <string name="previous_pwd">原密码</string>
+    <string name="previous_old_pwd">原支付密码</string>
+    <string name="input_new_pwd">请设置新登陆密码</string>
+    <string name="new_pwd1">请设置新密码</string>
+    <string name="new_pwd2">确认密码</string>
+    <string name="new_pay_pwd">新支付密码</string>
+    <string name="toast_empty_pwd">密码不能为空</string>
+    <string name="toast_notsame_pwd">两次输入的密码一致</string>
+    <string name="change_paypwd">修改支付密码</string>
+    <string name="remember_previous_paypwd">我记得原支付密码</string>
+    <string name="forget_previous_paypwd">我忘记原支付密码了</string>
+    <string name="identify_old_paypwd">请验证原支付密码</string>
 </resources>

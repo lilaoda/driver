@@ -86,7 +86,6 @@ public class OrderService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(OrderEvent event) {
         Log.i(TAG, "onMessageEvent: OrderEvent" + event.getLocationValue());
@@ -164,22 +163,26 @@ public class OrderService extends Service {
             @Override
             public void onSuccess(List<OrderInfo> value) {
                 if (value.size() > 0) {
-                    LhyActivity currentActivity = BaseApplication.getInstance().getCurrentActivity();
-                    if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_ONDOING || GlobeConstants.DRIVER_STATSU == GlobeConstants.DRIVER_STATSU_REST) {
-                        return;
-                    }
-                    if (isBackground() || currentActivity == null || !currentActivity.isResume()) {
-                        notifyOrder(value.get(0));
-                    } else {
-                        if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_NO) {
-                            if (mOrderDialog != null && mOrderDialog.isShowing() || currentActivity instanceof CaptureOrderActivity)
-                                return;
-                            showOrderDialog(currentActivity, value.get(0));
-                        }
-                    }
+                    checkNotify(value);
                 }
             }
         });
+    }
+
+    private void checkNotify(List<OrderInfo> value) {
+        LhyActivity currentActivity = BaseApplication.getInstance().getCurrentActivity();
+        if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_ONDOING || GlobeConstants.DRIVER_STATSU == GlobeConstants.DRIVER_STATSU_REST) {
+            return;
+        }
+        if (isBackground() || currentActivity == null || !currentActivity.isResume()) {
+            notifyOrder(value.get(0));
+        } else {
+            if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_NO) {
+                if (mOrderDialog != null && mOrderDialog.isShowing() || currentActivity instanceof CaptureOrderActivity)
+                    return;
+                showOrderDialog(currentActivity, value.get(0));
+            }
+        }
     }
 
     private void showOrderDialog(final Activity currentActivity, final OrderInfo orderInfo) {

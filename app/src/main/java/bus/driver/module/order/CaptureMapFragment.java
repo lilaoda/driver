@@ -14,14 +14,14 @@ import bus.driver.module.AMapFragment;
  * Email:749948218@qq.com
  */
 
-public class CaptureOrderFragment extends AMapFragment {
+public class CaptureMapFragment extends AMapFragment {
 
     private OrderInfo mOrderInfo;
 
-    public static CaptureOrderFragment newInstance(OrderInfo orderInfo) {
+    public static CaptureMapFragment newInstance(OrderInfo orderInfo) {
         Bundle args = new Bundle();
         args.putParcelable(GlobeConstants.ORDER_INFO, orderInfo);
-        CaptureOrderFragment fragment = new CaptureOrderFragment();
+        CaptureMapFragment fragment = new CaptureMapFragment();
         fragment.setArguments(args);
         return fragment;
     }

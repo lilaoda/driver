@@ -14,8 +14,10 @@ import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.local.entity.User;
+import bus.driver.data.remote.DriverService;
 import bus.driver.data.remote.HttpResult;
 import bus.driver.module.main.MainActivity;
+import bus.driver.utils.GlideUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -29,6 +31,7 @@ import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.utils.ValidateUtils;
+import lhy.lhylibrary.view.roundImageView.RoundedImageView;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
 
@@ -39,6 +42,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     EditText editPhone;
     @BindView(R.id.edit_pwd)
     EditText editPwd;
+    @BindView(R.id.riv)
+    RoundedImageView riv;
+
     private HttpManager mHttpManager;
     private DbManager mDbManager;
 
@@ -61,6 +67,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (user != null) {
             editPhone.setText(user.getPhone());
             editPwd.setText(user.getPassword());
+            GlideUtil.instance().loadUserIcon(riv, DriverService.imgBaseUrl + user.getIconUrl());
         }
     }
 
@@ -120,6 +127,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                         User user = mDbManager.getUser();
                         if (user != null) {
                             user.setUuid(value.getUser().getUuid());
+                            user.setIconUrl(value.getUser().getFace());
+                            if (value.getDriver() != null) {
+                                user.setName(value.getDriver().getName());
+                            }
                         }
                         mDbManager.updateUser(user);
                         startActivity(new Intent(LoginActivity.this, MainActivity.class));

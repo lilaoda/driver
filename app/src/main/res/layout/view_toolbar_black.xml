@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    app:elevation="0dp"
+    android:theme="@style/AppTheme.AppBarOverlay.Dark">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        android:background="@color/app_color"
+        app:popupTheme="@style/AppTheme.PopupOverlay_Dark">
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -19,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             tools:text="乘客端"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16sp" />
     </android.support.v7.widget.Toolbar>
 </android.support.design.widget.AppBarLayout>

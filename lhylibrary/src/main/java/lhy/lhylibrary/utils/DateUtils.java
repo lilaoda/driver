@@ -15,9 +15,7 @@ public class DateUtils {
      * @return
      */
     public static String getCurrentTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-        String time = simpleDateFormat.format(new Date());
-        return time;
+        return  new SimpleDateFormat(dateFormat,Locale.CHINA).format(new Date());
     }
 
     public static long getCurrenTimestemp() {
@@ -44,10 +42,9 @@ public class DateUtils {
      * @return
      */
     public static String getCurrentTime(Long timestemp){
-        Date date = new Date(timestemp);
-        SimpleDateFormat format = new SimpleDateFormat(dateFormat);
-        return format.format(date);
+        return  new SimpleDateFormat(dateFormat,Locale.CHINA).format(new Date(timestemp));
     }
+
 
     public static String getDate(String dateFormat){
         return new SimpleDateFormat(dateFormat, Locale.CHINA).format(new Date());

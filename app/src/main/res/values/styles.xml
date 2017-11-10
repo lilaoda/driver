@@ -13,9 +13,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.AppBarOverlay.Light" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.AppBarOverlay.Dark" parent="ThemeOverlay.AppCompat.Dark" />
+
+    <style name="AppTheme.PopupOverlay_Light" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.PopupOverlay_Dark" parent="ThemeOverlay.AppCompat.Dark" />
 
     <style name="ViewLineHorizontal">
         <item name="android:layout_width">match_parent</item>
@@ -112,7 +116,7 @@
         <item name="android:paddingRight">15dp</item>
         <item name="android:drawableRight">@mipmap/arrow_right</item>
         <item name="android:drawablePadding">9dp</item>
-        <item name="android:textColor">@color/text_666</item>
+        <item name="android:textColor">@color/text_333</item>
         <item name="android:textSize">14sp</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
@@ -130,6 +134,65 @@
         <item name="android:paddingRight">15dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/text_333</item>
+    </style>
+
+    <!--确认费用中linearLayout左侧text-->
+    <style name="TextLeft_linearLayout">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <!--确认费用中linearLayout右侧text-->
+    <style name="TextRight_linearLayout">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+    <!--确认费用中linearLayout左侧text-->
+    <style name="TextLeft_fix_linearLayout">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical|right</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <!--确认费用中linearLayout右侧text-->
+    <style name="EditRight_fix_linearLayout">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+
+    <style name="TextCaptureOrder">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:gravity">center_vertical|left</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:textColor">@color/green_normal</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!--单行可编辑的edit-->
+    <style name="Edit_modify">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">45dp</item>
+        <item name="android:background">@color/white</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_333</item>
+        <item name="android:textColorHint">@color/text_999</item>
     </style>
 
 </resources>

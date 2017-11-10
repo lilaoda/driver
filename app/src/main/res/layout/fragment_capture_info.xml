@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_color"
+    android:orientation="vertical">
+
+    <lhy.lhylibrary.view.roundImageView.CircleImageView
+        android:id="@+id/civ_icon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/icon_user_default" />
+
+    <TextView
+        android:id="@+id/text_target"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="13988888888"
+        android:textColor="@color/green_normal"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/shape_circel_black"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text_order_type"
+            style="@style/TextCaptureOrder"
+            android:text="*实时" />
+
+        <TextView
+            android:id="@+id/text_distance"
+            style="@style/TextCaptureOrder"
+            android:text="*距离：2.5公里" />
+
+        <TextView
+            android:id="@+id/text_start"
+            style="@style/TextCaptureOrder"
+            android:text="*广州信息港" />
+
+        <TextView
+            android:id="@+id/text_detail_start"
+            style="@style/TextCaptureOrder"
+            android:text="广州信息港天信楼330"
+            android:textColor="@color/white_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_dest"
+            style="@style/TextCaptureOrder"
+            android:text="*广州信息港"
+            android:textColor="@color/yellow_normal" />
+
+        <TextView
+            android:id="@+id/text_detail_dest"
+            style="@style/TextCaptureOrder"
+            android:text="广州信息港天信楼330"
+            android:textColor="@color/white_gray"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_estimate_distance"
+            style="@style/TextCaptureOrder"
+            android:text="*距离：2.5公里" />
+
+        <TextView
+            android:id="@+id/text_estimate_price"
+            style="@style/TextCaptureOrder"
+            android:text="*66元" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="20dp">
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="80dp"
+            android:background="@drawable/selector_circel_green"
+            android:text="关闭"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/btn_receive"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="80dp"
+            android:background="@drawable/selector_circel_green"
+            android:text="接单"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+    </FrameLayout>
+</LinearLayout>

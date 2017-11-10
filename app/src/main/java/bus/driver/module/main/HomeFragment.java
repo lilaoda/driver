@@ -20,11 +20,12 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.concurrent.TimeUnit;
 
 import bus.driver.R;
-import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseFragment;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.OrderEvent;
+import bus.driver.data.HttpManager;
+import bus.driver.data.SpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,8 +36,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.DateUtils;
+
+import static bus.driver.utils.RxUtils.wrapHttp;
 
 /**
  * Created by Lilaoda on 2017/9/27.
@@ -45,8 +49,8 @@ import lhy.lhylibrary.utils.DateUtils;
 
 public class HomeFragment extends BaseFragment {
 
-    public static final int STATUS_NORMAL = 1;//正常
-    public static final int STATUS_GO_CAR = 2;//出车
+    public static final int STATUS_REST = 1;//休息状态
+    public static final int STATUS_WORK = 2;//工作状态
 
     @BindView(R.id.text_time)
     TextView textTime;
@@ -64,11 +68,12 @@ public class HomeFragment extends BaseFragment {
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
 
-    private int mCurrentStatus = 1;
+    private int mCurrentStatus = STATUS_REST;
     private RotateAnimation mRotateAnim;
     private AnimatorSet mSetAnimStart;
     private AnimatorSet mSetAnimPause;
     private Disposable mTimeDisable;
+    private SpManager mSpManager;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -82,8 +87,18 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, null);
         unbinder = ButterKnife.bind(this, view);
+        mSpManager = SpManager.instance();
         initView();
+        checkIsWorking();
         return view;
+    }
+
+    private void checkIsWorking() {
+        boolean isCarWork = mSpManager.getIsCarWork();
+        if (isCarWork) {
+            mCurrentStatus = STATUS_WORK;
+            reSetView();
+        }
     }
 
     private void initView() {
@@ -104,6 +119,7 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
+    //TODO test
     private void refreshView() {
         Observable.timer(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -136,21 +152,37 @@ public class HomeFragment extends BaseFragment {
             case R.id.btn_style:
                 break;
             case R.id.btn_go_car:
-                reSetView();
+                updateWorkStatus(mCurrentStatus == STATUS_REST ? STATUS_WORK : STATUS_REST);
                 break;
         }
     }
 
+    /**
+     * 更改司机出车状态
+     *
+     * @param workStatus 1,下班 2，上班
+     */
+    private void updateWorkStatus(final int workStatus) {
+        wrapHttp(HttpManager.instance().getDriverService().updaeWork(workStatus))
+                .compose(this.<String>bindToLifecycle())
+                .subscribe(new ResultObserver<String>(getActivity(),"正在加载...",true) {
+                    @Override
+                    public void onSuccess(String value) {
+                        mCurrentStatus = workStatus;
+                        mSpManager.putIsCarWork(mCurrentStatus == STATUS_WORK);
+                        reSetView();
+                    }
+                });
+    }
+
     private void reSetView() {
-        if (mCurrentStatus == STATUS_NORMAL) {
-            mCurrentStatus = STATUS_GO_CAR;
+        if (mCurrentStatus == STATUS_WORK) {
             GlobeConstants.DRIVER_STATSU = GlobeConstants.DRIVER_STATSU_WORK;
             imgIndicate.setVisibility(View.VISIBLE);
             btnGoCar.setText("收车");
             setOrderServiceEnable(true);
             startAnim();
         } else {
-            mCurrentStatus = STATUS_NORMAL;
             GlobeConstants.DRIVER_STATSU = GlobeConstants.DRIVER_STATSU_REST;
             imgIndicate.setVisibility(View.GONE);
             setOrderServiceEnable(false);
@@ -160,7 +192,6 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void setOrderServiceEnable(boolean b) {
-        BaseActivity activity = (BaseActivity) getActivity();
         EventBus.getDefault().post(b ? OrderEvent.ORDER_PULL_ENABLE : OrderEvent.ORDER_PULL_UNABLE);
         EventBus.getDefault().post(b ? LocationEvent.LOCATION_ENABLE : LocationEvent.LOCATION_UNABLE);
     }
