@@ -11,7 +11,9 @@ public enum LocationEvent {
     LOCATION_ENABLE(1),
     LOCATION_UNABLE(2),
     LOCATION_ONCE(3),
-    LOCATION_NEED_RESULT(4);
+    LOCATION_REFRESH(4),
+    LOCATION_DISTANCE_START(5),
+    LOCATION_DISTANCE_STOP(6);
 
     private int locationValue;
 

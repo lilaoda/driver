@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="120dp"
         android:background="@color/app_color"
         android:paddingLeft="15dp"
         android:paddingTop="10dp">
@@ -34,12 +34,12 @@
 
         <TextView
             android:id="@+id/text_passenger_info"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="40dp"
             android:layout_below="@+id/civ_icon"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:textColor="@color/green_normal"
-            android:textSize="16sp"
+            android:textSize="15sp"
             tools:text="等待乘客\n尾号9152" />
 
         <ImageView

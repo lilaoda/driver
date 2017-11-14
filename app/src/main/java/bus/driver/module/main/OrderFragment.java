@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -129,12 +131,15 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
                     }
 
                     @Override
-                    public void onFailure(Throwable e) {
+                    public void onFailure(String e) {
                         super.onFailure(e);
                         if (isLoadMore) {
                             mOrderAdapter.loadMoreFail();
                         } else {
                             refreshLayout.setRefreshing(false);
+                            if (TextUtils.equals("暂时没有订单数据", e)) {
+                                refreshAdapter(new ArrayList<OrderInfo>());
+                            }
                         }
                     }
                 });
@@ -170,6 +175,7 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
 
     /**
      * 订单信息有改变 在抢单，行程中的订单，确认费用页面对订单状态就行了更改，此时回到这个页面，需要刷新数据
+     *
      * @param orderInfo 更改的订单信息,备用
      */
     @Subscribe(threadMode = ThreadMode.MAIN)

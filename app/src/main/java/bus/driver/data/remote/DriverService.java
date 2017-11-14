@@ -3,6 +3,7 @@ package bus.driver.data.remote;
 import java.util.List;
 import java.util.Map;
 
+import bus.driver.bean.City;
 import bus.driver.bean.DriverInfo;
 import bus.driver.bean.OrderInfo;
 import io.reactivex.Observable;
@@ -104,5 +105,15 @@ public interface DriverService {
     @POST("driver/updateWork")
     @FormUrlEncoded
     Observable<HttpResult<String>> updaeWork(@Field("isWork") int isWork);
+
+    // POST /driver/getAreaList 城市列表 查询省用province、查询城市用city
+    @POST("driver/getAreaList")
+    @FormUrlEncoded
+    Observable<HttpResult<List<City>>> getAreaList(@Field("level") String type);
+
+    //  driver/order/info  获取订单详情接口
+    @POST("driver/order/info")
+    @FormUrlEncoded
+    Observable<HttpResult<OrderInfo>> getOrderDetail(@Field("order_uuid") String orderUuid);
 
 }

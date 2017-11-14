@@ -16,6 +16,10 @@ import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +27,8 @@ import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
+import bus.driver.bean.event.DistanceEvent;
+import bus.driver.bean.event.LocationEvent;
 import bus.driver.data.AMapManager;
 import bus.driver.data.HttpManager;
 import bus.driver.service.LocationService;
@@ -112,6 +118,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ongoing);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
         initToolbar("订单");
         mHttpManager = HttpManager.instance();
         mAMapManager = AMapManager.instance();
@@ -134,7 +141,9 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
 
     private void initView() {
         textTarget.setText(mOrderInfo.getDestAddress());
-        textPassengerInfo.setText(mOrderInfo.getActualPasNam() + ": " + mOrderInfo.getActualPasMob());
+//        textPassengerInfo.setText(mOrderInfo.getActualPasNam() + ": " + mOrderInfo.getActualPasMob());
+        //TODO Test
+        textPassengerInfo.setText("高圆圆" + "\n" + "尾号9152");
 
         int subStatus = mOrderInfo.getSubStatus();
         if (subStatus < 220) {
@@ -162,13 +171,11 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             finish();
         }
 
-
         if (mCurrentStatus == STATUS_READY_ABOARD || mCurrentStatus == STATUS_READY_ARRIVE_PASSENGER) {
             showWaitTime();
         } else if (mCurrentStatus == STATUS_ON_GOING) {
             showGoingTime();
         } else if (mCurrentStatus == STATUS_READY_PAY) {
-            //TODO 行程耗时，订单从乘客上车到到达目的地总时间 等后端加字段
             showEndText();
         }
     }
@@ -187,11 +194,12 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
         } else if (mCurrentStatus == STATUS_READY_ABOARD) {
             setToolbarTitle("等待乘客上车");
         } else if (mCurrentStatus == STATUS_ON_GOING) {
+            //开始实时计算距离
+            EventBusUtls.notifyLocation(LocationEvent.LOCATION_DISTANCE_START);
             setToolbarTitle("正在行程中");
         } else if (mCurrentStatus == STATUS_READY_PAY) {
             setToolbarTitle("费用详情");
         }
-
     }
 
     private void setToolbarTitle(String title) {
@@ -203,19 +211,18 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
 
     private void showEndText() {
         textDistance.setText("已到达");
-        textTime.setText("共用时：10小时");
+        long l = DateUtils.getCurrenTimestemp(mOrderInfo.getArriveTime()) - DateUtils.getCurrenTimestemp(mOrderInfo.getPasArrTime());
+        textTime.setText("共用时:" + getIntervalTime(l / 1000));
     }
 
     /**
      * 乘客上车后显示正式行程的行驶时间
      */
     private void showGoingTime() {
-        if (TextUtils.isEmpty(mOrderInfo.getLeaveTime())) {
-//            return;
-            //TODO 目前后台返回为空，此为测试
-            mOrderInfo.setLeaveTime(DateUtils.getCurrentTime());
+        if (TextUtils.isEmpty(mOrderInfo.getPasArrTime())) {
+            return;
         }
-        mGoingTime = (System.currentTimeMillis() - DateUtils.getCurrenTimestemp(mOrderInfo.getLeaveTime())) / 1000;
+        mGoingTime = (System.currentTimeMillis() - DateUtils.getCurrenTimestemp(mOrderInfo.getPasArrTime())) / 1000;
         mGoingTimeDisposable = Flowable.interval(1, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
                 .map(new Function<Long, String>() {
                     @Override
@@ -228,7 +235,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
                 .subscribe(new Consumer<String>() {
                     @Override
                     public void accept(@NonNull String time) throws Exception {
-                        textTime.setText(time);
+                        textTime.setText("已行驶：" + time);
                     }
                 });
     }
@@ -243,10 +250,13 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
      * 显示乘客等待时间
      */
     private void showWaitTime() {
-        if (TextUtils.isEmpty(mOrderInfo.getBeginTime())) {
-            return;
+        if (TextUtils.isEmpty(mOrderInfo.getDistributeTime())) {
+            //从抢单页进来，可能没有接单时间
+            mWaitTime = 0;
+        } else {
+            mWaitTime = (System.currentTimeMillis() - DateUtils.getCurrenTimestemp(mOrderInfo.getDistributeTime())) / 1000;
         }
-        mWaitTime = (System.currentTimeMillis() - DateUtils.getCurrenTimestemp(mOrderInfo.getLeaveTime())) / 1000;
+
         mWaitTimeDisposable = Flowable.interval(1, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
                 .map(new Function<Long, String>() {
                     @Override
@@ -279,9 +289,9 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
     @android.support.annotation.NonNull
     private String getIntervalTime(long intervalSecond) {
         if (intervalSecond / 3600 != 0) {
-            return intervalSecond / 3600 + "小时" + (intervalSecond % 3600) / 60 + "分钟" + intervalSecond % 60 + "秒";
+            return intervalSecond / 3600 + "小时" + (intervalSecond % 3600) / 60 + "分" + intervalSecond % 60 + "秒";
         } else {
-            return intervalSecond / 60 + "分钟" + intervalSecond % 60 + "秒";
+            return intervalSecond / 60 + "分" + intervalSecond % 60 + "秒";
         }
     }
 
@@ -333,7 +343,14 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
     }
 
     private void notifyOrderChanged(OrderInfo value) {
+        mOrderInfo = value;
         EventBusUtls.notifyOrderChanged(value);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDistanceEvent(DistanceEvent event) {
+        //TODO 实时更新距离 需位置修复
+        textDistance.setText(event.getLoacationDistance() + "米");
     }
 
     /**
@@ -363,6 +380,8 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
                     public void onSuccess(OrderInfo value) {
 //                        showView(STATUS_READY_PAY);
 //                        cancelGoingTime();
+                        //关闭实时计算距离
+                        EventBusUtls.notifyLocation(LocationEvent.LOCATION_DISTANCE_STOP);
                         notifyOrderChanged(value);
                         gotoConfirmExpensesActivity();
                         finish();
@@ -404,19 +423,21 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             } else {
                 textDistance.setText(String.format(Locale.CHINA, "距离乘客： %f 米", distance));
             }
-        } else if (mCurrentStatus == STATUS_ON_GOING) {
-            if (distance / 1000 != 0) {
-                distance += 500;
-                textDistance.setText(String.format(Locale.CHINA, "已行驶： %d 公里", (int) distance / 1000));
-            } else {
-                textDistance.setText(String.format(Locale.CHINA, "已行驶： %f 米", distance));
-            }
         }
+//        else if (mCurrentStatus == STATUS_ON_GOING) {
+//            if (distance / 1000 != 0) {
+//                distance += 500;
+//                textDistance.setText(String.format(Locale.CHINA, "已行驶： %d 公里", (int) distance / 1000));
+//            } else {
+//                textDistance.setText(String.format(Locale.CHINA, "已行驶： %f 米", distance));
+//            }
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         cancelWaitTime();
         cancelGoingTime();
     }

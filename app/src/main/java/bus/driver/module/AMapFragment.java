@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,12 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Poi;
+import com.amap.api.maps.model.Polyline;
+import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.maps.model.animation.Animation;
 import com.amap.api.maps.model.animation.ScaleAnimation;
+import com.amap.api.maps.utils.SpatialRelationUtil;
+import com.amap.api.maps.utils.overlay.SmoothMoveMarker;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
@@ -46,6 +51,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import bus.driver.R;
 import bus.driver.bean.event.LocationEvent;
@@ -54,6 +60,7 @@ import bus.driver.data.AMapManager;
 import bus.driver.overlay.AMapUtil;
 import bus.driver.overlay.DrivingRouteOverlay;
 import bus.driver.service.LocationService;
+import bus.driver.utils.EventBusUtls;
 import lhy.lhylibrary.base.LhyFragment;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.ImageFactory;
@@ -73,10 +80,11 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
 
     private TextureMapView mapView;
     private Marker mGrowMarker;
-    private AMap mAMap;
+    protected AMap mAMap;
     private MyLocationStyle mMyLocationStyle;
     private LinearLayout llRoot;
     private boolean isResume;
+    private Polyline mPolyline;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,7 +121,11 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
         if (mAMap == null) {
             mAMap = mapView.getMap();
             mAMap.setOnMapLoadedListener(this);
+            onMapCreated();
         }
+    }
+
+    protected void onMapCreated() {
     }
 
     @Override
@@ -249,7 +261,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
 
     //重新定位，移动到定位位置
     public void refreshLocation() {
-        EventBus.getDefault().post(LocationEvent.LOCATION_NEED_RESULT);
+        EventBusUtls.notifyLocation(LocationEvent.LOCATION_REFRESH);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -381,5 +393,66 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
         void drawRouteSuccess(String friendlyLength, String friendlyTime, int taxiCost);
 
         void drawRouteFailue(String error);
+    }
+
+    /**
+     * 添加轨迹线
+     */
+    protected void addPolylineInPlayGround(List<LatLng> list) {
+//        List<LatLng> list = readLatLngs();
+//        List<Integer> colorList = new ArrayList<Integer>();
+//        List<BitmapDescriptor> bitmapDescriptors = new ArrayList<BitmapDescriptor>();
+//
+//        int[] colors = new int[]{Color.argb(255, 0, 255, 0),Color.argb(255, 255, 255, 0),Color.argb(255, 255, 0, 0)};
+
+//        //用一个数组来存放纹理
+//        List<BitmapDescriptor> textureList = new ArrayList<BitmapDescriptor>();
+//        textureList.add(BitmapDescriptorFactory.fromResource(R.drawable.custtexture));
+//
+//        List<Integer> texIndexList = new ArrayList<Integer>();
+//        texIndexList.add(0);//对应上面的第0个纹理
+//        texIndexList.add(1);
+//        texIndexList.add(2);
+//
+//        Random random = new Random();
+//        for (int i = 0; i < list.size(); i++) {
+//            colorList.add(colors[random.nextInt(3)]);
+//            bitmapDescriptors.add(textureList.get(0));
+//
+//        }
+
+        mPolyline = mAMap.addPolyline(new PolylineOptions().setCustomTexture(BitmapDescriptorFactory.fromResource(R.mipmap.custtexture)) //setCustomTextureList(bitmapDescriptors)
+//				.setCustomTextureIndex(texIndexList)
+                .addAll(list)
+                .useGradient(true)
+                .width(18));
+
+        LatLngBounds bounds = new LatLngBounds(list.get(0), list.get(list.size() - 2));
+        mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+    }
+
+    /**
+     * @param points 轨迹坐标点
+     */
+    protected void startMove(List<LatLng> points) {
+        if (points.size() < 0) return;
+        LatLngBounds bounds = new LatLngBounds(points.get(0), points.get(points.size() - 2));
+        mAMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+
+        SmoothMoveMarker smoothMarker = new SmoothMoveMarker(mAMap);
+        // 设置滑动的图标
+        smoothMarker.setDescriptor(BitmapDescriptorFactory.fromResource(R.mipmap.icon_car));
+
+        LatLng drivePoint = points.get(0);
+        Pair<Integer, LatLng> pair = SpatialRelationUtil.calShortestDistancePoint(points, drivePoint);
+        points.set(pair.first, drivePoint);
+        List<LatLng> subList = points.subList(pair.first, points.size());
+
+        // 设置滑动的轨迹左边点
+        smoothMarker.setPoints(subList);
+        // 设置滑动的总时间
+        smoothMarker.setTotalDuration(40);
+        // 开始滑动
+        smoothMarker.startSmoothMove();
     }
 }

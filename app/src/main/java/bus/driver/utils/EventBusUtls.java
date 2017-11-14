@@ -3,8 +3,12 @@ package bus.driver.utils;
 import org.greenrobot.eventbus.EventBus;
 
 import bus.driver.bean.OrderInfo;
+import bus.driver.bean.event.DistanceEvent;
+import bus.driver.bean.event.LocationEvent;
+import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.data.local.entity.User;
 import bus.driver.module.setting.MyInfoActivity;
+import bus.driver.service.LocationService;
 
 /**
  * Created by Lilaoda on 2017/11/10.
@@ -27,5 +31,29 @@ public class EventBusUtls {
      */
     public static void notifyUserInfoChanged(User user){
         EventBus.getDefault().post(user);
+    }
+
+    /**
+     * 开启定位事件 的定位服务里接受通知 {@link LocationService}
+     * @param event 定位事件
+     */
+    public static void notifyLocation(LocationEvent event){
+        EventBus.getDefault().post(event);
+    }
+
+    /**
+     * 发送定位结果 {@link LocationService}
+     * @param event 定位结果
+     */
+    public static void notifyLocationResult(LocationResultEvent event){
+        EventBus.getDefault().post(event);
+    }
+
+    /**
+     * 发送定位测算的距离结果 {@link LocationService}
+     * @param event 定位结果
+     */
+    public static void notifyDistanceResult(DistanceEvent event){
+        EventBus.getDefault().post(event);
     }
 }

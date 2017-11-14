@@ -63,7 +63,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startDriverService() {
-        startService(new Intent(this, LocationService.class).putExtra(LocationService.FIRST_LOCATE, true));
+        startService(new Intent(this, LocationService.class));
         startService(new Intent(this, OrderService.class));
     }
 

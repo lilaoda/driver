@@ -9,7 +9,7 @@ import android.os.Parcelable;
  * 获取服务器推送的订单信息
  */
 
-public class OrderInfo implements Parcelable{
+public class OrderInfo implements Parcelable {
 
 
     /**
@@ -36,22 +36,6 @@ public class OrderInfo implements Parcelable{
      * 实际乘车人数
      */
     private int actualPasNum;
-
-    /**
-     * 出发时间(后台说是从接到乘客开始算起)2017-10-17 16:50:45
-     */
-    private String leaveTime;
-
-    /**
-     * 乘客下单时间 //TODO 待让后台加上
-     */
-    private String beginTime;
-
-    /**
-     * 到达目的地时间   //TODO 待让后台加上
-     */
-    private String arriveTime;
-
 
     /**
      * 使用导航地图类型：0为高德、1百度、2谷歌、3其他
@@ -138,46 +122,56 @@ public class OrderInfo implements Parcelable{
      */
     private int subStatus;
 
+
+    /**
+     * 出发时间(后台说是从接到乘客开始算起)2017-10-17 16:50:45
+     */
+    private String leaveTime;
+
+
+    /**
+     * 订单创建时间 "yyyy-MM-dd HH:mm:ss"
+     */
+    private String createTime;
+
+    /**
+     * 派单成功时间 "yyyy-MM-dd HH:mm:ss"
+     */
+    private String distributeTime;
+
+
+    /**
+     * 司机抵达上车地点时间 "yyyy-MM-dd HH:mm:ss"
+     */
+    private String driArrTime;
+
+    /**
+     * 接到乘客时间（行程开始时间）
+     */
+    private String pasArrTime;
+
+    /**
+     * 到达目的地时间
+     */
+    private String arriveTime;
+
+    /**
+     * 费用确认时间
+     **/
+    private String fareConfirmTime;
+
+    /**
+     * 支付时间
+     */
+    private String payTime;
+
+    /**
+     * 订单总费用（=司机收入=各费用之和*高峰溢价率+附加服务费等+（后台）调整价格）
+     */
+    private Double totalFare;
+
     public OrderInfo() {
     }
-
-    protected OrderInfo(Parcel in) {
-        passengerUuid = in.readString();
-        orderUuid = in.readString();
-        actualPasNam = in.readString();
-        actualPasMob = in.readString();
-        actualPasNum = in.readInt();
-        leaveTime = in.readString();
-        mapType = in.readInt();
-        originCityUuid = in.readString();
-        originBuscircleUuid = in.readString();
-        originLng = in.readDouble();
-        originLat = in.readDouble();
-        originCity = in.readString();
-        originAddress = in.readString();
-        originDetailAddress = in.readString();
-        destCityUuid = in.readString();
-        destBuscircleUuid = in.readString();
-        destLng = in.readDouble();
-        destLat = in.readDouble();
-        destCity = in.readString();
-        destAddress = in.readString();
-        destDetailAddress = in.readString();
-        mainStatus = in.readInt();
-        subStatus = in.readInt();
-    }
-
-    public static final Creator<OrderInfo> CREATOR = new Creator<OrderInfo>() {
-        @Override
-        public OrderInfo createFromParcel(Parcel in) {
-            return new OrderInfo(in);
-        }
-
-        @Override
-        public OrderInfo[] newArray(int size) {
-            return new OrderInfo[size];
-        }
-    };
 
     @Override
     public int describeContents() {
@@ -186,30 +180,84 @@ public class OrderInfo implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(passengerUuid);
-        dest.writeString(orderUuid);
-        dest.writeString(actualPasNam);
-        dest.writeString(actualPasMob);
-        dest.writeInt(actualPasNum);
-        dest.writeString(leaveTime);
-        dest.writeInt(mapType);
-        dest.writeString(originCityUuid);
-        dest.writeString(originBuscircleUuid);
-        dest.writeDouble(originLng);
-        dest.writeDouble(originLat);
-        dest.writeString(originCity);
-        dest.writeString(originAddress);
-        dest.writeString(originDetailAddress);
-        dest.writeString(destCityUuid);
-        dest.writeString(destBuscircleUuid);
-        dest.writeDouble(destLng);
-        dest.writeDouble(destLat);
-        dest.writeString(destCity);
-        dest.writeString(destAddress);
-        dest.writeString(destDetailAddress);
-        dest.writeInt(mainStatus);
-        dest.writeInt(subStatus);
+        dest.writeString(this.passengerUuid);
+        dest.writeString(this.orderUuid);
+        dest.writeString(this.actualPasNam);
+        dest.writeString(this.actualPasMob);
+        dest.writeInt(this.actualPasNum);
+        dest.writeInt(this.mapType);
+        dest.writeString(this.originCityUuid);
+        dest.writeString(this.originBuscircleUuid);
+        dest.writeDouble(this.originLng);
+        dest.writeDouble(this.originLat);
+        dest.writeString(this.originCity);
+        dest.writeString(this.originAddress);
+        dest.writeString(this.originDetailAddress);
+        dest.writeString(this.destCityUuid);
+        dest.writeString(this.destBuscircleUuid);
+        dest.writeDouble(this.destLng);
+        dest.writeDouble(this.destLat);
+        dest.writeString(this.destCity);
+        dest.writeString(this.destAddress);
+        dest.writeString(this.destDetailAddress);
+        dest.writeInt(this.mainStatus);
+        dest.writeInt(this.subStatus);
+        dest.writeString(this.leaveTime);
+        dest.writeString(this.createTime);
+        dest.writeString(this.distributeTime);
+        dest.writeString(this.driArrTime);
+        dest.writeString(this.pasArrTime);
+        dest.writeString(this.arriveTime);
+        dest.writeString(this.fareConfirmTime);
+        dest.writeString(this.payTime);
+        dest.writeValue(this.totalFare);
     }
+
+    protected OrderInfo(Parcel in) {
+        this.passengerUuid = in.readString();
+        this.orderUuid = in.readString();
+        this.actualPasNam = in.readString();
+        this.actualPasMob = in.readString();
+        this.actualPasNum = in.readInt();
+        this.mapType = in.readInt();
+        this.originCityUuid = in.readString();
+        this.originBuscircleUuid = in.readString();
+        this.originLng = in.readDouble();
+        this.originLat = in.readDouble();
+        this.originCity = in.readString();
+        this.originAddress = in.readString();
+        this.originDetailAddress = in.readString();
+        this.destCityUuid = in.readString();
+        this.destBuscircleUuid = in.readString();
+        this.destLng = in.readDouble();
+        this.destLat = in.readDouble();
+        this.destCity = in.readString();
+        this.destAddress = in.readString();
+        this.destDetailAddress = in.readString();
+        this.mainStatus = in.readInt();
+        this.subStatus = in.readInt();
+        this.leaveTime = in.readString();
+        this.createTime = in.readString();
+        this.distributeTime = in.readString();
+        this.driArrTime = in.readString();
+        this.pasArrTime = in.readString();
+        this.arriveTime = in.readString();
+        this.fareConfirmTime = in.readString();
+        this.payTime = in.readString();
+        this.totalFare = (Double) in.readValue(Double.class.getClassLoader());
+    }
+
+    public static final Creator<OrderInfo> CREATOR = new Creator<OrderInfo>() {
+        @Override
+        public OrderInfo createFromParcel(Parcel source) {
+            return new OrderInfo(source);
+        }
+
+        @Override
+        public OrderInfo[] newArray(int size) {
+            return new OrderInfo[size];
+        }
+    };
 
     public String getPassengerUuid() {
         return passengerUuid;
@@ -249,14 +297,6 @@ public class OrderInfo implements Parcelable{
 
     public void setActualPasNum(int actualPasNum) {
         this.actualPasNum = actualPasNum;
-    }
-
-    public String getLeaveTime() {
-        return leaveTime;
-    }
-
-    public void setLeaveTime(String leaveTime) {
-        this.leaveTime = leaveTime;
     }
 
     public int getMapType() {
@@ -395,16 +435,80 @@ public class OrderInfo implements Parcelable{
         this.subStatus = subStatus;
     }
 
+    public String getLeaveTime() {
+        return leaveTime;
+    }
+
+    public void setLeaveTime(String leaveTime) {
+        this.leaveTime = leaveTime;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getDistributeTime() {
+        return distributeTime;
+    }
+
+    public void setDistributeTime(String distributeTime) {
+        this.distributeTime = distributeTime;
+    }
+
+    public String getDriArrTime() {
+        return driArrTime;
+    }
+
+    public void setDriArrTime(String driArrTime) {
+        this.driArrTime = driArrTime;
+    }
+
+    public String getPasArrTime() {
+        return pasArrTime;
+    }
+
+    public void setPasArrTime(String pasArrTime) {
+        this.pasArrTime = pasArrTime;
+    }
+
+    public String getArriveTime() {
+        return arriveTime;
+    }
+
+    public void setArriveTime(String arriveTime) {
+        this.arriveTime = arriveTime;
+    }
+
+    public String getFareConfirmTime() {
+        return fareConfirmTime;
+    }
+
+    public void setFareConfirmTime(String fareConfirmTime) {
+        this.fareConfirmTime = fareConfirmTime;
+    }
+
+    public String getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(String payTime) {
+        this.payTime = payTime;
+    }
+
+    public Double getTotalFare() {
+        return totalFare;
+    }
+
+    public void setTotalFare(Double totalFare) {
+        this.totalFare = totalFare;
+    }
+
     public static Creator<OrderInfo> getCREATOR() {
         return CREATOR;
-    }
-
-    public String getBeginTime() {
-        return beginTime;
-    }
-
-    public void setBeginTime(String beginTime) {
-        this.beginTime = beginTime;
     }
 
     @Override
@@ -415,8 +519,6 @@ public class OrderInfo implements Parcelable{
                 ", actualPasNam='" + actualPasNam + '\'' +
                 ", actualPasMob='" + actualPasMob + '\'' +
                 ", actualPasNum=" + actualPasNum +
-                ", leaveTime='" + leaveTime + '\'' +
-                ", beginTime='" + beginTime + '\'' +
                 ", mapType=" + mapType +
                 ", originCityUuid='" + originCityUuid + '\'' +
                 ", originBuscircleUuid='" + originBuscircleUuid + '\'' +
@@ -434,6 +536,15 @@ public class OrderInfo implements Parcelable{
                 ", destDetailAddress='" + destDetailAddress + '\'' +
                 ", mainStatus=" + mainStatus +
                 ", subStatus=" + subStatus +
+                ", leaveTime='" + leaveTime + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", distributeTime='" + distributeTime + '\'' +
+                ", driArrTime='" + driArrTime + '\'' +
+                ", pasArrTime='" + pasArrTime + '\'' +
+                ", arriveTime='" + arriveTime + '\'' +
+                ", fareConfirmTime='" + fareConfirmTime + '\'' +
+                ", payTime='" + payTime + '\'' +
+                ", totalFare=" + totalFare +
                 '}';
     }
 }

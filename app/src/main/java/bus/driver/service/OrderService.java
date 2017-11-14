@@ -143,7 +143,7 @@ public class OrderService extends Service {
     }
 
     private void startPullOrder() {
-        Log.i(TAG, "stopPullOrder: " + "开始循环拉取订单");
+        Log.i(TAG, "startPullOrder: " + "开始循环拉取订单");
         if (mOrderDisposable != null && !mOrderDisposable.isDisposed()) return;
         mOrderDisposable = Flowable.interval(INTERVAL_PULL_ORDER, TimeUnit.SECONDS)
                 .onBackpressureLatest()

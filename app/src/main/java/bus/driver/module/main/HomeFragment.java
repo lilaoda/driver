@@ -26,6 +26,7 @@ import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import bus.driver.data.SpManager;
+import bus.driver.utils.EventBusUtls;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -97,7 +98,15 @@ public class HomeFragment extends BaseFragment {
         boolean isCarWork = mSpManager.getIsCarWork();
         if (isCarWork) {
             mCurrentStatus = STATUS_WORK;
-            reSetView();
+            //防止服务没开启就发送事件，延迟500MS
+            Observable.timer(500, TimeUnit.MILLISECONDS).compose(this.<Long>bindToLifecycle())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Long>() {
+                        @Override
+                        public void accept(@NonNull Long aLong) throws Exception {
+                            reSetView();
+                        }
+                    });
         }
     }
 
@@ -165,7 +174,7 @@ public class HomeFragment extends BaseFragment {
     private void updateWorkStatus(final int workStatus) {
         wrapHttp(HttpManager.instance().getDriverService().updaeWork(workStatus))
                 .compose(this.<String>bindToLifecycle())
-                .subscribe(new ResultObserver<String>(getActivity(),"正在加载...",true) {
+                .subscribe(new ResultObserver<String>(getActivity(), "正在加载...", true) {
                     @Override
                     public void onSuccess(String value) {
                         mCurrentStatus = workStatus;
@@ -174,6 +183,30 @@ public class HomeFragment extends BaseFragment {
                     }
                 });
     }
+
+//    private void getCityList() {
+//        wrapHttp(HttpManager.instance().getDriverService().getAreaList("city"))
+//                .compose(this.<List<City>>bindToLifecycle())
+//                .subscribe(new ResultObserver<List<City>>(getActivity(),"正在加载...",true) {
+//                    @Override
+//                    public void onSuccess(List<City> value) {
+//                            if (FileUtils.isSDCardEnabled()) {
+//                                File file1 = new File(DIR_CRASH);
+//                                if(!file1.exists())file1.mkdirs();
+//                                File file = new File(DIR_CRASH, DateUtils.getCurrentTime());
+//                                try {
+//                                    FileWriter fileWriter = new FileWriter(file);
+//                                    fileWriter.write(new Gson().toJson(value));
+//                                    fileWriter.flush();
+//                                    fileWriter.close();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                    }
+//                });
+//    }
 
     private void reSetView() {
         if (mCurrentStatus == STATUS_WORK) {
@@ -193,7 +226,7 @@ public class HomeFragment extends BaseFragment {
 
     private void setOrderServiceEnable(boolean b) {
         EventBus.getDefault().post(b ? OrderEvent.ORDER_PULL_ENABLE : OrderEvent.ORDER_PULL_UNABLE);
-        EventBus.getDefault().post(b ? LocationEvent.LOCATION_ENABLE : LocationEvent.LOCATION_UNABLE);
+        EventBusUtls.notifyLocation(b ? LocationEvent.LOCATION_ENABLE : LocationEvent.LOCATION_UNABLE);
     }
 
     private void startAnim() {

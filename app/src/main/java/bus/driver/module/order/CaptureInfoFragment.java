@@ -15,7 +15,6 @@ import bus.driver.R;
 import bus.driver.base.BaseFragment;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
-import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import butterknife.BindView;
@@ -113,7 +112,6 @@ public class CaptureInfoFragment extends BaseFragment {
                         intent.putExtra(GlobeConstants.ORDER_INFO, mOrderInfo);
                         startActivity(intent);
                         EventBus.getDefault().post(mOrderInfo);
-                        EventBus.getDefault().post(LocationEvent.LOCATION_UNABLE);
                         EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_ENABLE);
                         getActivity().finish();
                     }

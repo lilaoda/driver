@@ -21,7 +21,7 @@
             <TextView
                 android:id="@+id/expenses_des"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="30dp"
                 android:gravity="center_horizontal|bottom"
                 android:text="总费用"
                 android:textColor="@color/white"
@@ -30,11 +30,11 @@
             <TextView
                 android:id="@+id/text_expenses"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="45dp"
                 android:gravity="center"
                 android:text="48.5元"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textColor="@color/red_normal"
+                android:textSize="19sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,7 +71,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
@@ -87,7 +87,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -102,7 +102,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -117,7 +117,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -133,15 +133,15 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:background="@color/text_999" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:gravity="center"
                 android:text="*请在费用产生前，务必与乘客已沟通确认"
                 android:textColor="@color/red_normal"
@@ -149,7 +149,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="30dp"
                 android:gravity="center"
                 android:paddingRight="130dp"
                 android:text="产生其它费用"
@@ -158,7 +158,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -174,7 +174,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -190,7 +190,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="35dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -209,7 +209,7 @@
                 android:id="@+id/ll_status"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView

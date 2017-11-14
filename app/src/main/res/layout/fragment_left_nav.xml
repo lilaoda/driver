@@ -77,8 +77,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:background="@color/gray_light_light"
+        android:layout_height="80dp"
+        android:background="@color/black_light_light"
         android:orientation="horizontal"
         android:paddingTop="10dp">
 
@@ -93,12 +93,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:src="@mipmap/icon_user_default" />
+                android:src="@mipmap/ic_wallet" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:gravity="center"
+                android:textColor="@color/text_999"
                 android:text="我的钱包" />
         </LinearLayout>
 
@@ -113,12 +114,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:src="@mipmap/icon_user_default" />
+                android:src="@mipmap/ic_route" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:gravity="center"
+                android:textColor="@color/text_999"
                 android:text="我的行程" />
         </LinearLayout>
 
@@ -134,12 +136,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:src="@mipmap/icon_user_default" />
+                android:src="@mipmap/ic_setting" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:gravity="center"
+                android:textColor="@color/text_999"
                 android:text="设置中心" />
         </LinearLayout>
     </LinearLayout>
