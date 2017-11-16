@@ -15,7 +15,7 @@ import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
-import bus.driver.service.LocationService;
+import bus.driver.service.DriverService;
 import bus.driver.utils.navi.AmapTTSController;
 
 /**
@@ -39,7 +39,7 @@ public class NaviActivity extends BaseActivity implements INaviInfoCallback {
         //TODO 空指针
         amapTTSController.init();
 
-        Poi start = new Poi("起点", new LatLng(LocationService.latitude, LocationService.longitude), "");//起点
+        Poi start = new Poi("起点", new LatLng(DriverService.latitude, DriverService.longitude), "");//起点
         Poi end = new Poi("终点", new LatLng(orderInfo.getDestLat(), orderInfo.getDestLng()), "");//终点
         AmapNaviParams amapNaviParams = new AmapNaviParams(start, null, end, AmapNaviType.DRIVER);
         AmapNaviPage.getInstance().showRouteActivity(getApplicationContext(), amapNaviParams, NaviActivity.this);

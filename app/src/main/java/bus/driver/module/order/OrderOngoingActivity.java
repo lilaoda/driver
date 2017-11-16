@@ -31,7 +31,7 @@ import bus.driver.bean.event.DistanceEvent;
 import bus.driver.bean.event.LocationEvent;
 import bus.driver.data.AMapManager;
 import bus.driver.data.HttpManager;
-import bus.driver.service.LocationService;
+import bus.driver.service.DriverService;
 import bus.driver.utils.EventBusUtls;
 import bus.driver.widget.ConfirmExpensesDialog;
 import butterknife.BindView;
@@ -165,6 +165,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             //行程已结束已经付费
             llOver.setVisibility(View.VISIBLE);
             llStatus.setVisibility(View.GONE);
+            setToolbarTitle("行程已结束付费");
         } else {
             //行程已取消
             ToastUtils.showString("行程已取消");
@@ -197,6 +198,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             //开始实时计算距离
             EventBusUtls.notifyLocation(LocationEvent.LOCATION_DISTANCE_START);
             setToolbarTitle("正在行程中");
+            textDistance.setText("加载中...");
         } else if (mCurrentStatus == STATUS_READY_PAY) {
             setToolbarTitle("费用详情");
         }
@@ -301,7 +303,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             case R.id.ib_reLocate:
                 break;
             case R.id.btn_navi:
-                AmapNaviParams amapNaviParams = new AmapNaviParams(new Poi("我的位置", new LatLng(LocationService.latitude, LocationService.longitude), null),
+                AmapNaviParams amapNaviParams = new AmapNaviParams(new Poi("我的位置", new LatLng(DriverService.latitude, DriverService.longitude), null),
                         null, new Poi("终点", new LatLng(mOrderInfo.getDestLat(), mOrderInfo.getDestLng()), null), AmapNaviType.DRIVER);
                 AmapNaviPage.getInstance().showRouteActivity(getContext(), amapNaviParams, null);
                 break;
@@ -350,7 +352,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDistanceEvent(DistanceEvent event) {
         //TODO 实时更新距离 需位置修复
-        textDistance.setText(event.getLoacationDistance() + "米");
+        textDistance.setText((int) event.getLoacationDistance() + "米");
     }
 
     /**

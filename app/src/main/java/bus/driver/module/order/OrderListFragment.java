@@ -1,4 +1,4 @@
-package bus.driver.module.main;
+package bus.driver.module.order;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,12 +28,11 @@ import bus.driver.base.BaseFragment;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.data.HttpManager;
-import bus.driver.module.order.ConfirmExpensesActivity;
-import bus.driver.module.order.OrderOngoingActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
 
@@ -42,7 +41,7 @@ import static bus.driver.utils.RxUtils.wrapHttp;
  * Email:749948218@qq.com
  */
 
-public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener,
+public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.OnItemClickListener,
         BaseQuickAdapter.RequestLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.recyclerView)
@@ -54,9 +53,9 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
     private HttpManager mHttpManager;
     private OrderListAdapter mOrderAdapter;
 
-    public static OrderFragment newInstance() {
+    public static OrderListFragment newInstance() {
         Bundle args = new Bundle();
-        OrderFragment fragment = new OrderFragment();
+        OrderListFragment fragment = new OrderListFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -159,10 +158,13 @@ public class OrderFragment extends BaseFragment implements BaseQuickAdapter.OnIt
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         OrderInfo orderInfo = mOrderAdapter.getData().get(position);
-        if (orderInfo.getSubStatus() == 301 || orderInfo.getSubStatus() == 400) {
-            //到达目的地未确认费用  //确认费用了未支付
+        if (orderInfo.getSubStatus() == 301 ) {
+            //到达目的地未确认费用
             toActivity(orderInfo, ConfirmExpensesActivity.class);
-        } else {
+        } else if(orderInfo.getSubStatus() == 400){
+            //确认费用了未支付
+            ToastUtils.showString("去支付");
+        }else {
             toActivity(orderInfo, OrderOngoingActivity.class);
         }
     }

@@ -38,7 +38,7 @@ import static bus.driver.utils.RxUtils.wrapAsync;
  * Email:liheyu999@163.com
  */
 
-public class SearchAddressActivity extends LhyActivity {
+public class AddressSearchActivity extends LhyActivity {
 
     public static final String RESULT_ADDRESS = "result_address";
 

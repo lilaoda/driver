@@ -1,6 +1,5 @@
 package bus.driver.module.main;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,8 +21,8 @@ import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseApplication;
 import bus.driver.base.BaseFragment;
-import bus.driver.service.LocationService;
-import bus.driver.service.OrderService;
+import bus.driver.module.order.OrderListFragment;
+import bus.driver.service.DriverService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import lhy.lhylibrary.utils.ActivityUtils;
@@ -49,7 +48,7 @@ public class MainActivity extends BaseActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
     private List<BaseFragment> mFragments;
-    private HomeFragment mHomeFragment;
+    private MainFragment mHomeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,22 +56,25 @@ public class MainActivity extends BaseActivity {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        startDriverService();
+        DriverService.start(this);
         initToolbar();
         initView();
     }
 
-    private void startDriverService() {
-        startService(new Intent(this, LocationService.class));
-        startService(new Intent(this, OrderService.class));
+
+    public void setCurrentTab(int position) {
+        if (position < 0 || position > viewPager.getAdapter().getCount() - 1) {
+            return;
+        }
+        viewPager.setCurrentItem(position);
     }
 
     private void initView() {
-        ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),LeftNavFragment.newInstance(),R.id.fl_left);
+        ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), LeftNavFragment.newInstance(), R.id.fl_left);
         mFragments = new ArrayList<>();
-        mHomeFragment = HomeFragment.newInstance();
+        mHomeFragment = MainFragment.newInstance();
         mFragments.add(mHomeFragment);
-        mFragments.add(OrderFragment.newInstance());
+        mFragments.add(OrderListFragment.newInstance());
         viewPager.setAdapter(new ManiAdapter(getSupportFragmentManager()));
         tabLayout.setViewPager(viewPager);
     }

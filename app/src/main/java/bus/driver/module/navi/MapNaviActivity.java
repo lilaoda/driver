@@ -28,7 +28,7 @@ import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.GlobeConstants;
 import bus.driver.bean.OrderInfo;
-import bus.driver.service.LocationService;
+import bus.driver.service.DriverService;
 
 /**
  * Created by Lilaoda on 2017/10/12.
@@ -53,7 +53,7 @@ public class MapNaviActivity extends BaseActivity implements AMapNaviListener, A
         setContentView(R.layout.activity_navi);
 
         OrderInfo orderInfo = getIntent().getParcelableExtra(GlobeConstants.ORDER_INFO);
-        mStartLatlng = new NaviLatLng(LocationService.latitude, LocationService.longitude);
+        mStartLatlng = new NaviLatLng(DriverService.latitude, DriverService.longitude);
         mEndLatlng = new NaviLatLng(orderInfo.getDestLat(), orderInfo.getDestLng());
 
         //获取AMapNavi实例

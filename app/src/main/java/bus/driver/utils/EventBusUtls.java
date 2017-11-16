@@ -7,8 +7,9 @@ import bus.driver.bean.event.DistanceEvent;
 import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.data.local.entity.User;
+import bus.driver.module.order.OrderListFragment;
 import bus.driver.module.setting.MyInfoActivity;
-import bus.driver.service.LocationService;
+import bus.driver.service.DriverService;
 
 /**
  * Created by Lilaoda on 2017/11/10.
@@ -18,7 +19,7 @@ import bus.driver.service.LocationService;
 public class EventBusUtls {
 
     /**
-     * 通知订单信息有改变 在订单列表接受通知{@link bus.driver.module.main.OrderFragment}
+     * 通知订单信息有改变 在订单列表接受通知{@link OrderListFragment}
      * @param orderInfo 改变的订单信息
      */
     public static void notifyOrderChanged(OrderInfo orderInfo){
@@ -34,7 +35,7 @@ public class EventBusUtls {
     }
 
     /**
-     * 开启定位事件 的定位服务里接受通知 {@link LocationService}
+     * 开启定位事件 的定位服务里接受通知 {@link DriverService}
      * @param event 定位事件
      */
     public static void notifyLocation(LocationEvent event){
@@ -42,7 +43,7 @@ public class EventBusUtls {
     }
 
     /**
-     * 发送定位结果 {@link LocationService}
+     * 发送定位结果 {@link DriverService}
      * @param event 定位结果
      */
     public static void notifyLocationResult(LocationResultEvent event){
@@ -50,7 +51,7 @@ public class EventBusUtls {
     }
 
     /**
-     * 发送定位测算的距离结果 {@link LocationService}
+     * 发送定位测算的距离结果 {@link DriverService}
      * @param event 定位结果
      */
     public static void notifyDistanceResult(DistanceEvent event){

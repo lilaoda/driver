@@ -57,9 +57,9 @@ import bus.driver.R;
 import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.data.AMapManager;
-import bus.driver.overlay.AMapUtil;
-import bus.driver.overlay.DrivingRouteOverlay;
-import bus.driver.service.LocationService;
+import bus.driver.utils.overlay.AMapUtil;
+import bus.driver.utils.overlay.DrivingRouteOverlay;
+import bus.driver.service.DriverService;
 import bus.driver.utils.EventBusUtls;
 import lhy.lhylibrary.base.LhyFragment;
 import lhy.lhylibrary.utils.CommonUtils;
@@ -109,7 +109,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
     }
 
     private void addMapView(@Nullable Bundle savedInstanceState) {
-        LatLng centerMyPoint = new LatLng(LocationService.latitude, LocationService.longitude);
+        LatLng centerMyPoint = new LatLng(DriverService.latitude, DriverService.longitude);
         AMapOptions mapOptions = new AMapOptions();
         mapOptions.camera(new CameraPosition(centerMyPoint, AMapManager.ZOOM_SCALE_VALUE, 0, 0));
         mapView = new TextureMapView(getContext(), mapOptions);
@@ -161,7 +161,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
     }
 
     protected void initLocation(AMap.OnMyLocationChangeListener listener) {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_map_location);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_map_location_direction);
         ImageFactory imageFactory = new ImageFactory();
         Bitmap ratio = imageFactory.ratio(bitmap, CommonUtils.dp2px(getContext(), 5), CommonUtils.dp2px(getContext(), 5));
         BitmapDescriptor pointIcon = BitmapDescriptorFactory.fromBitmap(bitmap);
@@ -238,7 +238,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
      * 移动地图到指定位置
      */
     public void moveMapToCurrentLocation() {
-        CameraUpdate cameraUpate = CameraUpdateFactory.newLatLngZoom(new LatLng(LocationService.latitude, LocationService.longitude), AMapManager.ZOOM_SCALE_VALUE);
+        CameraUpdate cameraUpate = CameraUpdateFactory.newLatLngZoom(new LatLng(DriverService.latitude, DriverService.longitude), AMapManager.ZOOM_SCALE_VALUE);
         mAMap.animateCamera(cameraUpate);
     }
 

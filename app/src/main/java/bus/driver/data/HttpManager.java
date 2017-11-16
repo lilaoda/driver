@@ -9,8 +9,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import bus.driver.BuildConfig;
-import bus.driver.data.remote.CarService;
-import bus.driver.data.remote.DriverService;
+import bus.driver.data.remote.DriverApi;
 import bus.driver.data.remote.HeadIntercepter;
 import bus.driver.data.remote.OrderApiService;
 import lhy.lhylibrary.base.LhyApplication;
@@ -31,8 +30,7 @@ public class HttpManager {
 
     private static HttpManager instance;
     private Retrofit.Builder mRetrofitBuilder;
-    private DriverService mApiService;
-    private CarService mCarService;
+    private DriverApi mApiService;
     private OrderApiService mOrderApi;
 
     private HttpManager() {
@@ -78,18 +76,11 @@ public class HttpManager {
                 .build();
     }
 
-    public DriverService getDriverService() {
+    public DriverApi getDriverService() {
         if (mApiService == null) {
-            mApiService = mRetrofitBuilder.baseUrl(DriverService.BASE_URL).build().create(DriverService.class);
+            mApiService = mRetrofitBuilder.baseUrl(DriverApi.BASE_URL).build().create(DriverApi.class);
         }
         return mApiService;
-    }
-
-    public CarService getCarService() {
-        if (mCarService == null) {
-            mCarService = mRetrofitBuilder.baseUrl(CarService.BASE_URL).build().create(CarService.class);
-        }
-        return mCarService;
     }
 
     public OrderApiService getOrderApi() {

@@ -80,7 +80,13 @@ public class CaptureInfoFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_capture_info, container, false);
         unbinder = ButterKnife.bind(this, view);
+        initView();
         return view;
+    }
+
+    private void initView() {
+        textStart.setText(mOrderInfo.getOriginAddress());
+        textDest.setText(mOrderInfo.getDestAddress());
     }
 
     @Override
@@ -99,6 +105,10 @@ public class CaptureInfoFragment extends BaseFragment {
                 captureOrder();
                 break;
         }
+    }
+
+    private void closeDrawLayout(){
+
     }
 
     private void captureOrder() {

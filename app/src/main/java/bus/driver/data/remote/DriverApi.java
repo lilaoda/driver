@@ -19,7 +19,7 @@ import retrofit2.http.POST;
  * Email:liheyu999@163.com
  */
 
-public interface DriverService {
+public interface DriverApi {
 
     //    String BASE_URL = "http://192.168.8.58:8881/";
     String BASE_URL = "http://120.24.79.21:8881/";

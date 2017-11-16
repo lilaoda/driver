@@ -26,7 +26,7 @@ import bus.driver.base.BaseFragment;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.local.entity.User;
-import bus.driver.data.remote.DriverService;
+import bus.driver.data.remote.DriverApi;
 import bus.driver.module.customerservice.CustomerServiceActivity;
 import bus.driver.module.setting.MyInfoActivity;
 import bus.driver.module.setting.SettingActivity;
@@ -115,7 +115,7 @@ public class LeftNavFragment extends BaseFragment {
         if (mUser == null) {
             textName.setText("请登陆");
         } else {
-            GlideUtil.instance().loadUserIcon(civIcon,DriverService.imgBaseUrl+mUser.getIconUrl());
+            GlideUtil.instance().loadUserIcon(civIcon, DriverApi.imgBaseUrl + mUser.getIconUrl());
             String phone = mUser.getPhone();
             if (TextUtils.isEmpty(mUser.getName())) {
                 textName.setText(phone.substring(phone.length() - 5, phone.length()));
@@ -141,6 +141,10 @@ public class LeftNavFragment extends BaseFragment {
             case R.id.ll_money:
                 break;
             case R.id.ll_route:
+                if (mActivity instanceof MainActivity) {
+                    MainActivity activity = (MainActivity) mActivity;
+                    activity.setCurrentTab(1);
+                }
                 break;
             case R.id.ll_setting:
                 gotoActivity(SettingActivity.class);

@@ -23,7 +23,7 @@ import bus.driver.base.BaseActivity;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.local.entity.User;
-import bus.driver.data.remote.DriverService;
+import bus.driver.data.remote.DriverApi;
 import bus.driver.utils.EventBusUtls;
 import bus.driver.utils.GlideUtil;
 import butterknife.BindView;
@@ -78,7 +78,7 @@ public class MyInfoActivity extends BaseActivity {
     }
 
     private void initView() {
-        GlideUtil.instance().loadUserIcon(civIcon, DriverService.imgBaseUrl + mUser.getIconUrl());
+        GlideUtil.instance().loadUserIcon(civIcon, DriverApi.imgBaseUrl + mUser.getIconUrl());
         textNickname.setText(mUser.getName());
         textPhone.setText(mUser.getPhone());
     }

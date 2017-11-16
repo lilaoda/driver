@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".module.main.SearchAddressActivity" />
+        <activity android:name=".module.main.AddressSearchActivity" />
         <activity android:name=".module.login.RegisterActivity" />
         <activity android:name=".module.setting.SettingActivity" />
         <activity android:name=".module.route.RouteActivity" />
@@ -56,8 +56,7 @@
         <activity android:name=".module.setting.MyInfoActivity" />
         <activity android:name=".module.setting.ChangeInfoActivity"/>
 
-        <service android:name=".service.LocationService" />
-        <service android:name=".service.OrderService" />
+        <service android:name=".service.DriverService" />
         <!--高德地图-->
         <service android:name="com.amap.api.location.APSService" />
 

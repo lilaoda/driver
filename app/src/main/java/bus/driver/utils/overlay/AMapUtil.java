@@ -1,7 +1,7 @@
 /**
  *
  */
-package bus.driver.overlay;
+package bus.driver.utils.overlay;
 
 import android.text.Html;
 import android.text.Spanned;

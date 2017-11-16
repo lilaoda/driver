@@ -48,7 +48,7 @@ import static bus.driver.utils.RxUtils.wrapHttp;
  * Email:749948218@qq.com
  */
 
-public class HomeFragment extends BaseFragment {
+public class MainFragment extends BaseFragment {
 
     public static final int STATUS_REST = 1;//休息状态
     public static final int STATUS_WORK = 2;//工作状态
@@ -76,9 +76,9 @@ public class HomeFragment extends BaseFragment {
     private Disposable mTimeDisable;
     private SpManager mSpManager;
 
-    public static HomeFragment newInstance() {
+    public static MainFragment newInstance() {
         Bundle args = new Bundle();
-        HomeFragment fragment = new HomeFragment();
+        MainFragment fragment = new MainFragment();
         fragment.setArguments(args);
         return fragment;
     }

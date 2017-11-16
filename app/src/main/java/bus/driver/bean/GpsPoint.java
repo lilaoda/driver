@@ -26,7 +26,7 @@ public class GpsPoint {
     private float accuracy;
 
     /**
-     * 速度
+     * 获取当前速度(单位：米/秒) 默认值：0.0
      */
     private float speed ;
 
@@ -51,9 +51,7 @@ public class GpsPoint {
 
     /**
      * 定位类型
-     * 0：gps定位
-     * 1：wifi定位
-     * 2：基站定位
+     * 具体见高德文档
      */
     private int locType ;
 
@@ -135,5 +133,17 @@ public class GpsPoint {
         this.locType = locType;
     }
 
-
+    @Override
+    public String toString() {
+        return "GpsPoint{" +
+                "lat=" + lat +
+                ", lng=" + lng +
+                ", timemap=" + timemap +
+                ", accuracy=" + accuracy +
+                ", speed=" + speed +
+                ", bearing=" + bearing +
+                ", coorType=" + coorType +
+                ", locType=" + locType +
+                '}';
+    }
 }

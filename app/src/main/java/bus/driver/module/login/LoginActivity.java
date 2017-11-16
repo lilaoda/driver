@@ -14,7 +14,7 @@ import bus.driver.bean.DriverInfo;
 import bus.driver.data.DbManager;
 import bus.driver.data.HttpManager;
 import bus.driver.data.local.entity.User;
-import bus.driver.data.remote.DriverService;
+import bus.driver.data.remote.DriverApi;
 import bus.driver.data.remote.HttpResult;
 import bus.driver.module.main.MainActivity;
 import bus.driver.utils.GlideUtil;
@@ -67,7 +67,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         if (user != null) {
             editPhone.setText(user.getPhone());
             editPwd.setText(user.getPassword());
-            GlideUtil.instance().loadUserIcon(riv, DriverService.imgBaseUrl + user.getIconUrl());
+            GlideUtil.instance().loadUserIcon(riv, DriverApi.imgBaseUrl + user.getIconUrl());
         }
     }
 
