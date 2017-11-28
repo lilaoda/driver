@@ -8,11 +8,26 @@ package bus.driver.bean.event;
 
 public enum LocationEvent {
 
+    /**
+     * 定位可用
+     */
     LOCATION_ENABLE(1),
+    /**
+     * 定位不可用
+     */
     LOCATION_UNABLE(2),
-    LOCATION_ONCE(3),
+
+    /**
+     * 刷新位置时使用，发送定位结果（成功或失败）
+     */
     LOCATION_REFRESH(4),
+    /**
+     * 测算距离 可用
+     */
     LOCATION_DISTANCE_START(5),
+    /**
+     * 测算距离 ，不可用
+     */
     LOCATION_DISTANCE_STOP(6);
 
     private int locationValue;

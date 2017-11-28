@@ -13,7 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import bus.driver.R;
 import bus.driver.base.BaseFragment;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
@@ -62,7 +62,7 @@ public class CaptureInfoFragment extends BaseFragment {
 
     public static CaptureInfoFragment newInstance(OrderInfo orderInfo) {
         Bundle args = new Bundle();
-        args.putParcelable(GlobeConstants.ORDER_INFO, orderInfo);
+        args.putParcelable(Constants.ORDER_INFO, orderInfo);
         CaptureInfoFragment fragment = new CaptureInfoFragment();
         fragment.setArguments(args);
         return fragment;
@@ -72,7 +72,7 @@ public class CaptureInfoFragment extends BaseFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
-        mOrderInfo = arguments.getParcelable(GlobeConstants.ORDER_INFO);
+        mOrderInfo = arguments.getParcelable(Constants.ORDER_INFO);
     }
 
     @Nullable
@@ -117,9 +117,9 @@ public class CaptureInfoFragment extends BaseFragment {
                 .subscribe(new ResultObserver<String>(getActivity(), "正在抢单...", true) {
                     @Override
                     public void onSuccess(String value) {
-                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_ONDOING;
+                        Constants.ORDER_STATSU = Constants.ORDER_STATSU_ONDOING;
                         Intent intent = new Intent(getContext(), OrderOngoingActivity.class);
-                        intent.putExtra(GlobeConstants.ORDER_INFO, mOrderInfo);
+                        intent.putExtra(Constants.ORDER_INFO, mOrderInfo);
                         startActivity(intent);
                         EventBus.getDefault().post(mOrderInfo);
                         EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_ENABLE);

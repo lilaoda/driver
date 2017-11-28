@@ -181,4 +181,31 @@ public class AMapManager {
     public float calculateLineDistance(LatLng latLng1, LatLng latLng2) {
         return AMapUtils.calculateLineDistance(latLng1, latLng2);
     }
+
+    /**
+     * 计算两点之间的距离 高德图层里的算法
+     * @return 两点间的距离
+     */
+    public static int calculateDistance(double x1, double y1, double x2, double y2) {
+        final double NF_pi = 0.01745329251994329; // 弧度 PI/180
+        x1 *= NF_pi;
+        y1 *= NF_pi;
+        x2 *= NF_pi;
+        y2 *= NF_pi;
+        double sinx1 = Math.sin(x1);
+        double siny1 = Math.sin(y1);
+        double cosx1 = Math.cos(x1);
+        double cosy1 = Math.cos(y1);
+        double sinx2 = Math.sin(x2);
+        double siny2 = Math.sin(y2);
+        double cosx2 = Math.cos(x2);
+        double cosy2 = Math.cos(y2);
+        double[] v1 = new double[3];
+        v1[0] = cosy1 * cosx1 - cosy2 * cosx2;
+        v1[1] = cosy1 * sinx1 - cosy2 * sinx2;
+        v1[2] = siny1 - siny2;
+        double dist = Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+
+        return (int) (Math.asin(dist / 2) * 12742001.5798544);
+    }
 }

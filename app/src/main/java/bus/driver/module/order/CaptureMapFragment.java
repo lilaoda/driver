@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.amap.api.maps.model.LatLng;
 
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.module.AMapFragment;
 
@@ -20,7 +20,7 @@ public class CaptureMapFragment extends AMapFragment {
 
     public static CaptureMapFragment newInstance(OrderInfo orderInfo) {
         Bundle args = new Bundle();
-        args.putParcelable(GlobeConstants.ORDER_INFO, orderInfo);
+        args.putParcelable(Constants.ORDER_INFO, orderInfo);
         CaptureMapFragment fragment = new CaptureMapFragment();
         fragment.setArguments(args);
         return fragment;
@@ -30,7 +30,7 @@ public class CaptureMapFragment extends AMapFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
-        mOrderInfo = arguments.getParcelable(GlobeConstants.ORDER_INFO);
+        mOrderInfo = arguments.getParcelable(Constants.ORDER_INFO);
     }
 
     @Override

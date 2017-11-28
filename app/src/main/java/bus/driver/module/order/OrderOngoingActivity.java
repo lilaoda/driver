@@ -15,6 +15,8 @@ import com.amap.api.maps.model.Poi;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
+import com.amap.api.navi.INaviInfoCallback;
+import com.amap.api.navi.model.AMapNaviLocation;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,10 +27,11 @@ import java.util.concurrent.TimeUnit;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.DistanceEvent;
 import bus.driver.bean.event.LocationEvent;
+import bus.driver.bean.event.NaviStatus;
 import bus.driver.data.AMapManager;
 import bus.driver.data.HttpManager;
 import bus.driver.service.DriverService;
@@ -120,16 +123,16 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
         initToolbar("订单");
-        mHttpManager = HttpManager.instance();
-        mAMapManager = AMapManager.instance();
         initData();
         initView();
     }
 
     private void initData() {
+        mHttpManager = HttpManager.instance();
+        mAMapManager = AMapManager.instance();
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(GlobeConstants.ORDER_INFO)) {
-            mOrderInfo = intent.getParcelableExtra(GlobeConstants.ORDER_INFO);
+        if (intent != null && intent.hasExtra(Constants.ORDER_INFO)) {
+            mOrderInfo = intent.getParcelableExtra(Constants.ORDER_INFO);
         }
         if (mOrderInfo == null) {
             finish();
@@ -161,7 +164,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
         } else if (subStatus == 400) {
             //确认费用了未支付
             ToastUtils.showString("跳到支付页面");
-        } else if (subStatus / 500 == 1) {
+        } else if (subStatus == 500 || subStatus == 501) {
             //行程已结束已经付费
             llOver.setVisibility(View.VISIBLE);
             llStatus.setVisibility(View.GONE);
@@ -252,13 +255,12 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
      * 显示乘客等待时间
      */
     private void showWaitTime() {
-        if (TextUtils.isEmpty(mOrderInfo.getDistributeTime())) {
+        //等待时间以国国说的为准，从司机到达乘客位置开始算
+        if (TextUtils.isEmpty(mOrderInfo.getDriArrTime())) {
             //从抢单页进来，可能没有接单时间
-            mWaitTime = 0;
-        } else {
-            mWaitTime = (System.currentTimeMillis() - DateUtils.getCurrenTimestemp(mOrderInfo.getDistributeTime())) / 1000;
+            return;
         }
-
+        mWaitTime = (System.currentTimeMillis() - DateUtils.getCurrenTimestemp(mOrderInfo.getDriArrTime())) / 1000;
         mWaitTimeDisposable = Flowable.interval(1, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
                 .map(new Function<Long, String>() {
                     @Override
@@ -303,9 +305,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             case R.id.ib_reLocate:
                 break;
             case R.id.btn_navi:
-                AmapNaviParams amapNaviParams = new AmapNaviParams(new Poi("我的位置", new LatLng(DriverService.latitude, DriverService.longitude), null),
-                        null, new Poi("终点", new LatLng(mOrderInfo.getDestLat(), mOrderInfo.getDestLng()), null), AmapNaviType.DRIVER);
-                AmapNaviPage.getInstance().showRouteActivity(getContext(), amapNaviParams, null);
+                startNavi();
                 break;
             case R.id.btn_call:
                 break;
@@ -326,6 +326,62 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
                 confirmArrivePassengerAddress();
                 break;
         }
+    }
+
+    private void startNavi() {
+        AmapNaviParams amapNaviParams;
+        if (mCurrentStatus == STATUS_READY_ARRIVE_PASSENGER) {
+            amapNaviParams = new AmapNaviParams(new Poi("我的位置", new LatLng(DriverService.latitude, DriverService.longitude), null),
+                    null, new Poi("乘客位置", new LatLng(mOrderInfo.getOriginLat(), mOrderInfo.getOriginLng()), null), AmapNaviType.DRIVER);
+        } else {
+            amapNaviParams = new AmapNaviParams(new Poi("我的位置", new LatLng(DriverService.latitude, DriverService.longitude), null),
+                    null, new Poi("目的地", new LatLng(mOrderInfo.getDestLat(), mOrderInfo.getDestLng()), null), AmapNaviType.DRIVER);
+        }
+        AmapNaviPage.getInstance().showRouteActivity(getContext(), amapNaviParams, new INaviInfoCallback() {
+            NaviStatus event = new NaviStatus();
+
+            @Override
+            public void onInitNaviFailure() {
+
+            }
+
+            @Override
+            public void onGetNavigationText(String s) {
+
+            }
+
+            @Override
+            public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+
+            }
+
+            @Override
+            public void onArriveDestination(boolean b) {
+                event.setNaving(false);
+                EventBusUtls.notifyIsNaving(event);
+            }
+
+            @Override
+            public void onStartNavi(int i) {
+                event.setNaving(true);
+                EventBusUtls.notifyIsNaving(event);
+            }
+
+            @Override
+            public void onCalculateRouteSuccess(int[] ints) {
+
+            }
+
+            @Override
+            public void onCalculateRouteFailure(int i) {
+
+            }
+
+            @Override
+            public void onStopSpeaking() {
+
+            }
+        });
     }
 
     /**
@@ -396,7 +452,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
      */
     private void gotoConfirmExpensesActivity() {
         Intent intent = new Intent(this, ConfirmExpensesActivity.class);
-        intent.putExtra(GlobeConstants.ORDER_INFO, mOrderInfo);
+        intent.putExtra(Constants.ORDER_INFO, mOrderInfo);
         startActivity(intent);
     }
 

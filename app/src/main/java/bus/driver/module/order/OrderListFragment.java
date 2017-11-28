@@ -25,8 +25,9 @@ import java.util.List;
 import bus.driver.R;
 import bus.driver.adapter.OrderListAdapter;
 import bus.driver.base.BaseFragment;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
+import bus.driver.bean.PageParam;
 import bus.driver.data.HttpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +53,8 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
     Unbinder unbinder;
     private HttpManager mHttpManager;
     private OrderListAdapter mOrderAdapter;
+    private PageParam mPageParam;
+    private int mCurrentPage =1;
 
     public static OrderListFragment newInstance() {
         Bundle args = new Bundle();
@@ -73,7 +76,10 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
     }
 
     private void getOrderList() {
-        wrapHttp(mHttpManager.getDriverService().getOrderList()).
+        mPageParam = new PageParam();
+        mPageParam.setPageNo(1);
+        mPageParam.setPageSize(10);
+        wrapHttp(mHttpManager.getDriverService().getOrderList(mPageParam)).
                 compose(this.<List<OrderInfo>>bindToLifecycle())
                 .subscribe(new ResultObserver<List<OrderInfo>>() {
                     @Override
@@ -86,7 +92,7 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
     private void refreshAdapter(List<OrderInfo> value) {
         sort(value);
         mOrderAdapter.setNewData(value);
-        //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
+        mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
     }
 
     private void sort(List<OrderInfo> list) {
@@ -104,14 +110,19 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
         mOrderAdapter.setEmptyView(R.layout.empty_order, (ViewGroup) recyclerView.getParent());
         recyclerView.setAdapter(mOrderAdapter);
         mOrderAdapter.setOnItemClickListener(this);
-        //  mOrderAdapter.setOnLoadMoreListener(this, recyclerView);
+        mOrderAdapter.setOnLoadMoreListener(this, recyclerView);
         refreshLayout.setOnRefreshListener(this);
         //这句要想有效果必须放在监听器之后 要想不满屏时不能上拉加载，需要放在监听器之后 然后每次刷新数据都要再调用
-        //  mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
+        mOrderAdapter.disableLoadMoreIfNotFullPage(recyclerView);
     }
 
     private void refresh(final boolean isLoadMore) {
-        wrapHttp(mHttpManager.getDriverService().getOrderList())
+        if (isLoadMore){
+            mPageParam.setPageNo(mCurrentPage+1);
+        }else {
+            mPageParam.setPageNo(1);
+        }
+        wrapHttp(mHttpManager.getDriverService().getOrderList(mPageParam))
                 .compose(this.<List<OrderInfo>>bindToLifecycle())
                 .subscribe(new ResultObserver<List<OrderInfo>>(true) {
                     @Override
@@ -120,6 +131,7 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
                             if (value == null || value.size() == 0) {
                                 mOrderAdapter.loadMoreEnd();
                             } else {
+                                mCurrentPage++;
                                 mOrderAdapter.addData(value);
                                 mOrderAdapter.loadMoreComplete();
                             }
@@ -152,26 +164,26 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
 
     @Override
     public void onLoadMoreRequested() {
-        //  refresh(true);
+          refresh(true);
     }
 
     @Override
     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
         OrderInfo orderInfo = mOrderAdapter.getData().get(position);
-        if (orderInfo.getSubStatus() == 301 ) {
+        if (orderInfo.getSubStatus() == 301) {
             //到达目的地未确认费用
             toActivity(orderInfo, ConfirmExpensesActivity.class);
-        } else if(orderInfo.getSubStatus() == 400){
+        } else if (orderInfo.getSubStatus() == 400) {
             //确认费用了未支付
             ToastUtils.showString("去支付");
-        }else {
+        } else {
             toActivity(orderInfo, OrderOngoingActivity.class);
         }
     }
 
     private void toActivity(OrderInfo orderInfo, Class cls) {
         Intent intent = new Intent(getActivity(), cls);
-        intent.putExtra(GlobeConstants.ORDER_INFO, orderInfo);
+        intent.putExtra(Constants.ORDER_INFO, orderInfo);
         startActivity(intent);
     }
 

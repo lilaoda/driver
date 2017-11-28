@@ -13,7 +13,7 @@ import com.amap.api.navi.model.AMapNaviLocation;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.service.DriverService;
 import bus.driver.utils.navi.AmapTTSController;
@@ -33,7 +33,7 @@ public class NaviActivity extends BaseActivity implements INaviInfoCallback {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navi);
-        OrderInfo orderInfo = getIntent().getParcelableExtra(GlobeConstants.ORDER_INFO);
+        OrderInfo orderInfo = getIntent().getParcelableExtra(Constants.ORDER_INFO);
 
         amapTTSController = AmapTTSController.getInstance(getApplicationContext());
         //TODO 空指针

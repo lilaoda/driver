@@ -12,10 +12,11 @@ public class DateUtils {
 
     /**
      * 得到系统当前时间：时间格式 2016-08-15 12：00：00
+     *
      * @return
      */
     public static String getCurrentTime() {
-        return  new SimpleDateFormat(dateFormat,Locale.CHINA).format(new Date());
+        return new SimpleDateFormat(dateFormat, Locale.CHINA).format(new Date());
     }
 
     public static long getCurrenTimestemp() {
@@ -24,6 +25,7 @@ public class DateUtils {
 
     /**
      * 时间格式 2016-08-15 12：00：00
+     *
      * @return
      */
     public static long getCurrenTimestemp(String time) {
@@ -39,17 +41,28 @@ public class DateUtils {
 
     /**
      * 根据得到系统当前时间：时间格式 2016-08-15 12：00：00
+     *
      * @return
      */
-    public static String getCurrentTime(Long timestemp){
-        return  new SimpleDateFormat(dateFormat,Locale.CHINA).format(new Date(timestemp));
+    public static String getCurrentTime(Long timestemp) {
+        return new SimpleDateFormat(dateFormat, Locale.CHINA).format(new Date(timestemp));
+    }
+
+    /**
+     * 根据得到系统当前时间：时间格式 2016-08-15 12：00：00
+     *
+     * @return
+     */
+    public static String getCurrentTime(Date date) {
+        return new SimpleDateFormat(dateFormat, Locale.CHINA).format(date);
     }
 
 
-    public static String getDate(String dateFormat){
+    public static String getDate(String dateFormat) {
         return new SimpleDateFormat(dateFormat, Locale.CHINA).format(new Date());
     }
-    public static String getWeek(){
+
+    public static String getWeek() {
         return new SimpleDateFormat("EEEE", Locale.CHINA).format(new Date());
     }
 }

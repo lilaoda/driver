@@ -13,7 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
@@ -80,8 +80,8 @@ public class ConfirmExpensesActivity extends BaseActivity {
 
     private void initData() {
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(GlobeConstants.ORDER_INFO)) {
-            mOrderInfo = intent.getParcelableExtra(GlobeConstants.ORDER_INFO);
+        if (intent != null && intent.hasExtra(Constants.ORDER_INFO)) {
+            mOrderInfo = intent.getParcelableExtra(Constants.ORDER_INFO);
         }
         if (mOrderInfo == null) {
             finish();
@@ -104,7 +104,7 @@ public class ConfirmExpensesActivity extends BaseActivity {
                     public void onSuccess(String value) {
                         btnExpenses.setText(value);
                         btnExpenses.setEnabled(false);
-                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_NO;
+                        Constants.ORDER_STATSU = Constants.ORDER_STATSU_NO;
                         EventBusUtls.notifyOrderChanged(mOrderInfo);
                         //开启循环拉取订单
                         EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);

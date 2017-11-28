@@ -16,13 +16,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.TimeUnit;
 
 import bus.driver.R;
 import bus.driver.base.BaseFragment;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.event.LocationEvent;
+import bus.driver.bean.event.NaviStatus;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import bus.driver.data.SpManager;
@@ -210,13 +213,13 @@ public class MainFragment extends BaseFragment {
 
     private void reSetView() {
         if (mCurrentStatus == STATUS_WORK) {
-            GlobeConstants.DRIVER_STATSU = GlobeConstants.DRIVER_STATSU_WORK;
+            Constants.DRIVER_STATSU = Constants.DRIVER_STATSU_WORK;
             imgIndicate.setVisibility(View.VISIBLE);
             btnGoCar.setText("收车");
             setOrderServiceEnable(true);
             startAnim();
         } else {
-            GlobeConstants.DRIVER_STATSU = GlobeConstants.DRIVER_STATSU_REST;
+            Constants.DRIVER_STATSU = Constants.DRIVER_STATSU_REST;
             imgIndicate.setVisibility(View.GONE);
             setOrderServiceEnable(false);
             btnGoCar.setText("出车");
@@ -273,5 +276,18 @@ public class MainFragment extends BaseFragment {
 
     public int getCurrentCarStatus() {
         return mCurrentStatus;
+    }
+
+    /**
+     * 如果司机正在导航，不能进行收车
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(NaviStatus event) {
+        if (event.isNaving()) {
+            btnGoCar.setEnabled(false);
+        } else {
+            btnGoCar.setEnabled(true);
+        }
     }
 }

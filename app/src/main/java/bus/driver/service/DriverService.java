@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import bus.driver.R;
 import bus.driver.base.BaseApplication;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.GpsPoint;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.DistanceEvent;
@@ -52,6 +51,7 @@ import io.reactivex.functions.Consumer;
 import lhy.lhylibrary.base.LhyActivity;
 import lhy.lhylibrary.base.LhyApplication;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.service.AliveService;
 import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapAsync;
@@ -65,7 +65,7 @@ import static lhy.lhylibrary.base.LhyApplication.getContext;
  * 第一次开启服务时自动定位一次就关闭，以后再通过事件开启定时，会一直定位，直到调用关闭定位才会停止定位
  */
 
-public class DriverService extends Service implements AMapLocationListener {
+public class DriverService extends AliveService implements AMapLocationListener {
 
     public static final String TAG = "LocationService";
     /**
@@ -91,6 +91,12 @@ public class DriverService extends Service implements AMapLocationListener {
     private static double distanceLocation = 0;
 
     /**
+     * 高德图层计算距离方式
+     */
+    private static double distanceLocationGao = 0;
+    private static double distanceLocationLine = 0;
+
+    /**
      * 修复的里程 单位 米
      */
     private static double distanceRepair = 0;
@@ -111,10 +117,7 @@ public class DriverService extends Service implements AMapLocationListener {
      */
     public static double SPEED_LOW_LIMIT = 1.0;
 
-    /**
-     * 只获取一次定位就关闭定位，为了地图在初始化时以定位点开始,或者不在连接定位状态下的刷新定位时使用
-     */
-    private boolean isOnceLocation = false;
+
     /**
      * 是否需要定位结果，其它页面在刷新定位时使用
      */
@@ -145,6 +148,7 @@ public class DriverService extends Service implements AMapLocationListener {
     @Override
     public void onCreate() {
         super.onCreate();
+       // startForeground();
         EventBus.getDefault().register(this);
         mHttpManager = HttpManager.instance();
         mDriverService = mHttpManager.getDriverService();
@@ -186,18 +190,13 @@ public class DriverService extends Service implements AMapLocationListener {
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
-            Log.i(TAG, "onLocationChanged: "+aMapLocation.toStr());
+            Log.i("定位service", "onLocationChanged: " + aMapLocation.toStr());
             if (aMapLocation.getErrorCode() == 0) {
                 longitude = aMapLocation.getLongitude();
                 latitude = aMapLocation.getLatitude();
 
-                if (isOnceLocation) {
-                    isOnceLocation = false;
-                    mlocationClient.stopLocation();
-                }
-
                 //如果处于工作状态，或者在测算实时距离，就上传定位
-                if (GlobeConstants.DRIVER_STATSU == GlobeConstants.DRIVER_STATSU_WORK || isCaculateDistance) {
+                if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK || isCaculateDistance) {
                     uploadLocation(latitude, longitude);
                 }
 
@@ -230,6 +229,8 @@ public class DriverService extends Service implements AMapLocationListener {
         lastGpsPoint = null;
         locationNumber = 0;
         distanceLocation = 0.0;
+//        distanceLocationGao = 0.0;
+//        distanceLocationLine = 0.0;
     }
 
     private GpsPoint startGpsPoint = null;
@@ -251,12 +252,14 @@ public class DriverService extends Service implements AMapLocationListener {
             if (lastGpsPoint.getSpeed() > SPEED_LOW_LIMIT) {
                 locationNumber++;
                 distanceLocation += distance_guo(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
+//                distanceLocationGao += calculateDistanceGao(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
+//                distanceLocationLine += AMapUtils.calculateLineDistance(new LatLng(startGpsPoint.getLat(), startGpsPoint.getLng()), new LatLng(lastGpsPoint.getLat(), lastGpsPoint.getLng()));
             }
             convertToGpsPoint(startGpsPoint, aMapLocation);
-            Log.i(TAG, "caculateDistance: " + distanceLocation);
             if (mDistanceEvent == null) {
                 mDistanceEvent = new DistanceEvent();
             }
+//            Log.e(TAG, "caculateDistance: " + distanceLocation + "图层：" + distanceLocationGao + "直线:" + distanceLocationLine);
             mDistanceEvent.setLoacationDistance(distanceLocation);
             mDistanceEvent.setLocationNumber(locationNumber);
             EventBusUtls.notifyDistanceResult(mDistanceEvent);
@@ -302,10 +305,6 @@ public class DriverService extends Service implements AMapLocationListener {
                 break;
             case LOCATION_UNABLE:
                 mlocationClient.stopLocation();
-                break;
-            case LOCATION_ONCE:
-                isOnceLocation = true;
-                mlocationClient.startLocation();
                 break;
             case LOCATION_REFRESH:
                 isNeedResult = true;
@@ -358,6 +357,29 @@ public class DriverService extends Service implements AMapLocationListener {
     //将弧度转换为角度
     static double rad2deg(double radian) {
         return radian * 180 / Math.PI;
+    }
+
+    public static int calculateDistanceGao(double x1, double y1, double x2, double y2) {
+        final double NF_pi = 0.01745329251994329; // 弧度 PI/180
+        x1 *= NF_pi;
+        y1 *= NF_pi;
+        x2 *= NF_pi;
+        y2 *= NF_pi;
+        double sinx1 = Math.sin(x1);
+        double siny1 = Math.sin(y1);
+        double cosx1 = Math.cos(x1);
+        double cosy1 = Math.cos(y1);
+        double sinx2 = Math.sin(x2);
+        double siny2 = Math.sin(y2);
+        double cosx2 = Math.cos(x2);
+        double cosy2 = Math.cos(y2);
+        double[] v1 = new double[3];
+        v1[0] = cosy1 * cosx1 - cosy2 * cosx2;
+        v1[1] = cosy1 * sinx1 - cosy2 * sinx2;
+        v1[2] = siny1 - siny2;
+        double dist = Math.sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+
+        return (int) (Math.asin(dist / 2) * 12742001.5798544);
     }
 
 
@@ -446,7 +468,7 @@ public class DriverService extends Service implements AMapLocationListener {
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(@NonNull Long aLong) throws Exception {
-                        if (GlobeConstants.DRIVER_STATSU == GlobeConstants.DRIVER_STATSU_WORK) {
+                        if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK) {
                             pullOrder();
                         }
                     }
@@ -466,13 +488,13 @@ public class DriverService extends Service implements AMapLocationListener {
 
     private void checkNotify(List<OrderInfo> value) {
         LhyActivity currentActivity = BaseApplication.getInstance().getCurrentActivity();
-        if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_ONDOING || GlobeConstants.DRIVER_STATSU == GlobeConstants.DRIVER_STATSU_REST) {
+        if (Constants.ORDER_STATSU == Constants.ORDER_STATSU_ONDOING || Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_REST) {
             return;
         }
         if (isBackground() || currentActivity == null || !currentActivity.isResume()) {
             notifyOrder(value.get(0));
         } else {
-            if (GlobeConstants.ORDER_STATSU == GlobeConstants.ORDER_STATSU_NO) {
+            if (Constants.ORDER_STATSU == Constants.ORDER_STATSU_NO) {
                 if (mOrderDialog != null && mOrderDialog.isShowing() || currentActivity instanceof CaptureOrderActivity)
                     return;
                 showOrderDialog(currentActivity, value.get(0));
@@ -491,7 +513,7 @@ public class DriverService extends Service implements AMapLocationListener {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(currentActivity, CaptureOrderActivity.class);
-                        intent.putExtra(GlobeConstants.ORDER_INFO, orderInfo);
+                        intent.putExtra(Constants.ORDER_INFO, orderInfo);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
@@ -525,7 +547,7 @@ public class DriverService extends Service implements AMapLocationListener {
 
     private void notifyOrder(OrderInfo orderInfo) {
         Intent intent = new Intent(this, CaptureOrderActivity.class);
-        intent.putExtra(GlobeConstants.ORDER_INFO, orderInfo);
+        intent.putExtra(Constants.ORDER_INFO, orderInfo);
         Notification notification = mNotifyBuilder.setContentIntent(PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .build();
         notification.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;

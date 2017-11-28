@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,8 +42,8 @@ public class CaptureOrderActivity extends BaseActivity {
 
     private void initData() {
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(GlobeConstants.ORDER_INFO)) {
-            mOrderInfo = intent.getParcelableExtra(GlobeConstants.ORDER_INFO);
+        if (intent != null && intent.hasExtra(Constants.ORDER_INFO)) {
+            mOrderInfo = intent.getParcelableExtra(Constants.ORDER_INFO);
             if (mOrderInfo == null) {
                 finish();
             }

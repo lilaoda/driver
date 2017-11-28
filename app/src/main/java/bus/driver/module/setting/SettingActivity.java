@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseApplication;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.data.DbManager;
 import bus.driver.module.login.LoginActivity;
 import butterknife.BindView;
@@ -114,8 +114,8 @@ public class SettingActivity extends BaseActivity {
      */
     private void doCleanCache() {
         GlideCacheUtils.getInstance().clearAllImgCache(this);
-        FileUtils.deleteFolderFile(FileUtils.getExtraCacheFile(this, GlobeConstants.CACHE_FILE_NAME).getAbsolutePath(), false);
-        FileUtils.deleteFolderFile(FileUtils.getInternalCacheFile(this, GlobeConstants.CACHE_FILE_NAME).getAbsolutePath(), false);
+        FileUtils.deleteFolderFile(FileUtils.getExtraCacheFile(this, Constants.CACHE_FILE_NAME).getAbsolutePath(), false);
+        FileUtils.deleteFolderFile(FileUtils.getInternalCacheFile(this, Constants.CACHE_FILE_NAME).getAbsolutePath(), false);
     }
 
     /**
@@ -124,8 +124,8 @@ public class SettingActivity extends BaseActivity {
      * @return
      */
     private long getCacheSize() {
-        return FileUtils.getFolderSize(FileUtils.getInternalCacheFile(this, GlobeConstants.CACHE_FILE_NAME)) +
-                FileUtils.getFolderSize(FileUtils.getExtraCacheFile(this, GlobeConstants.CACHE_FILE_NAME)) +
+        return FileUtils.getFolderSize(FileUtils.getInternalCacheFile(this, Constants.CACHE_FILE_NAME)) +
+                FileUtils.getFolderSize(FileUtils.getExtraCacheFile(this, Constants.CACHE_FILE_NAME)) +
                 GlideCacheUtils.getInstance().getGlideCacheSize(this);
     }
 

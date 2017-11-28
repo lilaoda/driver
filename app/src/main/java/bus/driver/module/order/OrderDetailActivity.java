@@ -12,7 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
-import bus.driver.base.GlobeConstants;
+import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
@@ -55,8 +55,8 @@ public class OrderDetailActivity extends BaseActivity {
     private void initData() {
         mHttpManager = HttpManager.instance();
         Intent intent = getIntent();
-        if (intent != null && intent.hasExtra(GlobeConstants.ORDER_INFO)) {
-            mOrderInfo = intent.getParcelableExtra(GlobeConstants.ORDER_INFO);
+        if (intent != null && intent.hasExtra(Constants.ORDER_INFO)) {
+            mOrderInfo = intent.getParcelableExtra(Constants.ORDER_INFO);
         }
     }
 
@@ -83,7 +83,7 @@ public class OrderDetailActivity extends BaseActivity {
                     public void onSuccess(String value) {
                         btnExpenses.setText(value);
                         btnExpenses.setEnabled(false);
-                        GlobeConstants.ORDER_STATSU = GlobeConstants.ORDER_STATSU_NO;
+                        Constants.ORDER_STATSU = Constants.ORDER_STATSU_NO;
                         EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
                         EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
                     }

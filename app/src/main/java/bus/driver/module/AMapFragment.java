@@ -76,7 +76,7 @@ public class AMapFragment extends LhyFragment implements AMap.OnPOIClickListener
     /**
      * 定位时间间隔，mS
      */
-    public static final int INTERVAL_LOCAITON = 2000;
+    public static final int INTERVAL_LOCAITON = 3000;
 
     private TextureMapView mapView;
     private Marker mGrowMarker;

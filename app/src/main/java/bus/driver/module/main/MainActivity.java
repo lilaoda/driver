@@ -1,6 +1,7 @@
 package bus.driver.module.main;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,12 +10,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import bus.driver.R;
@@ -59,6 +63,15 @@ public class MainActivity extends BaseActivity {
         DriverService.start(this);
         initToolbar();
         initView();
+        long l = Runtime.getRuntime().maxMemory();
+        Log.e("meo", "onCreate: "+l );
+        HashMap<String, String> stringStringHashMap = new HashMap<>();
+        LruCache<String, Bitmap> lruCache = new LruCache<String,Bitmap>(1024*1024){
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
+            }
+        };
     }
 
 

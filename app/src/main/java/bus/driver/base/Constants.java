@@ -1,7 +1,7 @@
 package bus.driver.base;
 
 
-public class GlobeConstants {
+public class Constants {
 
     public static final int STATUSBAR_ALPHA = 30;
 

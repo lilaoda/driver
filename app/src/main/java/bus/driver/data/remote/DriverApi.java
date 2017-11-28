@@ -6,6 +6,7 @@ import java.util.Map;
 import bus.driver.bean.City;
 import bus.driver.bean.DriverInfo;
 import bus.driver.bean.OrderInfo;
+import bus.driver.bean.PageParam;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
@@ -76,7 +77,7 @@ public interface DriverApi {
 
     //获取订单列表
     @POST("driver/getOrderList")
-    Observable<HttpResult<List<OrderInfo>>> getOrderList();
+    Observable<HttpResult<List<OrderInfo>>> getOrderList(@Body PageParam pageParam);
 
     // 司机退出登陆接口
     @POST("driver/user/logout")
