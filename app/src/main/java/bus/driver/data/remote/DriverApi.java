@@ -73,7 +73,7 @@ public interface DriverApi {
     //确认费用
     @POST("driver/order/confirmExpenses")
     @FormUrlEncoded
-    Observable<HttpResult<String>> confirmExpenses(@Field("order_uuid") String order_uuid);
+    Observable<HttpResult<String>> confirmExpenses(@FieldMap Map<String,String> map );
 
     //获取订单列表
     @POST("driver/getOrderList")
@@ -116,5 +116,10 @@ public interface DriverApi {
     @POST("driver/order/info")
     @FormUrlEncoded
     Observable<HttpResult<OrderInfo>> getOrderDetail(@Field("order_uuid") String orderUuid);
+
+    //查询司机是否有正在行程中的订单接口
+    @POST("driver/order/checkOrder")
+    @FormUrlEncoded
+    Observable<HttpResult<OrderInfo>> checkOrder();
 
 }

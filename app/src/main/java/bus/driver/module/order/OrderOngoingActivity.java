@@ -15,8 +15,6 @@ import com.amap.api.maps.model.Poi;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
-import com.amap.api.navi.INaviInfoCallback;
-import com.amap.api.navi.model.AMapNaviLocation;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,11 +29,11 @@ import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.DistanceEvent;
 import bus.driver.bean.event.LocationEvent;
-import bus.driver.bean.event.NaviStatus;
 import bus.driver.data.AMapManager;
 import bus.driver.data.HttpManager;
 import bus.driver.service.DriverService;
 import bus.driver.utils.EventBusUtls;
+import bus.driver.utils.overlay.AMapUtil;
 import bus.driver.widget.ConfirmExpensesDialog;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +51,6 @@ import lhy.lhylibrary.utils.StatusBarUtil;
 import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
-import static lhy.lhylibrary.base.LhyApplication.getContext;
 
 /**
  * Created by Lilaoda on 2017/9/29.
@@ -115,6 +112,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
     private Disposable mWaitTimeDisposable;
     private Disposable mGoingTimeDisposable;
     private ConfirmExpensesDialog mConfirmExpensesDialog;
+    private LocationEvent mCaculateLocationEvent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,9 +142,8 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
 
     private void initView() {
         textTarget.setText(mOrderInfo.getDestAddress());
-//        textPassengerInfo.setText(mOrderInfo.getActualPasNam() + ": " + mOrderInfo.getActualPasMob());
-        //TODO Test
-        textPassengerInfo.setText("高圆圆" + "\n" + "尾号9152");
+        String name = TextUtils.isEmpty(mOrderInfo.getActualPasNam()) ? "乘客" : mOrderInfo.getActualPasNam();
+        textPassengerInfo.setText(name + ": " + mOrderInfo.getActualPasMob());
 
         int subStatus = mOrderInfo.getSubStatus();
         if (subStatus < 220) {
@@ -199,12 +196,27 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             setToolbarTitle("等待乘客上车");
         } else if (mCurrentStatus == STATUS_ON_GOING) {
             //开始实时计算距离
-            EventBusUtls.notifyLocation(LocationEvent.LOCATION_DISTANCE_START);
+            beginCaculateDistance();
             setToolbarTitle("正在行程中");
             textDistance.setText("加载中...");
         } else if (mCurrentStatus == STATUS_READY_PAY) {
             setToolbarTitle("费用详情");
         }
+    }
+
+    private void beginCaculateDistance() {
+        if (mCaculateLocationEvent == null) {
+            mCaculateLocationEvent = LocationEvent.LOCATION_DISTANCE_START;
+        }
+        mCaculateLocationEvent.setOrderUuid(mOrderInfo.getOrderUuid());
+        if (!TextUtils.isEmpty(mOrderInfo.getTripDistance()) && mOrderInfo.getLastLat() > 0 && mOrderInfo.getLastLng() > 0) {
+            LatLng lastLatLng = new LatLng(mOrderInfo.getOriginLat(), mOrderInfo.getOriginLng());
+            mCaculateLocationEvent.setLastLatLng(lastLatLng);
+            mCaculateLocationEvent.setTripDistance(mOrderInfo.getTripDistance());
+        } else {
+            mCaculateLocationEvent.setLastLatLng(null);
+        }
+        EventBusUtls.notifyLocation(mCaculateLocationEvent);
     }
 
     private void setToolbarTitle(String title) {
@@ -337,51 +349,52 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
             amapNaviParams = new AmapNaviParams(new Poi("我的位置", new LatLng(DriverService.latitude, DriverService.longitude), null),
                     null, new Poi("目的地", new LatLng(mOrderInfo.getDestLat(), mOrderInfo.getDestLng()), null), AmapNaviType.DRIVER);
         }
-        AmapNaviPage.getInstance().showRouteActivity(getContext(), amapNaviParams, new INaviInfoCallback() {
-            NaviStatus event = new NaviStatus();
-
-            @Override
-            public void onInitNaviFailure() {
-
-            }
-
-            @Override
-            public void onGetNavigationText(String s) {
-
-            }
-
-            @Override
-            public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
-
-            }
-
-            @Override
-            public void onArriveDestination(boolean b) {
-                event.setNaving(false);
-                EventBusUtls.notifyIsNaving(event);
-            }
-
-            @Override
-            public void onStartNavi(int i) {
-                event.setNaving(true);
-                EventBusUtls.notifyIsNaving(event);
-            }
-
-            @Override
-            public void onCalculateRouteSuccess(int[] ints) {
-
-            }
-
-            @Override
-            public void onCalculateRouteFailure(int i) {
-
-            }
-
-            @Override
-            public void onStopSpeaking() {
-
-            }
-        });
+        AmapNaviPage.getInstance().showRouteActivity(getApplication(), amapNaviParams, null);
+//        AmapNaviPage.getInstance().showRouteActivity(getContext(), amapNaviParams, new INaviInfoCallback() {
+//            NaviStatus event = new NaviStatus();
+//
+//            @Override
+//            public void onInitNaviFailure() {
+//
+//            }
+//
+//            @Override
+//            public void onGetNavigationText(String s) {
+//
+//            }
+//
+//            @Override
+//            public void onLocationChange(AMapNaviLocation aMapNaviLocation) {
+//
+//            }
+//
+//            @Override
+//            public void onArriveDestination(boolean b) {
+//                event.setNaving(false);
+//                EventBusUtls.notifyIsNaving(event);
+//            }
+//
+//            @Override
+//            public void onStartNavi(int i) {
+//                event.setNaving(true);
+//                EventBusUtls.notifyIsNaving(event);
+//            }
+//
+//            @Override
+//            public void onCalculateRouteSuccess(int[] ints) {
+//
+//            }
+//
+//            @Override
+//            public void onCalculateRouteFailure(int i) {
+//
+//            }
+//
+//            @Override
+//            public void onStopSpeaking() {
+//
+//            }
+//        });
     }
 
     /**
@@ -407,8 +420,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDistanceEvent(DistanceEvent event) {
-        //TODO 实时更新距离 需位置修复
-        textDistance.setText((int) event.getLoacationDistance() + "米");
+        textDistance.setText(AMapUtil.getFriendlyLength((int) (event.getLoacationDistance() + 0.5)));
     }
 
     /**

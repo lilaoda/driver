@@ -19,6 +19,8 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.model.LatLng;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -75,7 +77,7 @@ public class DriverService extends AliveService implements AMapLocationListener 
     /**
      * 定位时间间隔
      */
-    private final static int LOCATION_TIME_INTERVAL = 5000;
+    private final static int LOCATION_TIME_INTERVAL = 10000;
     /**
      * 第一次启动定位的标记 第一次启动后获取定位结果会立即关闭
      */
@@ -117,7 +119,6 @@ public class DriverService extends AliveService implements AMapLocationListener 
      */
     public static double SPEED_LOW_LIMIT = 1.0;
 
-
     /**
      * 是否需要定位结果，其它页面在刷新定位时使用
      */
@@ -127,6 +128,8 @@ public class DriverService extends AliveService implements AMapLocationListener 
      * 是否实时测算距离
      */
     private boolean isCaculateDistance;
+    private String mOrderUuid = "";
+    private HashMap<String, String> mLocationUploadMap;
 
     private AlertDialog mOrderDialog;
     private NotificationCompat.Builder mNotifyBuilder;
@@ -134,21 +137,27 @@ public class DriverService extends AliveService implements AMapLocationListener 
     private HttpManager mHttpManager;
     private Disposable mOrderDisposable;
     private Disposable mCancelOrderDisposable;
-
     private AMapLocationClient mlocationClient;
     private DriverApi mDriverService;
     private DistanceEvent mDistanceEvent;
 
+    private LatLng mLastLatLng;
+    //开始测算距离时第一次定位的地点
+    private LatLng mFirstLatlng;
+    /**
+     * 已行驶里程
+     */
+    private double mTripDistance;
 
-    public static void start(Context context) {
+
+    public static void start(Activity context) {
         context.startService(new Intent(context, DriverService.class));
     }
-
 
     @Override
     public void onCreate() {
         super.onCreate();
-       // startForeground();
+        // startForeground();
         EventBus.getDefault().register(this);
         mHttpManager = HttpManager.instance();
         mDriverService = mHttpManager.getDriverService();
@@ -169,9 +178,9 @@ public class DriverService extends AliveService implements AMapLocationListener 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (mlocationClient != null) {
-            mlocationClient.startLocation();
-        }
+//        if (mlocationClient != null) {
+//            mlocationClient.startLocation();
+//        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -195,11 +204,6 @@ public class DriverService extends AliveService implements AMapLocationListener 
                 longitude = aMapLocation.getLongitude();
                 latitude = aMapLocation.getLatitude();
 
-                //如果处于工作状态，或者在测算实时距离，就上传定位
-                if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK || isCaculateDistance) {
-                    uploadLocation(latitude, longitude);
-                }
-
                 //在有地图的页面，点击刷新定位时，获取结果
                 if (isNeedResult) {
                     EventBusUtls.notifyLocationResult(new LocationResultEvent(true));
@@ -208,8 +212,19 @@ public class DriverService extends AliveService implements AMapLocationListener 
 
                 //如果需要，测算距离
                 if (isCaculateDistance) {
+                    //第一次定位结束后才修复距离，等于已行驶距离+修复的距离
+                    if (mFirstLatlng == null) {
+                        mFirstLatlng = new LatLng(latitude, longitude);
+                        mTripDistance += caculateRepairDistance();
+                    }
                     caculateDistance(aMapLocation);
                 }
+
+                //如果处于工作状态，或者在测算实时距离，就上传定位
+                if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK || isCaculateDistance) {
+                    uploadLocation(latitude, longitude);
+                }
+
             } else {
 
                 if (isNeedResult) {
@@ -251,7 +266,8 @@ public class DriverService extends AliveService implements AMapLocationListener 
             convertToGpsPoint(lastGpsPoint, aMapLocation);
             if (lastGpsPoint.getSpeed() > SPEED_LOW_LIMIT) {
                 locationNumber++;
-                distanceLocation += distance_guo(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
+                distanceLocation = distance_guo(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
+                mTripDistance += distanceLocation;
 //                distanceLocationGao += calculateDistanceGao(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
 //                distanceLocationLine += AMapUtils.calculateLineDistance(new LatLng(startGpsPoint.getLat(), startGpsPoint.getLng()), new LatLng(lastGpsPoint.getLat(), lastGpsPoint.getLng()));
             }
@@ -260,7 +276,7 @@ public class DriverService extends AliveService implements AMapLocationListener 
                 mDistanceEvent = new DistanceEvent();
             }
 //            Log.e(TAG, "caculateDistance: " + distanceLocation + "图层：" + distanceLocationGao + "直线:" + distanceLocationLine);
-            mDistanceEvent.setLoacationDistance(distanceLocation);
+            mDistanceEvent.setLoacationDistance(mTripDistance);
             mDistanceEvent.setLocationNumber(locationNumber);
             EventBusUtls.notifyDistanceResult(mDistanceEvent);
         }
@@ -285,11 +301,15 @@ public class DriverService extends AliveService implements AMapLocationListener 
      * @param longitude 纬 度
      */
     private void uploadLocation(double latitude, double longitude) {
-        HashMap<String, String> argsMap = new HashMap<>(3);
-        argsMap.put("lat", String.valueOf(latitude));
-        argsMap.put("lng", String.valueOf(longitude));
-        argsMap.put("mapType", "0");
-        wrapAsync(mDriverService.uploadLocation(argsMap)).subscribe(new ResultObserver<HttpResult<String>>() {
+        if (mLocationUploadMap == null) {
+            mLocationUploadMap = new HashMap<>(3);
+        }
+        mLocationUploadMap.put("lat", String.valueOf(latitude));
+        mLocationUploadMap.put("lng", String.valueOf(longitude));
+        mLocationUploadMap.put("mapType", "0");
+        mLocationUploadMap.put("tripDistance", mTripDistance + "");
+        mLocationUploadMap.put("orderUuid", mOrderUuid);
+        wrapAsync(mDriverService.uploadLocation(mLocationUploadMap)).subscribe(new ResultObserver<HttpResult<String>>() {
             @Override
             public void onSuccess(HttpResult<String> value) {
 
@@ -314,13 +334,26 @@ public class DriverService extends AliveService implements AMapLocationListener 
                 Log.i(TAG, "onMessageEvent: LOCATION_DISTANCE_START");
                 //测算司机实时距离
                 clearDistanceData();
+                mOrderUuid = event.getOrderUuid();
+                mLastLatLng = event.getLastLatLng();
+                mTripDistance = event.getTripDistance() == null ? 0.0 : Double.valueOf(event.getTripDistance());
                 isCaculateDistance = true;
                 mlocationClient.startLocation();
                 break;
             case LOCATION_DISTANCE_STOP:
+                mOrderUuid = "";
+                mLastLatLng = null;
+                mFirstLatlng = null;
+                mTripDistance = 0.0;
                 isCaculateDistance = false;
                 break;
         }
+    }
+
+    //TODO 修复里程，需确认已经定位成功过一次
+    //待国国提供，先算直线距离
+    private double caculateRepairDistance() {
+        return AMapUtils.calculateLineDistance(mLastLatLng, mFirstLatlng);
     }
 
     /**

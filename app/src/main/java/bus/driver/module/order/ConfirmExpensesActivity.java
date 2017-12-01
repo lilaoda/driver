@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
+import java.util.HashMap;
 
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
@@ -22,6 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.utils.CommonUtils;
+import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
 
@@ -97,7 +100,18 @@ public class ConfirmExpensesActivity extends BaseActivity {
      * 确认费用
      */
     private void confirmExpenses() {
-        wrapHttp(mHttpManager.getDriverService().confirmExpenses(mOrderInfo.getOrderUuid()))
+        if (TextUtils.isEmpty(CommonUtils.getString(moneyHighSpeed))
+                || TextUtils.isEmpty(CommonUtils.getString(moneyPark))
+                || TextUtils.isEmpty(CommonUtils.getString(moneyOther))) {
+            ToastUtils.showString("请填写相关费用");
+            return;
+        }
+        HashMap<String, String> paramMap = new HashMap<>();
+        paramMap.put("order_uuid", mOrderInfo.getOrderUuid());
+        paramMap.put("high_peed_fare", CommonUtils.getString(moneyHighSpeed));
+        paramMap.put("parking_fare", CommonUtils.getString(moneyPark));
+        paramMap.put("other_fare", CommonUtils.getString(moneyOther));
+        wrapHttp(mHttpManager.getDriverService().confirmExpenses(paramMap))
                 .compose(this.<String>bindToLifecycle())
                 .subscribe(new ResultObserver<String>(this, "确认费用...", true) {
                     @Override
@@ -107,11 +121,10 @@ public class ConfirmExpensesActivity extends BaseActivity {
                         Constants.ORDER_STATSU = Constants.ORDER_STATSU_NO;
                         EventBusUtls.notifyOrderChanged(mOrderInfo);
                         //开启循环拉取订单
-                        EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
+                        EventBusUtls.notifyPullOrder(OrderEvent.ORDER_PULL_ENABLE);
                         //关闭循环拉取订单是否被取消
-                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
+                        EventBusUtls.notifyPullOrder(OrderEvent.ORDER_GET_CANCEL_UNABLE);
                     }
                 });
     }
-
 }

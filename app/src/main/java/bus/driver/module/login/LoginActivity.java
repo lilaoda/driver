@@ -1,5 +1,6 @@
 package bus.driver.module.login;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -83,8 +84,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 finish();
                 break;
             case R.id.btn_login:
+//                showUpdateDialog();
                 if (checkData()) {
-//                    startActivity(new Intent(this,MainActivity.class));
                     User user = mDbManager.getUser();
                     if (user != null) {
                         user.setToken("");
@@ -176,7 +177,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         return true;
     }
 
-
     private boolean checkMobile(String phone) {
         if (phone.isEmpty()) {
             ToastUtils.showString(getString(R.string.please_input_phone));
@@ -187,6 +187,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             return false;
         }
         return true;
+    }
+
+    private void showUpdateDialog() {
+        ProgressDialog progressDialog = new ProgressDialog(this, ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
     }
 
 }

@@ -1,5 +1,7 @@
 package bus.driver.bean.event;
 
+import com.amap.api.maps.model.LatLng;
+
 /**
  * Created by Lilaoda on 2017/10/11.
  * Email:749948218@qq.com
@@ -32,11 +34,46 @@ public enum LocationEvent {
 
     private int locationValue;
 
+    private String orderUuid;
+    /**
+     * 最后一次定位的坐标点
+     */
+    private LatLng lastLatLng;
+
+    /**
+     * 已行驶距离
+     */
+    private String tripDistance;
+
     LocationEvent(int locationValue) {
         this.locationValue = locationValue;
     }
 
     public int getLocationValue() {
         return locationValue;
+    }
+
+    public String getOrderUuid() {
+        return orderUuid;
+    }
+
+    public void setOrderUuid(String orderUuid) {
+        this.orderUuid = orderUuid;
+    }
+
+    public LatLng getLastLatLng() {
+        return lastLatLng;
+    }
+
+    public void setLastLatLng(LatLng lastLatLng) {
+        this.lastLatLng = lastLatLng;
+    }
+
+    public String getTripDistance() {
+        return tripDistance;
+    }
+
+    public void setTripDistance(String tripDistance) {
+        this.tripDistance = tripDistance;
     }
 }

@@ -1,9 +1,13 @@
 package lhy.lhylibrary.utils;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -34,6 +38,8 @@ public class DownloadManager {
     private Context mContext;
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotifyBuilder;
+    private Dialog progressDialog;
+    private Activity mActivity;
 
 
     public DownloadManager(Context context) {
@@ -113,14 +119,12 @@ public class DownloadManager {
         mNotificationManager.notify(NOTIFY_ID, mNotifyBuilder.build());
     }
 
-
     private void installApp(Context context, String apkPath) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setDataAndType(Uri.parse("file://" + apkPath), "application/vnd.android.package-archive");
         context.startActivity(intent);
     }
-
 
     //初始化通知
     private void initNotification() {
@@ -134,5 +138,30 @@ public class DownloadManager {
                 .setPriority(Notification.PRIORITY_MAX)
                 .setOngoing(true);
         mNotificationManager = (NotificationManager) LhyApplication.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    private void showDialog() {
+        //如果未传activity就不显示对话框
+        if (mActivity == null) {
+            return;
+        }
+
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(mActivity,ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                }
+            });
+        }
+        progressDialog.show();
+    }
+
+    private void hideDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
     }
 }

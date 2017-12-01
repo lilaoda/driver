@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/app_color"
     android:orientation="vertical">
 
@@ -36,7 +37,7 @@
         <TextView
             android:id="@+id/text_order_type"
             style="@style/TextCaptureOrder"
-            android:text="*实时" />
+            tools:text="*实时" />
 
         <TextView
             android:id="@+id/text_distance"
@@ -51,7 +52,7 @@
         <TextView
             android:id="@+id/text_detail_start"
             style="@style/TextCaptureOrder"
-            android:text="广州信息港天信楼330"
+            tools:text="广州信息港天信楼330"
             android:textColor="@color/white_gray"
             android:textSize="14sp" />
 
@@ -64,7 +65,7 @@
         <TextView
             android:id="@+id/text_detail_dest"
             style="@style/TextCaptureOrder"
-            android:text="广州信息港天信楼330"
+            tools:text="广州信息港天信楼330"
             android:textColor="@color/white_gray"
             android:textSize="14sp" />
 

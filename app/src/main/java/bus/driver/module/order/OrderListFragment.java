@@ -161,7 +161,6 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
         refresh(false);
     }
 
-
     @Override
     public void onLoadMoreRequested() {
           refresh(true);

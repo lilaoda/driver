@@ -7,6 +7,7 @@ import bus.driver.bean.event.DistanceEvent;
 import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.LocationResultEvent;
 import bus.driver.bean.event.NaviStatus;
+import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.local.entity.User;
 import bus.driver.module.main.MainFragment;
 import bus.driver.module.order.OrderListFragment;
@@ -65,6 +66,14 @@ public class EventBusUtls {
      * @param event 司机是否正在进行导航行驶
      */
     public static void notifyIsNaving(NaviStatus event){
+        EventBus.getDefault().post(event);
+    }
+
+    /**
+     * 通知是否循环获取订单，及获取订单是否被取消 {@link MainFragment}
+     * @param event 司机是否正在进行导航行驶
+     */
+    public static void notifyPullOrder(OrderEvent event){
         EventBus.getDefault().post(event);
     }
 }

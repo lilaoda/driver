@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -187,29 +186,6 @@ public class MainFragment extends BaseFragment {
                 });
     }
 
-//    private void getCityList() {
-//        wrapHttp(HttpManager.instance().getDriverService().getAreaList("city"))
-//                .compose(this.<List<City>>bindToLifecycle())
-//                .subscribe(new ResultObserver<List<City>>(getActivity(),"正在加载...",true) {
-//                    @Override
-//                    public void onSuccess(List<City> value) {
-//                            if (FileUtils.isSDCardEnabled()) {
-//                                File file1 = new File(DIR_CRASH);
-//                                if(!file1.exists())file1.mkdirs();
-//                                File file = new File(DIR_CRASH, DateUtils.getCurrentTime());
-//                                try {
-//                                    FileWriter fileWriter = new FileWriter(file);
-//                                    fileWriter.write(new Gson().toJson(value));
-//                                    fileWriter.flush();
-//                                    fileWriter.close();
-//                                } catch (IOException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//
-//                    }
-//                });
-//    }
 
     private void reSetView() {
         if (mCurrentStatus == STATUS_WORK) {
@@ -228,9 +204,10 @@ public class MainFragment extends BaseFragment {
     }
 
     private void setOrderServiceEnable(boolean b) {
-        EventBus.getDefault().post(b ? OrderEvent.ORDER_PULL_ENABLE : OrderEvent.ORDER_PULL_UNABLE);
+        EventBusUtls.notifyPullOrder(b ? OrderEvent.ORDER_PULL_ENABLE : OrderEvent.ORDER_PULL_UNABLE);
         EventBusUtls.notifyLocation(b ? LocationEvent.LOCATION_ENABLE : LocationEvent.LOCATION_UNABLE);
     }
+    //TODO 需增加接口，是否有正在进行中的订单 判断是否取消循环拉取订单等
 
     private void startAnim() {
         if (mRotateAnim == null) {
@@ -290,4 +267,28 @@ public class MainFragment extends BaseFragment {
             btnGoCar.setEnabled(true);
         }
     }
+
+    //    private void getCityList() {
+//        wrapHttp(HttpManager.instance().getDriverService().getAreaList("city"))
+//                .compose(this.<List<City>>bindToLifecycle())
+//                .subscribe(new ResultObserver<List<City>>(getActivity(),"正在加载...",true) {
+//                    @Override
+//                    public void onSuccess(List<City> value) {
+//                            if (FileUtils.isSDCardEnabled()) {
+//                                File file1 = new File(DIR_CRASH);
+//                                if(!file1.exists())file1.mkdirs();
+//                                File file = new File(DIR_CRASH, DateUtils.getCurrentTime());
+//                                try {
+//                                    FileWriter fileWriter = new FileWriter(file);
+//                                    fileWriter.write(new Gson().toJson(value));
+//                                    fileWriter.flush();
+//                                    fileWriter.close();
+//                                } catch (IOException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                    }
+//                });
+//    }
 }

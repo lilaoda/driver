@@ -28,6 +28,7 @@ public enum OrderEvent {
 
     private int OrderEventValue;
 
+
     OrderEvent(int locationValue) {
         this.OrderEventValue = locationValue;
     }
@@ -35,4 +36,5 @@ public enum OrderEvent {
     public int getLocationValue() {
         return OrderEventValue;
     }
+
 }

@@ -8,13 +8,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
-import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,25 +67,27 @@ public class OrderDetailActivity extends BaseActivity {
                 confirmArrive();
                 break;
             case R.id.btn_expenses:
-                confirmExpenses();
+//                confirmExpenses();
                 break;
         }
     }
 
-    private void confirmExpenses() {
-        wrapHttp(mHttpManager.getDriverService().confirmExpenses(mOrderInfo.getOrderUuid()))
-                .compose(this.<String>bindToLifecycle())
-                .subscribe(new ResultObserver<String>(this, "确认费用...", true) {
-                    @Override
-                    public void onSuccess(String value) {
-                        btnExpenses.setText(value);
-                        btnExpenses.setEnabled(false);
-                        Constants.ORDER_STATSU = Constants.ORDER_STATSU_NO;
-                        EventBus.getDefault().post(OrderEvent.ORDER_PULL_ENABLE);
-                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_UNABLE);
-                    }
-                });
-    }
+//    private void confirmExpenses() {
+//        wrapHttp(mHttpManager.getDriverService().confirmExpenses(mOrderInfo.getOrderUuid()))
+//                .compose(this.<String>bindToLifecycle())
+//                .subscribe(new ResultObserver<String>(this, "确认费用...", true) {
+//                    @Override
+//                    public void onSuccess(String value) {
+//                        btnExpenses.setText(value);
+//                        btnExpenses.setEnabled(false);
+//                        Constants.ORDER_STATSU = Constants.ORDER_STATSU_NO;
+//                        //开启循环拉取订单
+//                        EventBusUtls.notifyPullOrder(OrderEvent.ORDER_PULL_ENABLE);
+//                        //关闭循环拉取订单是否被取消
+//                        EventBusUtls.notifyPullOrder(OrderEvent.ORDER_GET_CANCEL_UNABLE);
+//                    }
+//                });
+//    }
 
     private void confirmArrive() {
         wrapHttp(mHttpManager.getDriverService().confirmArrive(mOrderInfo.getOrderUuid()))

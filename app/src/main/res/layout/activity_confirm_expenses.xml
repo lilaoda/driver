@@ -168,8 +168,7 @@
 
                 <EditText
                     android:id="@+id/money_high_speed"
-                    style="@style/EditRight_fix_linearLayout"
-                    android:hint="0" />
+                    style="@style/EditRight_fix_linearLayout" />
             </LinearLayout>
 
             <LinearLayout
@@ -184,8 +183,7 @@
 
                 <EditText
                     android:id="@+id/money_park"
-                    style="@style/EditRight_fix_linearLayout"
-                    android:hint="0" />
+                    style="@style/EditRight_fix_linearLayout" />
             </LinearLayout>
 
             <LinearLayout
@@ -200,8 +198,7 @@
 
                 <EditText
                     android:id="@+id/money_other"
-                    style="@style/EditRight_fix_linearLayout"
-                    android:hint="0" />
+                    style="@style/EditRight_fix_linearLayout" />
             </LinearLayout>
 
 

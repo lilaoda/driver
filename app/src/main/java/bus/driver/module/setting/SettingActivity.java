@@ -15,6 +15,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +32,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.FileUtils;
@@ -194,9 +196,20 @@ public class SettingActivity extends BaseActivity {
      * 打电话
      */
     private void doCall() {
-        Intent intent = new Intent(Intent.ACTION_DIAL);
-        intent.setData(Uri.parse("tel:" + CommonUtils.getString(textCall)));
-        startActivity(intent);
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(android.Manifest.permission.CALL_PHONE)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + CommonUtils.getString(textCall)));
+                            startActivity(intent);
+                        } else {
+                            ToastUtils.showString("权限被拒绝");
+                        }
+                    }
+                });
     }
 
     /**

@@ -17,6 +17,7 @@ import bus.driver.base.Constants;
 import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
+import bus.driver.utils.EventBusUtls;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -87,6 +88,11 @@ public class CaptureInfoFragment extends BaseFragment {
     private void initView() {
         textStart.setText(mOrderInfo.getOriginAddress());
         textDest.setText(mOrderInfo.getDestAddress());
+        if (mOrderInfo.getTypeTime() == 2) {
+            textOrderType.setText("*预约 " + mOrderInfo.getAppointTime());
+        } else {
+            textOrderType.setText("*实时");
+        }
     }
 
     @Override
@@ -107,7 +113,7 @@ public class CaptureInfoFragment extends BaseFragment {
         }
     }
 
-    private void closeDrawLayout(){
+    private void closeDrawLayout() {
 
     }
 
@@ -122,7 +128,8 @@ public class CaptureInfoFragment extends BaseFragment {
                         intent.putExtra(Constants.ORDER_INFO, mOrderInfo);
                         startActivity(intent);
                         EventBus.getDefault().post(mOrderInfo);
-                        EventBus.getDefault().post(OrderEvent.ORDER_GET_CANCEL_ENABLE);
+                        EventBusUtls.notifyPullOrder(OrderEvent.ORDER_GET_CANCEL_ENABLE);
+                        EventBusUtls.notifyPullOrder(OrderEvent.ORDER_PULL_UNABLE);
                         getActivity().finish();
                     }
                 });

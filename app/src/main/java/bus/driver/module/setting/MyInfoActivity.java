@@ -1,5 +1,6 @@
 package bus.driver.module.setting;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -29,7 +31,10 @@ import bus.driver.utils.GlideUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
 import lhy.lhylibrary.http.ResultObserver;
+import lhy.lhylibrary.utils.ToastUtils;
 import lhy.lhylibrary.view.roundImageView.CircleImageView;
 import me.nereo.multi_image_selector.MultiImageSelector;
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
@@ -124,10 +129,21 @@ public class MyInfoActivity extends BaseActivity {
 
     private void openAlbum() {
         mImgList = new ArrayList<>();
-        MultiImageSelector.create().count(1)
-                .showCamera(true)
-                .origin(mImgList)
-                .start(this, CODE_REQUEST_IMG);
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(Manifest.permission.CAMERA)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            MultiImageSelector.create().count(1)
+                                    .showCamera(true)
+                                    .origin(mImgList)
+                                    .start(MyInfoActivity.this, CODE_REQUEST_IMG);
+                        } else {
+                            ToastUtils.showString("权限被拒绝");
+                        }
+                    }
+                });
     }
 
     @Override

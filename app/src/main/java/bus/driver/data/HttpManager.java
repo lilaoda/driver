@@ -12,8 +12,6 @@ import bus.driver.BuildConfig;
 import bus.driver.data.remote.DriverApi;
 import bus.driver.data.remote.HeadIntercepter;
 import bus.driver.data.remote.OrderApiService;
-import lhy.lhylibrary.base.LhyApplication;
-import lhy.lhylibrary.http.interceptor.CacheIntercepter;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.internal.platform.Platform;
@@ -57,7 +55,7 @@ public class HttpManager {
                 .readTimeout(READTIMEOUT, TimeUnit.MILLISECONDS)
                 .retryOnConnectionFailure(false)
 //                .cache(new Cache(FileUtils.getCacheFile(LhyApplication.getContext(), CACHE_DIRECTORY_NAME), CACHE_MAX_SIZE))
-                .addInterceptor(new CacheIntercepter(LhyApplication.getContext()))
+//                .addInterceptor(new CacheIntercepter(LhyApplication.getContext()))
                 .addInterceptor(new HeadIntercepter(DbManager.instance()))
                 .addInterceptor(getHttpLogIntercept())
                 .connectionSpecs(Arrays.asList(ConnectionSpec.CLEARTEXT, ConnectionSpec.MODERN_TLS))
