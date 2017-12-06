@@ -14,13 +14,13 @@
         android:src="@mipmap/icon_user_default" />
 
     <TextView
-        android:id="@+id/text_target"
+        android:id="@+id/text_phone"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
-        android:text="13988888888"
+        tools:text="13988888888"
         android:textColor="@color/green_normal"
         android:textSize="16sp" />
 
@@ -47,37 +47,37 @@
         <TextView
             android:id="@+id/text_start"
             style="@style/TextCaptureOrder"
-            android:text="*广州信息港" />
+            tools:text="*广州信息港" />
 
         <TextView
             android:id="@+id/text_detail_start"
             style="@style/TextCaptureOrder"
-            tools:text="广州信息港天信楼330"
+            android:text="广州信息港天信楼330(test)"
             android:textColor="@color/white_gray"
             android:textSize="14sp" />
 
         <TextView
             android:id="@+id/text_dest"
             style="@style/TextCaptureOrder"
-            android:text="*广州信息港"
+            tools:text="*广州信息港"
             android:textColor="@color/yellow_normal" />
 
         <TextView
             android:id="@+id/text_detail_dest"
             style="@style/TextCaptureOrder"
-            tools:text="广州信息港天信楼330"
+            android:text="广州信息港天信楼330(test)"
             android:textColor="@color/white_gray"
             android:textSize="14sp" />
 
         <TextView
             android:id="@+id/text_estimate_distance"
             style="@style/TextCaptureOrder"
-            android:text="*距离：2.5公里" />
+            android:text="*预估里程：2.5公里(test)" />
 
         <TextView
             android:id="@+id/text_estimate_price"
             style="@style/TextCaptureOrder"
-            android:text="*66元" />
+            android:text="*预估价格：66元(test)" />
     </LinearLayout>
 
     <FrameLayout

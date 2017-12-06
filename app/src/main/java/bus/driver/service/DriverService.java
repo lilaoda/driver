@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -90,7 +91,7 @@ public class DriverService extends AliveService implements AMapLocationListener 
     /**
      * 实时行驶距离 单位 米
      */
-    private static double distanceLocation = 0;
+    private static double distanceRealTime = 0;
 
     /**
      * 高德图层计算距离方式
@@ -149,7 +150,6 @@ public class DriverService extends AliveService implements AMapLocationListener 
      */
     private double mTripDistance;
 
-
     public static void start(Activity context) {
         context.startService(new Intent(context, DriverService.class));
     }
@@ -157,7 +157,6 @@ public class DriverService extends AliveService implements AMapLocationListener 
     @Override
     public void onCreate() {
         super.onCreate();
-        // startForeground();
         EventBus.getDefault().register(this);
         mHttpManager = HttpManager.instance();
         mDriverService = mHttpManager.getDriverService();
@@ -178,9 +177,6 @@ public class DriverService extends AliveService implements AMapLocationListener 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        if (mlocationClient != null) {
-//            mlocationClient.startLocation();
-//        }
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -215,7 +211,8 @@ public class DriverService extends AliveService implements AMapLocationListener 
                     //第一次定位结束后才修复距离，等于已行驶距离+修复的距离
                     if (mFirstLatlng == null) {
                         mFirstLatlng = new LatLng(latitude, longitude);
-                        mTripDistance += caculateRepairDistance();
+                        distanceRepair = caculateRepairDistance();
+                        distanceTotal = mTripDistance + distanceRepair;
                     }
                     caculateDistance(aMapLocation);
                 }
@@ -240,10 +237,13 @@ public class DriverService extends AliveService implements AMapLocationListener 
      * 开始计算距离时 要清楚数据
      */
     private void clearDistanceData() {
+        mFirstLatlng = null;
         startGpsPoint = null;
         lastGpsPoint = null;
         locationNumber = 0;
-        distanceLocation = 0.0;
+        distanceRealTime = 0.0;
+        distanceTotal = 0.0;
+        distanceRepair = 0.0;
 //        distanceLocationGao = 0.0;
 //        distanceLocationLine = 0.0;
     }
@@ -266,8 +266,8 @@ public class DriverService extends AliveService implements AMapLocationListener 
             convertToGpsPoint(lastGpsPoint, aMapLocation);
             if (lastGpsPoint.getSpeed() > SPEED_LOW_LIMIT) {
                 locationNumber++;
-                distanceLocation = distance_guo(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
-                mTripDistance += distanceLocation;
+                distanceRealTime = distance_guo(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
+                distanceTotal += distanceRealTime;
 //                distanceLocationGao += calculateDistanceGao(startGpsPoint.getLat(), startGpsPoint.getLng(), lastGpsPoint.getLat(), lastGpsPoint.getLng());
 //                distanceLocationLine += AMapUtils.calculateLineDistance(new LatLng(startGpsPoint.getLat(), startGpsPoint.getLng()), new LatLng(lastGpsPoint.getLat(), lastGpsPoint.getLng()));
             }
@@ -276,7 +276,11 @@ public class DriverService extends AliveService implements AMapLocationListener 
                 mDistanceEvent = new DistanceEvent();
             }
 //            Log.e(TAG, "caculateDistance: " + distanceLocation + "图层：" + distanceLocationGao + "直线:" + distanceLocationLine);
-            mDistanceEvent.setLoacationDistance(mTripDistance);
+            Log.i(TAG, "caculateDistance: 总距离" + distanceTotal + " 已行驶距离：" + mTripDistance + " 实时距离：" + distanceRealTime + " 修复的距离：" + distanceRepair);
+            if (mLastLatLng != null) {
+                Log.i(TAG, "cculateDistance:  " + "修复的经纬度：上一次的结束位置：" +  mLastLatLng.toString() + "开始位置:" + mFirstLatlng.toString());
+            }
+            mDistanceEvent.setLoacationDistance(distanceTotal);
             mDistanceEvent.setLocationNumber(locationNumber);
             EventBusUtls.notifyDistanceResult(mDistanceEvent);
         }
@@ -302,13 +306,15 @@ public class DriverService extends AliveService implements AMapLocationListener 
      */
     private void uploadLocation(double latitude, double longitude) {
         if (mLocationUploadMap == null) {
-            mLocationUploadMap = new HashMap<>(3);
+            mLocationUploadMap = new HashMap<>();
         }
         mLocationUploadMap.put("lat", String.valueOf(latitude));
         mLocationUploadMap.put("lng", String.valueOf(longitude));
         mLocationUploadMap.put("mapType", "0");
-        mLocationUploadMap.put("tripDistance", mTripDistance + "");
+//        mLocationUploadMap.put("tripDistance", String.valueOf(distanceTotal));
+        mLocationUploadMap.put("tripDistance", "800");
         mLocationUploadMap.put("orderUuid", mOrderUuid);
+
         wrapAsync(mDriverService.uploadLocation(mLocationUploadMap)).subscribe(new ResultObserver<HttpResult<String>>() {
             @Override
             public void onSuccess(HttpResult<String> value) {
@@ -333,10 +339,11 @@ public class DriverService extends AliveService implements AMapLocationListener 
             case LOCATION_DISTANCE_START:
                 Log.i(TAG, "onMessageEvent: LOCATION_DISTANCE_START");
                 //测算司机实时距离
+                if (TextUtils.equals(event.getOrderUuid(), mOrderUuid) && isCaculateDistance) break;
                 clearDistanceData();
                 mOrderUuid = event.getOrderUuid();
                 mLastLatLng = event.getLastLatLng();
-                mTripDistance = event.getTripDistance() == null ? 0.0 : Double.valueOf(event.getTripDistance());
+                mTripDistance = event.getTripDistance();
                 isCaculateDistance = true;
                 mlocationClient.startLocation();
                 break;
@@ -344,8 +351,10 @@ public class DriverService extends AliveService implements AMapLocationListener 
                 mOrderUuid = "";
                 mLastLatLng = null;
                 mFirstLatlng = null;
-                mTripDistance = 0.0;
                 isCaculateDistance = false;
+                mTripDistance = 0.0;
+                distanceTotal = 0.0;
+                distanceRepair = 0.0;
                 break;
         }
     }
@@ -353,7 +362,7 @@ public class DriverService extends AliveService implements AMapLocationListener 
     //TODO 修复里程，需确认已经定位成功过一次
     //待国国提供，先算直线距离
     private double caculateRepairDistance() {
-        return AMapUtils.calculateLineDistance(mLastLatLng, mFirstLatlng);
+        return mLastLatLng == null ? 0.0 : AMapUtils.calculateLineDistance(mLastLatLng, mFirstLatlng);
     }
 
     /**
@@ -441,13 +450,15 @@ public class DriverService extends AliveService implements AMapLocationListener 
         Log.i(TAG, "onMessageEvent: OrderEvent" + event.getLocationValue());
         switch (event) {
             case ORDER_PULL_ENABLE:
-                startPullOrder();
+                if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK && Constants.ORDER_STATSU == Constants.ORDER_STATSU_NO)
+                    startPullOrder();
                 break;
             case ORDER_PULL_UNABLE:
                 stopPullOrder();
                 break;
             case ORDER_GET_CANCEL_ENABLE:
-                startPullCancelOrder();
+                if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK && Constants.ORDER_STATSU == Constants.ORDER_STATSU_ONDOING)
+                    startPullCancelOrder();
                 break;
             case ORDER_GET_CANCEL_UNABLE:
                 stopPullCancelOrder();
@@ -480,7 +491,7 @@ public class DriverService extends AliveService implements AMapLocationListener 
         wrapHttp(mHttpManager.getOrderApi().pushOrderCancel()).subscribe(new ResultObserver<List<OrderInfo>>() {
             @Override
             public void onSuccess(List<OrderInfo> value) {
-                ToastUtils.showString("订单已被取消");
+                ToastUtils.showString("订单已被乘客取消");
             }
         });
     }
@@ -513,25 +524,24 @@ public class DriverService extends AliveService implements AMapLocationListener 
             @Override
             public void onSuccess(List<OrderInfo> value) {
                 if (value.size() > 0) {
-                    checkNotify(value);
+                    checkNotify(value.get(0));
                 }
             }
         });
     }
 
-    private void checkNotify(List<OrderInfo> value) {
+    private void checkNotify(OrderInfo orderInfo) {
         LhyActivity currentActivity = BaseApplication.getInstance().getCurrentActivity();
         if (Constants.ORDER_STATSU == Constants.ORDER_STATSU_ONDOING || Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_REST) {
             return;
         }
+        if (mOrderDialog != null && mOrderDialog.isShowing() || currentActivity instanceof CaptureOrderActivity) {
+            return;
+        }
         if (isBackground() || currentActivity == null || !currentActivity.isResume()) {
-            notifyOrder(value.get(0));
+            notifyOrder(orderInfo);
         } else {
-            if (Constants.ORDER_STATSU == Constants.ORDER_STATSU_NO) {
-                if (mOrderDialog != null && mOrderDialog.isShowing() || currentActivity instanceof CaptureOrderActivity)
-                    return;
-                showOrderDialog(currentActivity, value.get(0));
-            }
+            showOrderDialog(currentActivity, orderInfo);
         }
     }
 

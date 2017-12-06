@@ -40,7 +40,7 @@
             android:layout_below="@+id/civ_icon"
             android:gravity="center"
             android:textColor="@color/green_normal"
-            android:textSize="15sp"
+            android:textSize="13sp"
             tools:text="等待乘客\n尾号9152" />
 
         <ImageView

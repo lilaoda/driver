@@ -1,5 +1,6 @@
 package bus.driver.module.main;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.LruCache;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -26,6 +28,7 @@ import bus.driver.base.BaseActivity;
 import bus.driver.base.BaseApplication;
 import bus.driver.base.BaseFragment;
 import bus.driver.module.order.OrderListFragment;
+import bus.driver.module.setting.SettingActivity;
 import bus.driver.service.DriverService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,9 +67,9 @@ public class MainActivity extends BaseActivity {
         initToolbar();
         initView();
         long l = Runtime.getRuntime().maxMemory();
-        Log.e("meo", "onCreate: "+l );
+        Log.e("meo", "onCreate: " + l);
         HashMap<String, String> stringStringHashMap = new HashMap<>();
-        LruCache<String, Bitmap> lruCache = new LruCache<String,Bitmap>(1024*1024){
+        LruCache<String, Bitmap> lruCache = new LruCache<String, Bitmap>(1024 * 1024) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
                 return value.getByteCount();
@@ -80,6 +83,7 @@ public class MainActivity extends BaseActivity {
             return;
         }
         viewPager.setCurrentItem(position);
+        drawerLayout.closeDrawer(Gravity.START);
     }
 
     private void initView() {
@@ -143,7 +147,8 @@ public class MainActivity extends BaseActivity {
             return true;
         }
         if (item != null && item.getItemId() == R.id.action_settings) {
-            ToastUtils.showString("setting");
+            //   ToastUtils.showString("setting");
+            startActivity(new Intent(this, SettingActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);

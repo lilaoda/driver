@@ -54,7 +54,8 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
     private HttpManager mHttpManager;
     private OrderListAdapter mOrderAdapter;
     private PageParam mPageParam;
-    private int mCurrentPage =1;
+    private int mCurrentPage = 1;
+    private View mRootView;
 
     public static OrderListFragment newInstance() {
         Bundle args = new Bundle();
@@ -66,13 +67,15 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_order, null);
+        if (mRootView == null) {
+            mRootView = inflater.inflate(R.layout.fragment_order, null);
+            unbinder = ButterKnife.bind(this, mRootView);
+            mHttpManager = HttpManager.instance();
+            initView();
+            getOrderList();
+        }
         EventBus.getDefault().register(this);
-        unbinder = ButterKnife.bind(this, view);
-        mHttpManager = HttpManager.instance();
-        initView();
-        getOrderList();
-        return view;
+        return mRootView;
     }
 
     private void getOrderList() {
@@ -117,9 +120,9 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
     }
 
     private void refresh(final boolean isLoadMore) {
-        if (isLoadMore){
-            mPageParam.setPageNo(mCurrentPage+1);
-        }else {
+        if (isLoadMore) {
+            mPageParam.setPageNo(mCurrentPage + 1);
+        } else {
             mPageParam.setPageNo(1);
         }
         wrapHttp(mHttpManager.getDriverService().getOrderList(mPageParam))
@@ -163,7 +166,7 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
 
     @Override
     public void onLoadMoreRequested() {
-          refresh(true);
+        refresh(true);
     }
 
     @Override
@@ -186,6 +189,8 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
         startActivity(intent);
     }
 
+    private boolean isRefresh = false;
+
     /**
      * 订单信息有改变 在抢单，行程中的订单，确认费用页面对订单状态就行了更改，此时回到这个页面，需要刷新数据
      *
@@ -193,7 +198,16 @@ public class OrderListFragment extends BaseFragment implements BaseQuickAdapter.
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMessage(OrderInfo orderInfo) {
-        getOrderList();
+        if (!isRefresh) isRefresh = true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isRefresh) {
+            getOrderList();
+            isRefresh = false;
+        }
     }
 
     @Override

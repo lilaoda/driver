@@ -78,45 +78,12 @@ public class OrderOngoingrFragment extends AMapFragment implements AMap.OnMyLoca
         }
     }
 
-//    double a = 0.001;
-//    double startLat = 23.119246;
-//    double startLng = 113.264945;
-
     @Override
     public void onMyLocationChange(Location location) {
         Log.i("定位map", "onLocationChanged: " + location.toString());
         if (mLocaitonChangeListener != null) {
             mLocaitonChangeListener.locationChange(location);
         }
-//        startLat += a;
-//        startLng += a;
-//        drawRoute(new LatLng(startLat, startLng));
-//
-
-//        // 113.264945, 23.119246,   113.294603 23.069417
-//        Logger.d("画线");
-//        if (polyline == null) {
-//            mMoveList.add(new LatLng(23.069417, 113.294603));
-//            mMoveList.add(new LatLng(23.119246, 113.264945));
-//            mMoveList.add(new LatLng(location.getLatitude(), location.getLongitude()));
-//            PolylineOptions polylineOptions = new PolylineOptions();
-//            polylineOptions.setPoints(mMoveList);
-//            polylineOptions.setCustomTexture(BitmapDescriptorFactory.fromResource(R.mipmap.custtexture));
-//            polylineOptions.width(18);
-//            polylineOptions.useGradient(true);
-//            polyline = mAMap.addPolyline(polylineOptions);
-//        } else {
-//            startLat += a;
-//            startLng += a;
-//            mMoveList.add(new LatLng(startLat, startLng));
-//            polyline.setPoints(mMoveList);//连续画线
-//            if (!polyline.getOptions().isVisible()) {
-//                polyline.getOptions().visible(true);
-//            }
-//            if (!polyline.isVisible()) {
-//                polyline.setVisible(true);
-//            }
-//        }
     }
 
     private LocaitonChageListener mLocaitonChangeListener;

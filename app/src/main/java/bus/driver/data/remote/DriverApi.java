@@ -119,7 +119,6 @@ public interface DriverApi {
 
     //查询司机是否有正在行程中的订单接口
     @POST("driver/order/checkOrder")
-    @FormUrlEncoded
     Observable<HttpResult<OrderInfo>> checkOrder();
 
 }

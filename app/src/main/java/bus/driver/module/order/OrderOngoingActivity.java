@@ -2,6 +2,7 @@ package bus.driver.module.order;
 
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -15,6 +16,8 @@ import com.amap.api.maps.model.Poi;
 import com.amap.api.navi.AmapNaviPage;
 import com.amap.api.navi.AmapNaviParams;
 import com.amap.api.navi.AmapNaviType;
+import com.orhanobut.logger.Logger;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -112,7 +115,6 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
     private Disposable mWaitTimeDisposable;
     private Disposable mGoingTimeDisposable;
     private ConfirmExpensesDialog mConfirmExpensesDialog;
-    private LocationEvent mCaculateLocationEvent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -205,18 +207,16 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
     }
 
     private void beginCaculateDistance() {
-        if (mCaculateLocationEvent == null) {
-            mCaculateLocationEvent = LocationEvent.LOCATION_DISTANCE_START;
-        }
-        mCaculateLocationEvent.setOrderUuid(mOrderInfo.getOrderUuid());
-        if (!TextUtils.isEmpty(mOrderInfo.getTripDistance()) && mOrderInfo.getLastLat() > 0 && mOrderInfo.getLastLng() > 0) {
+        LocationEvent caculateLocationEvent = LocationEvent.LOCATION_DISTANCE_START;
+        caculateLocationEvent.setOrderUuid(mOrderInfo.getOrderUuid());
+        caculateLocationEvent.setTripDistance(mOrderInfo.getTripDistance());
+        if (mOrderInfo.getLastLat() > 0 && mOrderInfo.getLastLng() > 0) {
             LatLng lastLatLng = new LatLng(mOrderInfo.getOriginLat(), mOrderInfo.getOriginLng());
-            mCaculateLocationEvent.setLastLatLng(lastLatLng);
-            mCaculateLocationEvent.setTripDistance(mOrderInfo.getTripDistance());
+            caculateLocationEvent.setLastLatLng(lastLatLng);
         } else {
-            mCaculateLocationEvent.setLastLatLng(null);
+            caculateLocationEvent.setLastLatLng(null);
         }
-        EventBusUtls.notifyLocation(mCaculateLocationEvent);
+        EventBusUtls.notifyLocation(caculateLocationEvent);
     }
 
     private void setToolbarTitle(String title) {
@@ -236,6 +236,8 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
      * 乘客上车后显示正式行程的行驶时间
      */
     private void showGoingTime() {
+        //防止重复显示
+        cancelGoingTime();
         if (TextUtils.isEmpty(mOrderInfo.getPasArrTime())) {
             return;
         }
@@ -267,6 +269,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
      * 显示乘客等待时间
      */
     private void showWaitTime() {
+        cancelWaitTime();
         //等待时间以国国说的为准，从司机到达乘客位置开始算
         if (TextUtils.isEmpty(mOrderInfo.getDriArrTime())) {
             //从抢单页进来，可能没有接单时间
@@ -320,6 +323,7 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
                 startNavi();
                 break;
             case R.id.btn_call:
+                doCall();
                 break;
             case R.id.btn_aboard:
                 confirmAboard();
@@ -328,16 +332,36 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
                 confirmArrive();
                 break;
             case R.id.btn_expenses:
-                if (mConfirmExpensesDialog == null) {
-                    mConfirmExpensesDialog = ConfirmExpensesDialog.newInstance();
-                }
-                mConfirmExpensesDialog.show(getSupportFragmentManager(), "bottomDialog");
+//                if (mConfirmExpensesDialog == null) {
+//                    mConfirmExpensesDialog = ConfirmExpensesDialog.newInstance();
+//                }
+//                mConfirmExpensesDialog.show(getSupportFragmentManager(), "bottomDialog");
 //                confirmExpenses();
                 break;
             case R.id.btn_arrive_passenger:
                 confirmArrivePassengerAddress();
                 break;
         }
+    }
+
+    /**
+     * 打电话
+     */
+    private void doCall() {
+        RxPermissions rxPermissions = new RxPermissions(this);
+        rxPermissions.request(android.Manifest.permission.CALL_PHONE)
+                .subscribe(new Consumer<Boolean>() {
+                    @Override
+                    public void accept(@NonNull Boolean aBoolean) throws Exception {
+                        if (aBoolean) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + mOrderInfo.getActualPasMob()));
+                            startActivity(intent);
+                        } else {
+                            ToastUtils.showString("权限被拒绝");
+                        }
+                    }
+                });
     }
 
     private void startNavi() {
@@ -420,7 +444,8 @@ public class OrderOngoingActivity extends BaseActivity implements OrderOngoingrF
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDistanceEvent(DistanceEvent event) {
-        textDistance.setText(AMapUtil.getFriendlyLength((int) (event.getLoacationDistance() + 0.5)));
+        Logger.d(event.getLoacationDistance());
+        textDistance.setText(AMapUtil.getFriendlyLength((int) (event.getLoacationDistance())));
     }
 
     /**

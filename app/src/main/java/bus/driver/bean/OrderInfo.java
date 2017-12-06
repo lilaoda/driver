@@ -173,7 +173,7 @@ public class OrderInfo implements Parcelable {
     /**
      * 已行驶距离
      */
-    private String tripDistance;
+    private double tripDistance;
 
     /**
      * 订单类型（时效性）：1 实时订单， 2 预约订单
@@ -191,25 +191,6 @@ public class OrderInfo implements Parcelable {
     private double lastLat ;
 
     private double lastLng ;
-
-    public double getLastLat() {
-        return lastLat;
-    }
-
-    public void setLastLat(double lastLat) {
-        this.lastLat = lastLat;
-    }
-
-    public double getLastLng() {
-        return lastLng;
-    }
-
-    public void setLastLng(double lastLng) {
-        this.lastLng = lastLng;
-    }
-
-    public OrderInfo() {
-    }
 
     protected OrderInfo(Parcel in) {
         passengerUuid = in.readString();
@@ -242,9 +223,12 @@ public class OrderInfo implements Parcelable {
         arriveTime = in.readString();
         fareConfirmTime = in.readString();
         payTime = in.readString();
-        tripDistance = in.readString();
+        totalFare = in.readDouble();
+        tripDistance = in.readDouble();
         typeTime = in.readInt();
         appointTime = in.readString();
+        lastLat = in.readDouble();
+        lastLng = in.readDouble();
     }
 
     public static final Creator<OrderInfo> CREATOR = new Creator<OrderInfo>() {
@@ -259,6 +243,25 @@ public class OrderInfo implements Parcelable {
         }
     };
 
+    public double getLastLat() {
+        return lastLat;
+    }
+
+    public void setLastLat(double lastLat) {
+        this.lastLat = lastLat;
+    }
+
+    public double getLastLng() {
+        return lastLng;
+    }
+
+    public void setLastLng(double lastLng) {
+        this.lastLng = lastLng;
+    }
+
+    public OrderInfo() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -266,7 +269,6 @@ public class OrderInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
         dest.writeString(passengerUuid);
         dest.writeString(orderUuid);
         dest.writeString(actualPasNam);
@@ -297,9 +299,12 @@ public class OrderInfo implements Parcelable {
         dest.writeString(arriveTime);
         dest.writeString(fareConfirmTime);
         dest.writeString(payTime);
-        dest.writeString(tripDistance);
+        dest.writeDouble(totalFare);
+        dest.writeDouble(tripDistance);
         dest.writeInt(typeTime);
         dest.writeString(appointTime);
+        dest.writeDouble(lastLat);
+        dest.writeDouble(lastLng);
     }
 
     public String getPassengerUuid() {
@@ -542,7 +547,7 @@ public class OrderInfo implements Parcelable {
         this.payTime = payTime;
     }
 
-    public Double getTotalFare() {
+    public double getTotalFare() {
         return totalFare;
     }
 
@@ -550,11 +555,11 @@ public class OrderInfo implements Parcelable {
         this.totalFare = totalFare;
     }
 
-    public String getTripDistance() {
+    public double getTripDistance() {
         return tripDistance;
     }
 
-    public void setTripDistance(String tripDistance) {
+    public void setTripDistance(double tripDistance) {
         this.tripDistance = tripDistance;
     }
 
@@ -576,45 +581,5 @@ public class OrderInfo implements Parcelable {
 
     public static Creator<OrderInfo> getCREATOR() {
         return CREATOR;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderInfo{" +
-                "passengerUuid='" + passengerUuid + '\'' +
-                ", orderUuid='" + orderUuid + '\'' +
-                ", actualPasNam='" + actualPasNam + '\'' +
-                ", actualPasMob='" + actualPasMob + '\'' +
-                ", actualPasNum=" + actualPasNum +
-                ", mapType=" + mapType +
-                ", originCityUuid='" + originCityUuid + '\'' +
-                ", originBuscircleUuid='" + originBuscircleUuid + '\'' +
-                ", originLng=" + originLng +
-                ", originLat=" + originLat +
-                ", originCity='" + originCity + '\'' +
-                ", originAddress='" + originAddress + '\'' +
-                ", originDetailAddress='" + originDetailAddress + '\'' +
-                ", destCityUuid='" + destCityUuid + '\'' +
-                ", destBuscircleUuid='" + destBuscircleUuid + '\'' +
-                ", destLng=" + destLng +
-                ", destLat=" + destLat +
-                ", destCity='" + destCity + '\'' +
-                ", destAddress='" + destAddress + '\'' +
-                ", destDetailAddress='" + destDetailAddress + '\'' +
-                ", mainStatus=" + mainStatus +
-                ", subStatus=" + subStatus +
-                ", leaveTime='" + leaveTime + '\'' +
-                ", createTime='" + createTime + '\'' +
-                ", distributeTime='" + distributeTime + '\'' +
-                ", driArrTime='" + driArrTime + '\'' +
-                ", pasArrTime='" + pasArrTime + '\'' +
-                ", arriveTime='" + arriveTime + '\'' +
-                ", fareConfirmTime='" + fareConfirmTime + '\'' +
-                ", payTime='" + payTime + '\'' +
-                ", totalFare=" + totalFare +
-                ", tripDistance='" + tripDistance + '\'' +
-                ", typeTime=" + typeTime +
-                ", appointTime='" + appointTime + '\'' +
-                '}';
     }
 }

@@ -1,7 +1,5 @@
 package bus.driver.bean;
 
-import java.util.Date;
-
 /**
  * Created by Lilaoda on 2017/10/8.
  * Email:749948218@qq.com
@@ -243,40 +241,40 @@ public class DriverInfo {
         private String name;
 
         /** 性别 1.男、2.女 */
-        private Integer sex;
+        private int sex;
 
         /** 成功订单数 */
-        private Integer orderCount;
+        private int orderCount;
 
         /** 上下班状态（1：下班、2：上班） */
-        private Integer isWork;
+        private int isWork;
 
         /** 平均分数 */
-        private Double score;
+        private double score;
 
         /** 司机状态(1:正常、2:短期封号、3:长期封号、4:未审核、5:删除) */
-        private Integer status;
+        private int status;
 
         /** 终止时间（针对短期封号>status） */
-        private Date abortTime;
+        private String abortTime;
 
         /** 封号备注 */
         private String abortRemark;
 
         /** 是否首次登录 1：是、2：否 */
-        private Integer isFirst;
+        private int isFirst;
 
         /** 账号余额 */
-        private Double balance;
+        private double balance;
 
         /** 最后一次登录时间 */
-        private Date lastLogin;
+        private String lastLogin;
 
         /** 推送id */
         private String pushId;
 
         /** 设备类型（1.android，2.IOS） */
-        private Integer deviceType;
+        private int deviceType;
 
         /** 设备唯一标识 */
         private String deviceToken;
@@ -288,16 +286,16 @@ public class DriverInfo {
         private String appVersion;
 
         /** 当前经度 */
-        private Double currentLng;
+        private double currentLng;
 
         /** 当前纬度 */
-        private Double currentLat;
+        private double currentLat;
 
         /** 当前角度 */
         private String currentAngle;
 
         /** 推送等级（1：最低，9999：最高） */
-        private Integer pushLevel;
+        private int pushLevel;
 
         /** 预约时间段 ：开始时间 */
         private String appointTimeStart;
@@ -306,7 +304,7 @@ public class DriverInfo {
         private String appointTimeEnd;
 
         /** 听单模式 1：全部，2：实时 3：预约 */
-        private Integer remindType;
+        private int remindType;
 
         /** 身份证号 */
         private String idCard;
@@ -315,10 +313,10 @@ public class DriverInfo {
         private String address;
 
         /** 出生日期 */
-        private Date birthday;
+        private String birthday;
 
         /** 民族 */
-        private Integer nation;
+        private int nation;
 
         /**  */
         private String operationRemark;
@@ -327,13 +325,13 @@ public class DriverInfo {
         private String createdBy;
 
         /** 创建时间 */
-        private Date createdOn;
+        private String createdOn;
 
         /** 更新人 */
         private String updatedBy;
 
         /** 更新时间 */
-        private Date updatedOn;
+        private String updatedOn;
 
         public String getUuid() {
             return uuid;
@@ -367,51 +365,51 @@ public class DriverInfo {
             this.name = name;
         }
 
-        public Integer getSex() {
+        public int getSex() {
             return sex;
         }
 
-        public void setSex(Integer sex) {
+        public void setSex(int sex) {
             this.sex = sex;
         }
 
-        public Integer getOrderCount() {
+        public int getOrderCount() {
             return orderCount;
         }
 
-        public void setOrderCount(Integer orderCount) {
+        public void setOrderCount(int orderCount) {
             this.orderCount = orderCount;
         }
 
-        public Integer getIsWork() {
+        public int getIsWork() {
             return isWork;
         }
 
-        public void setIsWork(Integer isWork) {
+        public void setIsWork(int isWork) {
             this.isWork = isWork;
         }
 
-        public Double getScore() {
+        public double getScore() {
             return score;
         }
 
-        public void setScore(Double score) {
+        public void setScore(double score) {
             this.score = score;
         }
 
-        public Integer getStatus() {
+        public int getStatus() {
             return status;
         }
 
-        public void setStatus(Integer status) {
+        public void setStatus(int status) {
             this.status = status;
         }
 
-        public Date getAbortTime() {
+        public String getAbortTime() {
             return abortTime;
         }
 
-        public void setAbortTime(Date abortTime) {
+        public void setAbortTime(String abortTime) {
             this.abortTime = abortTime;
         }
 
@@ -423,27 +421,27 @@ public class DriverInfo {
             this.abortRemark = abortRemark;
         }
 
-        public Integer getIsFirst() {
+        public int getIsFirst() {
             return isFirst;
         }
 
-        public void setIsFirst(Integer isFirst) {
+        public void setIsFirst(int isFirst) {
             this.isFirst = isFirst;
         }
 
-        public Double getBalance() {
+        public double getBalance() {
             return balance;
         }
 
-        public void setBalance(Double balance) {
+        public void setBalance(double balance) {
             this.balance = balance;
         }
 
-        public Date getLastLogin() {
+        public String getLastLogin() {
             return lastLogin;
         }
 
-        public void setLastLogin(Date lastLogin) {
+        public void setLastLogin(String lastLogin) {
             this.lastLogin = lastLogin;
         }
 
@@ -455,11 +453,11 @@ public class DriverInfo {
             this.pushId = pushId;
         }
 
-        public Integer getDeviceType() {
+        public int getDeviceType() {
             return deviceType;
         }
 
-        public void setDeviceType(Integer deviceType) {
+        public void setDeviceType(int deviceType) {
             this.deviceType = deviceType;
         }
 
@@ -487,19 +485,19 @@ public class DriverInfo {
             this.appVersion = appVersion;
         }
 
-        public Double getCurrentLng() {
+        public double getCurrentLng() {
             return currentLng;
         }
 
-        public void setCurrentLng(Double currentLng) {
+        public void setCurrentLng(double currentLng) {
             this.currentLng = currentLng;
         }
 
-        public Double getCurrentLat() {
+        public double getCurrentLat() {
             return currentLat;
         }
 
-        public void setCurrentLat(Double currentLat) {
+        public void setCurrentLat(double currentLat) {
             this.currentLat = currentLat;
         }
 
@@ -511,11 +509,11 @@ public class DriverInfo {
             this.currentAngle = currentAngle;
         }
 
-        public Integer getPushLevel() {
+        public int getPushLevel() {
             return pushLevel;
         }
 
-        public void setPushLevel(Integer pushLevel) {
+        public void setPushLevel(int pushLevel) {
             this.pushLevel = pushLevel;
         }
 
@@ -535,11 +533,11 @@ public class DriverInfo {
             this.appointTimeEnd = appointTimeEnd;
         }
 
-        public Integer getRemindType() {
+        public int getRemindType() {
             return remindType;
         }
 
-        public void setRemindType(Integer remindType) {
+        public void setRemindType(int remindType) {
             this.remindType = remindType;
         }
 
@@ -559,19 +557,19 @@ public class DriverInfo {
             this.address = address;
         }
 
-        public Date getBirthday() {
+        public String getBirthday() {
             return birthday;
         }
 
-        public void setBirthday(Date birthday) {
+        public void setBirthday(String birthday) {
             this.birthday = birthday;
         }
 
-        public Integer getNation() {
+        public int getNation() {
             return nation;
         }
 
-        public void setNation(Integer nation) {
+        public void setNation(int nation) {
             this.nation = nation;
         }
 
@@ -591,11 +589,11 @@ public class DriverInfo {
             this.createdBy = createdBy;
         }
 
-        public Date getCreatedOn() {
+        public String getCreatedOn() {
             return createdOn;
         }
 
-        public void setCreatedOn(Date createdOn) {
+        public void setCreatedOn(String createdOn) {
             this.createdOn = createdOn;
         }
 
@@ -607,11 +605,11 @@ public class DriverInfo {
             this.updatedBy = updatedBy;
         }
 
-        public Date getUpdatedOn() {
+        public String getUpdatedOn() {
             return updatedOn;
         }
 
-        public void setUpdatedOn(Date updatedOn) {
+        public void setUpdatedOn(String updatedOn) {
             this.updatedOn = updatedOn;
         }
     }

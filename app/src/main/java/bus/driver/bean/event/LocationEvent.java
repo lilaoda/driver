@@ -43,7 +43,7 @@ public enum LocationEvent {
     /**
      * 已行驶距离
      */
-    private String tripDistance;
+    private double tripDistance;
 
     LocationEvent(int locationValue) {
         this.locationValue = locationValue;
@@ -69,11 +69,21 @@ public enum LocationEvent {
         this.lastLatLng = lastLatLng;
     }
 
-    public String getTripDistance() {
+    public double getTripDistance() {
         return tripDistance;
     }
 
-    public void setTripDistance(String tripDistance) {
+    public void setTripDistance(double tripDistance) {
         this.tripDistance = tripDistance;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationEvent{" +
+                "locationValue=" + locationValue +
+                ", orderUuid='" + orderUuid + '\'' +
+                ", lastLatLng=" + lastLatLng +
+                ", tripDistance='" + tripDistance + '\'' +
+                '}';
     }
 }

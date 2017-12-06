@@ -36,8 +36,8 @@ public class CaptureInfoFragment extends BaseFragment {
 
     @BindView(R.id.civ_icon)
     CircleImageView civIcon;
-    @BindView(R.id.text_target)
-    TextView textTarget;
+    @BindView(R.id.text_phone)
+    TextView textPhone;
     @BindView(R.id.text_order_type)
     TextView textOrderType;
     @BindView(R.id.text_distance)
@@ -88,8 +88,9 @@ public class CaptureInfoFragment extends BaseFragment {
     private void initView() {
         textStart.setText(mOrderInfo.getOriginAddress());
         textDest.setText(mOrderInfo.getDestAddress());
+        textPhone.setText(mOrderInfo.getActualPasMob());
         if (mOrderInfo.getTypeTime() == 2) {
-            textOrderType.setText("*预约 " + mOrderInfo.getAppointTime());
+            textOrderType.setText("*预约: " + mOrderInfo.getAppointTime());
         } else {
             textOrderType.setText("*实时");
         }
@@ -111,10 +112,6 @@ public class CaptureInfoFragment extends BaseFragment {
                 captureOrder();
                 break;
         }
-    }
-
-    private void closeDrawLayout() {
-
     }
 
     private void captureOrder() {

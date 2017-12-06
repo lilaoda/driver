@@ -7,8 +7,6 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.EditText;
 
-import com.orhanobut.logger.Logger;
-
 import bus.driver.R;
 import bus.driver.base.BaseActivity;
 import bus.driver.bean.DriverInfo;
@@ -108,7 +106,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         wrapHttp(login.flatMap(new Function<HttpResult<String>, ObservableSource<HttpResult<DriverInfo>>>() {
             @Override
             public ObservableSource<HttpResult<DriverInfo>> apply(@NonNull HttpResult<String> stringHttpResult) throws Exception {
-                Logger.d("apply");
                 if (stringHttpResult.isResult()) {
                     User user = new User();
                     user.setPhone(CommonUtils.getString(editPhone));

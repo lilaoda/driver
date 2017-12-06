@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amap.api.maps.model.LatLng;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -23,11 +25,13 @@ import java.util.concurrent.TimeUnit;
 import bus.driver.R;
 import bus.driver.base.BaseFragment;
 import bus.driver.base.Constants;
+import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.LocationEvent;
 import bus.driver.bean.event.NaviStatus;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import bus.driver.data.SpManager;
+import bus.driver.data.remote.DriverApi;
 import bus.driver.utils.EventBusUtls;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,6 +46,7 @@ import io.reactivex.functions.Consumer;
 import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
 import lhy.lhylibrary.utils.DateUtils;
+import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
 
@@ -52,8 +57,8 @@ import static bus.driver.utils.RxUtils.wrapHttp;
 
 public class MainFragment extends BaseFragment {
 
-    public static final int STATUS_REST = 1;//休息状态
-    public static final int STATUS_WORK = 2;//工作状态
+//    public static final int STATUS_REST = 1;//休息状态
+//    public static final int STATUS_WORK = 2;//工作状态
 
     @BindView(R.id.text_time)
     TextView textTime;
@@ -71,12 +76,13 @@ public class MainFragment extends BaseFragment {
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
 
-    private int mCurrentStatus = STATUS_REST;
+    //    private int mCurrentStatus = Constants.DRIVER_STATSU_REST;
     private RotateAnimation mRotateAnim;
     private AnimatorSet mSetAnimStart;
     private AnimatorSet mSetAnimPause;
     private Disposable mTimeDisable;
     private SpManager mSpManager;
+    private DriverApi mDriverApi;
 
     public static MainFragment newInstance() {
         Bundle args = new Bundle();
@@ -91,6 +97,7 @@ public class MainFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_home, null);
         unbinder = ButterKnife.bind(this, view);
         mSpManager = SpManager.instance();
+        mDriverApi = HttpManager.instance().getDriverService();
         initView();
         checkIsWorking();
         return view;
@@ -99,7 +106,7 @@ public class MainFragment extends BaseFragment {
     private void checkIsWorking() {
         boolean isCarWork = mSpManager.getIsCarWork();
         if (isCarWork) {
-            mCurrentStatus = STATUS_WORK;
+            Constants.DRIVER_STATSU = Constants.DRIVER_STATSU_WORK;
             //防止服务没开启就发送事件，延迟500MS
             Observable.timer(500, TimeUnit.MILLISECONDS).compose(this.<Long>bindToLifecycle())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -107,9 +114,41 @@ public class MainFragment extends BaseFragment {
                         @Override
                         public void accept(@NonNull Long aLong) throws Exception {
                             reSetView();
+                            checkOndoingOrder();
                         }
                     });
         }
+    }
+
+    private void checkOndoingOrder() {
+        wrapHttp(mDriverApi.checkOrder()).compose(this.<OrderInfo>bindToLifecycle())
+                .subscribe(new ResultObserver<OrderInfo>() {
+                    @Override
+                    public void onSuccess(OrderInfo value) {
+                        if (value != null && value.getSubStatus() == 300) {
+                            beginCaculateDistance(value);
+                            if (Constants.DRIVER_STATSU != Constants.DRIVER_STATSU_WORK) {
+                                Constants.ORDER_STATSU = Constants.ORDER_STATSU_ONDOING;
+                                Constants.DRIVER_STATSU = Constants.DRIVER_STATSU_WORK;
+                                reSetView();
+                            }
+                            EventBusUtls.notifyPullOrder(OrderEvent.ORDER_PULL_UNABLE);
+                        }
+                    }
+                });
+    }
+
+    private void beginCaculateDistance(OrderInfo orderInfo) {
+        LocationEvent caculateLocationEvent = LocationEvent.LOCATION_DISTANCE_START;
+        caculateLocationEvent.setOrderUuid(orderInfo.getOrderUuid());
+        caculateLocationEvent.setTripDistance(orderInfo.getTripDistance());
+        if (orderInfo.getLastLat() > 0 && orderInfo.getLastLng() > 0) {
+            LatLng lastLatLng = new LatLng(orderInfo.getLastLat(), orderInfo.getLastLng());
+            caculateLocationEvent.setLastLatLng(lastLatLng);
+        } else {
+            caculateLocationEvent.setLastLatLng(null);
+        }
+        EventBusUtls.notifyLocation(caculateLocationEvent);
     }
 
     private void initView() {
@@ -163,7 +202,11 @@ public class MainFragment extends BaseFragment {
             case R.id.btn_style:
                 break;
             case R.id.btn_go_car:
-                updateWorkStatus(mCurrentStatus == STATUS_REST ? STATUS_WORK : STATUS_REST);
+                if (Constants.ORDER_STATSU == Constants.ORDER_STATSU_ONDOING && Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK) {
+                    ToastUtils.showString("您有正在进行中的订单，不能收车");
+                } else {
+                    updateWorkStatus(Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_REST ? Constants.DRIVER_STATSU_WORK : Constants.DRIVER_STATSU_REST);
+                }
                 break;
         }
     }
@@ -174,13 +217,13 @@ public class MainFragment extends BaseFragment {
      * @param workStatus 1,下班 2，上班
      */
     private void updateWorkStatus(final int workStatus) {
-        wrapHttp(HttpManager.instance().getDriverService().updaeWork(workStatus))
+        wrapHttp(mDriverApi.updaeWork(workStatus))
                 .compose(this.<String>bindToLifecycle())
                 .subscribe(new ResultObserver<String>(getActivity(), "正在加载...", true) {
                     @Override
                     public void onSuccess(String value) {
-                        mCurrentStatus = workStatus;
-                        mSpManager.putIsCarWork(mCurrentStatus == STATUS_WORK);
+                        Constants.DRIVER_STATSU = workStatus;
+                        mSpManager.putIsCarWork(Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK);
                         reSetView();
                     }
                 });
@@ -188,14 +231,12 @@ public class MainFragment extends BaseFragment {
 
 
     private void reSetView() {
-        if (mCurrentStatus == STATUS_WORK) {
-            Constants.DRIVER_STATSU = Constants.DRIVER_STATSU_WORK;
+        if (Constants.DRIVER_STATSU == Constants.DRIVER_STATSU_WORK) {
             imgIndicate.setVisibility(View.VISIBLE);
             btnGoCar.setText("收车");
             setOrderServiceEnable(true);
             startAnim();
         } else {
-            Constants.DRIVER_STATSU = Constants.DRIVER_STATSU_REST;
             imgIndicate.setVisibility(View.GONE);
             setOrderServiceEnable(false);
             btnGoCar.setText("出车");
@@ -207,7 +248,6 @@ public class MainFragment extends BaseFragment {
         EventBusUtls.notifyPullOrder(b ? OrderEvent.ORDER_PULL_ENABLE : OrderEvent.ORDER_PULL_UNABLE);
         EventBusUtls.notifyLocation(b ? LocationEvent.LOCATION_ENABLE : LocationEvent.LOCATION_UNABLE);
     }
-    //TODO 需增加接口，是否有正在进行中的订单 判断是否取消循环拉取订单等
 
     private void startAnim() {
         if (mRotateAnim == null) {
@@ -251,12 +291,9 @@ public class MainFragment extends BaseFragment {
         }
     }
 
-    public int getCurrentCarStatus() {
-        return mCurrentStatus;
-    }
-
     /**
      * 如果司机正在导航，不能进行收车
+     *
      * @param event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)

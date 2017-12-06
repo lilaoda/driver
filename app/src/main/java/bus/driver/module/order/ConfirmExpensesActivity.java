@@ -10,6 +10,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.orhanobut.logger.Logger;
+
 import java.util.HashMap;
 
 import bus.driver.R;
@@ -19,11 +22,13 @@ import bus.driver.bean.OrderInfo;
 import bus.driver.bean.event.OrderEvent;
 import bus.driver.data.HttpManager;
 import bus.driver.utils.EventBusUtls;
+import bus.driver.utils.overlay.AMapUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import lhy.lhylibrary.http.ResultObserver;
 import lhy.lhylibrary.utils.CommonUtils;
+import lhy.lhylibrary.utils.DateUtils;
 import lhy.lhylibrary.utils.ToastUtils;
 
 import static bus.driver.utils.RxUtils.wrapHttp;
@@ -78,6 +83,7 @@ public class ConfirmExpensesActivity extends BaseActivity {
         ButterKnife.bind(this);
         initToolbar("费用详情");
         initData();
+        initView();
         mHttpManager = HttpManager.instance();
     }
 
@@ -89,6 +95,19 @@ public class ConfirmExpensesActivity extends BaseActivity {
         if (mOrderInfo == null) {
             finish();
         }
+    }
+
+    private void initView() {
+        Logger.d(new Gson().toJson(mOrderInfo));
+        totalDistance.setText(AMapUtil.getFriendlyLength((int) mOrderInfo.getTripDistance()));
+//        if ((int) mOrderInfo.getTotalFare() == 0) {
+//            //TODO 待后端无问题再去掉
+//            textExpenses.setText("10");
+//        } else {
+        textExpenses.setText("" + mOrderInfo.getTotalFare());
+//        }
+        long l = (DateUtils.getCurrenTimestemp(mOrderInfo.getArriveTime()) - DateUtils.getCurrenTimestemp(mOrderInfo.getPasArrTime())) / 1000;
+        totalTime.setText(AMapUtil.getFriendlyTime((int) l));
     }
 
     @OnClick(R.id.btn_expenses)
@@ -116,7 +135,7 @@ public class ConfirmExpensesActivity extends BaseActivity {
                 .subscribe(new ResultObserver<String>(this, "确认费用...", true) {
                     @Override
                     public void onSuccess(String value) {
-                        btnExpenses.setText(value);
+                        btnExpenses.setText(value + "元");
                         btnExpenses.setEnabled(false);
                         Constants.ORDER_STATSU = Constants.ORDER_STATSU_NO;
                         EventBusUtls.notifyOrderChanged(mOrderInfo);
